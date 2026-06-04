@@ -1,0 +1,10616 @@
+{
+  "generated": "2026-06-04T22:16:56.126435",
+  "start": 9833,
+  "stats": {
+    "rooms_visited": 153,
+    "rooms_known": 270,
+    "open_frontier": 102
+  },
+  "rooms": {
+    "9833": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -29, 0",
+      "exits": {
+        "east": 9834,
+        "north": 9782,
+        "northeast": 9783,
+        "northwest": 9781,
+        "south": 9884,
+        "southeast": 9885,
+        "southwest": 9883,
+        "west": 9832
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9834": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -29, 0",
+      "exits": {
+        "east": 9835,
+        "north": 9783,
+        "northeast": 9784,
+        "northwest": 9782,
+        "south": 9885,
+        "southeast": 9886,
+        "southwest": 9884,
+        "west": 9833
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9782": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -30, 0",
+      "exits": {
+        "east": 9783,
+        "north": 9731,
+        "northeast": 9732,
+        "northwest": 9730,
+        "south": 9833,
+        "southeast": 9834,
+        "southwest": 9832,
+        "west": 9781
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9783": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -30, 0",
+      "exits": {
+        "east": 9784,
+        "north": 9732,
+        "northeast": 9733,
+        "northwest": 9731,
+        "south": 9834,
+        "southeast": 9835,
+        "southwest": 9833,
+        "west": 9782
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9781": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -30, 0",
+      "exits": {
+        "east": 9782,
+        "north": 9730,
+        "northeast": 9731,
+        "northwest": 9729,
+        "south": 9832,
+        "southeast": 9833,
+        "southwest": 9831,
+        "west": 9780
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9884": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -28, 0",
+      "exits": {
+        "east": 9885,
+        "north": 9833,
+        "northeast": 9834,
+        "northwest": 9832,
+        "south": 9935,
+        "southeast": 9936,
+        "southwest": 9934,
+        "west": 9883
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9885": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -28, 0",
+      "exits": {
+        "east": 9886,
+        "north": 9834,
+        "northeast": 9835,
+        "northwest": 9833,
+        "south": 9936,
+        "southeast": 9937,
+        "southwest": 9935,
+        "west": 9884
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "Strider766's Guide",
+        "cinder vulture",
+        "stim addict"
+      ],
+      "visited": true
+    },
+    "9883": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -28, 0",
+      "exits": {
+        "east": 9884,
+        "north": 9832,
+        "northeast": 9833,
+        "northwest": 9831,
+        "south": 9934,
+        "southeast": 9935,
+        "southwest": 9933,
+        "west": 9882
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "gila_kin wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9832": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -29, 0",
+      "exits": {
+        "east": 9833,
+        "north": 9781,
+        "northeast": 9782,
+        "northwest": 9780,
+        "south": 9883,
+        "southeast": 9884,
+        "southwest": 9882,
+        "west": 9831
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9835": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9784": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -30, 0",
+      "exits": {
+        "east": 9785,
+        "north": 9733,
+        "northeast": 9734,
+        "northwest": 9732,
+        "south": 9835,
+        "southeast": 9836,
+        "southwest": 9834,
+        "west": 9783
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9886": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -28, 0",
+      "exits": {
+        "east": 9887,
+        "north": 9835,
+        "northeast": 9836,
+        "northwest": 9834,
+        "south": 9937,
+        "southeast": 9938,
+        "southwest": 9936,
+        "west": 9885
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9731": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9732": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -31, 0",
+      "exits": {
+        "east": 9733,
+        "north": 9681,
+        "northeast": 9682,
+        "northwest": 9680,
+        "south": 9783,
+        "southeast": 9784,
+        "southwest": 9782,
+        "west": 9731
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "salt_born wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9730": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -31, 0",
+      "exits": {
+        "east": 9731,
+        "north": 9679,
+        "northeast": 9680,
+        "northwest": 9678,
+        "south": 9781,
+        "southeast": 9782,
+        "southwest": 9780,
+        "west": 9729
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "wandering merchant",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9679": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9680": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9678": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9780": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -30, 0",
+      "exits": {
+        "east": 9781,
+        "north": 9729,
+        "northeast": 9730,
+        "northwest": 9728,
+        "south": 9831,
+        "southeast": 9832,
+        "southwest": 9830,
+        "west": 9779
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "stim addict",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9729": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -31, 0",
+      "exits": {
+        "east": 9730,
+        "north": 9678,
+        "northeast": 9679,
+        "northwest": 9677,
+        "south": 9780,
+        "southeast": 9781,
+        "southwest": 9779,
+        "west": 9728
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9677": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9779": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -30, 0",
+      "exits": {
+        "east": 9780,
+        "north": 9728,
+        "northeast": 9729,
+        "northwest": 9727,
+        "south": 9830,
+        "southeast": 9831,
+        "southwest": 9829,
+        "west": 9778
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9728": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -31, 0",
+      "exits": {
+        "east": 9729,
+        "north": 9677,
+        "northeast": 9678,
+        "northwest": 9676,
+        "south": 9779,
+        "southeast": 9780,
+        "southwest": 9778,
+        "west": 9727
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9676": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -32, 0",
+      "exits": {
+        "east": 9677,
+        "north": 9625,
+        "northeast": 9626,
+        "northwest": 9624,
+        "south": 9727,
+        "southeast": 9728,
+        "southwest": 9726,
+        "west": 9675
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9778": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9727": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9625": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9626": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9624": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9726": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -9, -31, 0",
+      "exits": {
+        "east": 9727,
+        "north": 9675,
+        "northeast": 9676,
+        "northwest": 9674,
+        "south": 9777,
+        "southeast": 9778,
+        "southwest": 9776,
+        "west": 9725
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9675": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9674": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9777": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -9, -30, 0",
+      "exits": {
+        "east": 9778,
+        "north": 9726,
+        "northeast": 9727,
+        "northwest": 9725,
+        "south": 9828,
+        "southeast": 9829,
+        "southwest": 9827,
+        "west": 9776
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9776": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -10, -30, 0",
+      "exits": {
+        "east": 9777,
+        "north": 9725,
+        "northeast": 9726,
+        "south": 9827,
+        "southeast": 9828
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9725": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9827": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -10, -29, 0",
+      "exits": {
+        "east": 9828,
+        "north": 9776,
+        "northeast": 9777,
+        "south": 9878,
+        "southeast": 9879
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9828": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9829": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9878": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9879": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -9, -28, 0",
+      "exits": {
+        "east": 9880,
+        "north": 9828,
+        "northeast": 9829,
+        "northwest": 9827,
+        "south": 9930,
+        "southeast": 9931,
+        "southwest": 9929,
+        "west": 9878
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9880": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -28, 0",
+      "exits": {
+        "east": 9881,
+        "north": 9829,
+        "northeast": 9830,
+        "northwest": 9828,
+        "south": 9931,
+        "southeast": 9932,
+        "southwest": 9930,
+        "west": 9879
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9930": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -9, -27, 0",
+      "exits": {
+        "east": 9931,
+        "north": 9879,
+        "northeast": 9880,
+        "northwest": 9878,
+        "south": 9981,
+        "southeast": 9982,
+        "southwest": 9980,
+        "west": 9929
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9931": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -27, 0",
+      "exits": {
+        "east": 9932,
+        "north": 9880,
+        "northeast": 9881,
+        "northwest": 9879,
+        "south": 9982,
+        "southeast": 9983,
+        "southwest": 9981,
+        "west": 9930
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9929": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9881": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -28, 0",
+      "exits": {
+        "east": 9882,
+        "north": 9830,
+        "northeast": 9831,
+        "northwest": 9829,
+        "south": 9932,
+        "southeast": 9933,
+        "southwest": 9931,
+        "west": 9880
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9830": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -29, 0",
+      "exits": {
+        "east": 9831,
+        "north": 9779,
+        "northeast": 9780,
+        "northwest": 9778,
+        "south": 9881,
+        "southeast": 9882,
+        "southwest": 9880,
+        "west": 9829
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9932": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -27, 0",
+      "exits": {
+        "east": 9933,
+        "north": 9881,
+        "northeast": 9882,
+        "northwest": 9880,
+        "south": 9983,
+        "southeast": 9984,
+        "southwest": 9982,
+        "west": 9931
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "gila_kin wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9981": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -9, -26, 0",
+      "exits": {
+        "east": 9982,
+        "north": 9930,
+        "northeast": 9931,
+        "northwest": 9929,
+        "south": 10032,
+        "southeast": 10033,
+        "southwest": 10031,
+        "west": 9980
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9982": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -26, 0",
+      "exits": {
+        "east": 9983,
+        "north": 9931,
+        "northeast": 9932,
+        "northwest": 9930,
+        "south": 10033,
+        "southeast": 10034,
+        "southwest": 10032,
+        "west": 9981
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "salt_born wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9980": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10032": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10033": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -25, 0",
+      "exits": {
+        "east": 10034,
+        "north": 9982,
+        "northeast": 9983,
+        "northwest": 9981,
+        "south": 10084,
+        "southeast": 10085,
+        "southwest": 10083,
+        "west": 10032
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10031": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10034": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -25, 0",
+      "exits": {
+        "east": 10035,
+        "north": 9983,
+        "northeast": 9984,
+        "northwest": 9982,
+        "south": 10085,
+        "southeast": 10086,
+        "southwest": 10084,
+        "west": 10033
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "salt_born wanderer",
+        "chrome_junkie wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9983": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -26, 0",
+      "exits": {
+        "east": 9984,
+        "north": 9932,
+        "northeast": 9933,
+        "northwest": 9931,
+        "south": 10034,
+        "southeast": 10035,
+        "southwest": 10033,
+        "west": 9982
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10084": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10085": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -24, 0",
+      "exits": {
+        "east": 10086,
+        "north": 10034,
+        "northeast": 10035,
+        "northwest": 10033,
+        "south": 10136,
+        "southeast": 10137,
+        "southwest": 10135,
+        "west": 10084
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10083": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10035": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -25, 0",
+      "exits": {
+        "east": 10036,
+        "north": 9984,
+        "northeast": 9985,
+        "northwest": 9983,
+        "south": 10086,
+        "southeast": 10087,
+        "southwest": 10085,
+        "west": 10034
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9984": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -26, 0",
+      "exits": {
+        "east": 9985,
+        "north": 9933,
+        "northeast": 9934,
+        "northwest": 9932,
+        "south": 10035,
+        "southeast": 10036,
+        "southwest": 10034,
+        "west": 9983
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10086": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -24, 0",
+      "exits": {
+        "east": 10087,
+        "north": 10035,
+        "northeast": 10036,
+        "northwest": 10034,
+        "south": 10137,
+        "southeast": 10138,
+        "southwest": 10136,
+        "west": 10085
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "chrome_junkie wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9933": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -27, 0",
+      "exits": {
+        "east": 9934,
+        "north": 9882,
+        "northeast": 9883,
+        "northwest": 9881,
+        "south": 9984,
+        "southeast": 9985,
+        "southwest": 9983,
+        "west": 9932
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "spirit walker initiate",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10036": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -25, 0",
+      "exits": {
+        "east": 10037,
+        "north": 9985,
+        "northeast": 9986,
+        "northwest": 9984,
+        "south": 10087,
+        "southeast": 10088,
+        "southwest": 10086,
+        "west": 10035
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "roadkeeper",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9985": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -26, 0",
+      "exits": {
+        "east": 9986,
+        "north": 9934,
+        "northeast": 9935,
+        "northwest": 9933,
+        "south": 10036,
+        "southeast": 10037,
+        "southwest": 10035,
+        "west": 9984
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10087": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -24, 0",
+      "exits": {
+        "east": 10088,
+        "north": 10036,
+        "northeast": 10037,
+        "northwest": 10035,
+        "south": 10138,
+        "southeast": 10139,
+        "southwest": 10137,
+        "west": 10086
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "10037": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -25, 0",
+      "exits": {
+        "east": 10038,
+        "north": 9986,
+        "northeast": 9987,
+        "northwest": 9985,
+        "south": 10088,
+        "southeast": 10089,
+        "southwest": 10087,
+        "west": 10036
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "9986": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10088": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -24, 0",
+      "exits": {
+        "east": 10089,
+        "north": 10037,
+        "northeast": 10038,
+        "northwest": 10036,
+        "south": 10139,
+        "southeast": 10140,
+        "southwest": 10138,
+        "west": 10087
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9934": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -27, 0",
+      "exits": {
+        "east": 9935,
+        "north": 9883,
+        "northeast": 9884,
+        "northwest": 9882,
+        "south": 9985,
+        "southeast": 9986,
+        "southwest": 9984,
+        "west": 9933
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "9935": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -27, 0",
+      "exits": {
+        "east": 9936,
+        "north": 9884,
+        "northeast": 9885,
+        "northwest": 9883,
+        "south": 9986,
+        "southeast": 9987,
+        "southwest": 9985,
+        "west": 9934
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "stim addict",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9882": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -28, 0",
+      "exits": {
+        "east": 9883,
+        "north": 9831,
+        "northeast": 9832,
+        "northwest": 9830,
+        "south": 9933,
+        "southeast": 9934,
+        "southwest": 9932,
+        "west": 9881
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "9831": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -29, 0",
+      "exits": {
+        "east": 9832,
+        "north": 9780,
+        "northeast": 9781,
+        "northwest": 9779,
+        "south": 9882,
+        "southeast": 9883,
+        "southwest": 9881,
+        "west": 9830
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9936": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -27, 0",
+      "exits": {
+        "east": 9937,
+        "north": 9885,
+        "northeast": 9886,
+        "northwest": 9884,
+        "south": 9987,
+        "southeast": 9988,
+        "southwest": 9986,
+        "west": 9935
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9733": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -31, 0",
+      "exits": {
+        "east": 9734,
+        "north": 9682,
+        "northeast": 9683,
+        "northwest": 9681,
+        "south": 9784,
+        "southeast": 9785,
+        "southwest": 9783,
+        "west": 9732
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9681": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9682": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9734": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9683": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9785": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -1, -30, 0",
+      "exits": {
+        "east": 9786,
+        "north": 9734,
+        "northeast": 9735,
+        "northwest": 9733,
+        "south": 9836,
+        "southeast": 9837,
+        "southwest": 9835,
+        "west": 9784
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "truth merchant",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9836": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9786": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -30, 0",
+      "exits": {
+        "east": 9787,
+        "north": 9735,
+        "northeast": 9736,
+        "northwest": 9734,
+        "south": 9837,
+        "southeast": 9838,
+        "southwest": 9836,
+        "west": 9785
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9735": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9837": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9787": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9736": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 1, -31, 0",
+      "exits": {
+        "east": 9737,
+        "north": 9685,
+        "northeast": 9686,
+        "northwest": 9684,
+        "south": 9787,
+        "southeast": 9788,
+        "southwest": 9786,
+        "west": 9735
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9838": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9737": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -31, 0",
+      "exits": {
+        "east": 9738,
+        "north": 9686,
+        "northeast": 9687,
+        "northwest": 9685,
+        "south": 9788,
+        "southeast": 9789,
+        "southwest": 9787,
+        "west": 9736
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "petrochem wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9685": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9686": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9684": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9788": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -30, 0",
+      "exits": {
+        "east": 9789,
+        "north": 9737,
+        "northeast": 9738,
+        "northwest": 9736,
+        "south": 9839,
+        "southeast": 9840,
+        "southwest": 9838,
+        "west": 9787
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9738": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -31, 0",
+      "exits": {
+        "east": 9739,
+        "north": 9687,
+        "northeast": 9688,
+        "northwest": 9686,
+        "south": 9789,
+        "southeast": 9790,
+        "southwest": 9788,
+        "west": 9737
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9687": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -32, 0",
+      "exits": {
+        "east": 9688,
+        "north": 9636,
+        "northeast": 9637,
+        "northwest": 9635,
+        "south": 9738,
+        "southeast": 9739,
+        "southwest": 9737,
+        "west": 9686
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "scrap hound"
+      ],
+      "visited": true
+    },
+    "9789": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -30, 0",
+      "exits": {
+        "east": 9790,
+        "north": 9738,
+        "northeast": 9739,
+        "northwest": 9737,
+        "south": 9840,
+        "southeast": 9841,
+        "southwest": 9839,
+        "west": 9788
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9739": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 4, -31, 0",
+      "exits": {
+        "east": 9740,
+        "north": 9688,
+        "northeast": 9689,
+        "northwest": 9687,
+        "south": 9790,
+        "southeast": 9791,
+        "southwest": 9789,
+        "west": 9738
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "9688": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 4, -32, 0",
+      "exits": {
+        "east": 9689,
+        "north": 9637,
+        "northeast": 9638,
+        "northwest": 9636,
+        "south": 9739,
+        "southeast": 9740,
+        "southwest": 9738,
+        "west": 9687
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "stim addict",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9790": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 4, -30, 0",
+      "exits": {
+        "east": 9791,
+        "north": 9739,
+        "northeast": 9740,
+        "northwest": 9738,
+        "south": 9841,
+        "southeast": 9842,
+        "southwest": 9840,
+        "west": 9789
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "scrap hog"
+      ],
+      "visited": true
+    },
+    "9839": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -29, 0",
+      "exits": {
+        "east": 9840,
+        "north": 9788,
+        "northeast": 9789,
+        "northwest": 9787,
+        "south": 9890,
+        "southeast": 9891,
+        "southwest": 9889,
+        "west": 9838
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "spirit walker initiate",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9840": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -29, 0",
+      "exits": {
+        "east": 9841,
+        "north": 9789,
+        "northeast": 9790,
+        "northwest": 9788,
+        "south": 9891,
+        "southeast": 9892,
+        "southwest": 9890,
+        "west": 9839
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9841": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 4, -29, 0",
+      "exits": {
+        "east": 9842,
+        "north": 9790,
+        "northeast": 9791,
+        "northwest": 9789,
+        "south": 9892,
+        "southeast": 9893,
+        "southwest": 9891,
+        "west": 9840
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "scrap hog"
+      ],
+      "visited": true
+    },
+    "9791": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 5, -30, 0",
+      "exits": {
+        "east": 11267,
+        "mystarion gate": 668,
+        "north": 9740,
+        "northeast": 11266,
+        "northwest": 9739,
+        "south": 9842,
+        "southeast": 11268,
+        "southwest": 9841,
+        "west": 9790
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "mystarion gate": [
+          0,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9740": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9842": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 5, -29, 0",
+      "exits": {
+        "east": 11268,
+        "north": 9791,
+        "northeast": 11267,
+        "northwest": 9790,
+        "south": 9893,
+        "southeast": 11269,
+        "southwest": 9892,
+        "west": 9841
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9891": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -28, 0",
+      "exits": {
+        "east": 9892,
+        "north": 9840,
+        "northeast": 9841,
+        "northwest": 9839,
+        "south": 9942,
+        "southeast": 9943,
+        "southwest": 9941,
+        "west": 9890
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9892": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 4, -28, 0",
+      "exits": {
+        "east": 9893,
+        "north": 9841,
+        "northeast": 9842,
+        "northwest": 9840,
+        "south": 9943,
+        "southeast": 9944,
+        "southwest": 9942,
+        "west": 9891
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "tortoise_folk wanderer",
+        "scrap hog"
+      ],
+      "visited": true
+    },
+    "9890": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -28, 0",
+      "exits": {
+        "east": 9891,
+        "north": 9839,
+        "northeast": 9840,
+        "northwest": 9838,
+        "south": 9941,
+        "southeast": 9942,
+        "southwest": 9940,
+        "west": 9889
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9941": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -27, 0",
+      "exits": {
+        "east": 9942,
+        "north": 9890,
+        "northeast": 9891,
+        "northwest": 9889,
+        "south": 9992,
+        "southeast": 9993,
+        "southwest": 9991,
+        "west": 9940
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9942": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -27, 0",
+      "exits": {
+        "east": 9943,
+        "north": 9891,
+        "northeast": 9892,
+        "northwest": 9890,
+        "south": 9993,
+        "southeast": 9994,
+        "southwest": 9992,
+        "west": 9941
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9940": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9889": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 1, -28, 0",
+      "exits": {
+        "east": 9890,
+        "north": 9838,
+        "northeast": 9839,
+        "northwest": 9837,
+        "south": 9940,
+        "southeast": 9941,
+        "southwest": 9939,
+        "west": 9888
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9943": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9939": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -27, 0",
+      "exits": {
+        "east": 9940,
+        "north": 9888,
+        "northeast": 9889,
+        "northwest": 9887,
+        "south": 9990,
+        "southeast": 9991,
+        "southwest": 9989,
+        "west": 9938
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "9888": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -28, 0",
+      "exits": {
+        "east": 9889,
+        "north": 9837,
+        "northeast": 9838,
+        "northwest": 9836,
+        "south": 9939,
+        "southeast": 9940,
+        "southwest": 9938,
+        "west": 9887
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9938": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -1, -27, 0",
+      "exits": {
+        "east": 9939,
+        "north": 9887,
+        "northeast": 9888,
+        "northwest": 9886,
+        "south": 9989,
+        "southeast": 9990,
+        "southwest": 9988,
+        "west": 9937
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "iron nomad waykeeper",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9887": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -1, -28, 0",
+      "exits": {
+        "east": 9888,
+        "north": 9836,
+        "northeast": 9837,
+        "northwest": 9835,
+        "south": 9938,
+        "southeast": 9939,
+        "southwest": 9937,
+        "west": 9886
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9989": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -1, -26, 0",
+      "exits": {
+        "east": 9990,
+        "north": 9938,
+        "northeast": 9939,
+        "northwest": 9937,
+        "south": 10040,
+        "southeast": 10041,
+        "southwest": 10039,
+        "west": 9988
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "scrap hound"
+      ],
+      "visited": true
+    },
+    "9990": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -26, 0",
+      "exits": {
+        "east": 9991,
+        "north": 9939,
+        "northeast": 9940,
+        "northwest": 9938,
+        "south": 10041,
+        "southeast": 10042,
+        "southwest": 10040,
+        "west": 9989
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9988": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -26, 0",
+      "exits": {
+        "east": 9989,
+        "north": 9937,
+        "northeast": 9938,
+        "northwest": 9936,
+        "south": 10039,
+        "southeast": 10040,
+        "southwest": 10038,
+        "west": 9987
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "roadkeeper",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9937": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -27, 0",
+      "exits": {
+        "east": 9938,
+        "north": 9886,
+        "northeast": 9887,
+        "northwest": 9885,
+        "south": 9988,
+        "southeast": 9989,
+        "southwest": 9987,
+        "west": 9936
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "stim addict",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9987": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -26, 0",
+      "exits": {
+        "east": 9988,
+        "north": 9936,
+        "northeast": 9937,
+        "northwest": 9935,
+        "south": 10038,
+        "southeast": 10039,
+        "southwest": 10037,
+        "west": 9986
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "crater hermit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10038": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -25, 0",
+      "exits": {
+        "east": 10039,
+        "north": 9987,
+        "northeast": 9988,
+        "northwest": 9986,
+        "south": 10089,
+        "southeast": 10090,
+        "southwest": 10088,
+        "west": 10037
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10039": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10040": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10089": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -24, 0",
+      "exits": {
+        "east": 10090,
+        "north": 10038,
+        "northeast": 10039,
+        "northwest": 10037,
+        "south": 10140,
+        "southeast": 10141,
+        "southwest": 10139,
+        "west": 10088
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10090": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10138": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -23, 0",
+      "exits": {
+        "east": 10139,
+        "north": 10087,
+        "northeast": 10088,
+        "northwest": 10086,
+        "south": 10189,
+        "southeast": 10190,
+        "southwest": 10188,
+        "west": 10137
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10139": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -23, 0",
+      "exits": {
+        "east": 10140,
+        "north": 10088,
+        "northeast": 10089,
+        "northwest": 10087,
+        "south": 10190,
+        "southeast": 10191,
+        "southwest": 10189,
+        "west": 10138
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10137": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -23, 0",
+      "exits": {
+        "east": 10138,
+        "north": 10086,
+        "northeast": 10087,
+        "northwest": 10085,
+        "south": 10188,
+        "southeast": 10189,
+        "southwest": 10187,
+        "west": 10136
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10140": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -23, 0",
+      "exits": {
+        "east": 10141,
+        "north": 10089,
+        "northeast": 10090,
+        "northwest": 10088,
+        "south": 10191,
+        "southeast": 10192,
+        "southwest": 10190,
+        "west": 10139
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10190": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -22, 0",
+      "exits": {
+        "east": 10191,
+        "north": 10139,
+        "northeast": 10140,
+        "northwest": 10138,
+        "south": 10241,
+        "southeast": 10242,
+        "southwest": 10240,
+        "west": 10189
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10191": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -22, 0",
+      "exits": {
+        "east": 10192,
+        "north": 10140,
+        "northeast": 10141,
+        "northwest": 10139,
+        "south": 10242,
+        "southeast": 10243,
+        "southwest": 10241,
+        "west": 10190
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10189": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -22, 0",
+      "exits": {
+        "east": 10190,
+        "north": 10138,
+        "northeast": 10139,
+        "northwest": 10137,
+        "south": 10240,
+        "southeast": 10241,
+        "southwest": 10239,
+        "west": 10188
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10141": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -23, 0",
+      "exits": {
+        "east": 10142,
+        "north": 10090,
+        "northeast": 10091,
+        "northwest": 10089,
+        "south": 10192,
+        "southeast": 10193,
+        "southwest": 10191,
+        "west": 10140
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "10192": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -22, 0",
+      "exits": {
+        "east": 10193,
+        "north": 10141,
+        "northeast": 10142,
+        "northwest": 10140,
+        "south": 10243,
+        "southeast": 10244,
+        "southwest": 10242,
+        "west": 10191
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10142": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -1, -23, 0",
+      "exits": {
+        "east": 10143,
+        "north": 10091,
+        "northeast": 10092,
+        "northwest": 10090,
+        "south": 10193,
+        "southeast": 10194,
+        "southwest": 10192,
+        "west": 10141
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "10091": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10193": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10143": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10092": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10194": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -22, 0",
+      "exits": {
+        "east": 10195,
+        "north": 10143,
+        "northeast": 10144,
+        "northwest": 10142,
+        "south": 10245,
+        "southeast": 10246,
+        "southwest": 10244,
+        "west": 10193
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10195": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10144": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10245": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10246": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10244": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -1, -21, 0",
+      "exits": {
+        "east": 10245,
+        "north": 10193,
+        "northeast": 10194,
+        "northwest": 10192,
+        "south": 10295,
+        "southeast": 10296,
+        "southwest": 10294,
+        "west": 10243
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "truth merchant",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10295": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10296": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10294": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10243": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -21, 0",
+      "exits": {
+        "east": 10244,
+        "north": 10192,
+        "northeast": 10193,
+        "northwest": 10191,
+        "south": 10294,
+        "southeast": 10295,
+        "southwest": 10293,
+        "west": 10242
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10293": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -20, 0",
+      "exits": {
+        "east": 10294,
+        "north": 10242,
+        "northeast": 10243,
+        "northwest": 10241,
+        "south": 10344,
+        "southeast": 10345,
+        "southwest": 10343,
+        "west": 10292
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10242": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10241": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -21, 0",
+      "exits": {
+        "east": 10242,
+        "north": 10190,
+        "northeast": 10191,
+        "northwest": 10189,
+        "south": 10292,
+        "southeast": 10293,
+        "southwest": 10291,
+        "west": 10240
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10240": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -21, 0",
+      "exits": {
+        "east": 10241,
+        "north": 10189,
+        "northeast": 10190,
+        "northwest": 10188,
+        "south": 10291,
+        "southeast": 10292,
+        "southwest": 10290,
+        "west": 10239
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10188": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -22, 0",
+      "exits": {
+        "east": 10189,
+        "north": 10137,
+        "northeast": 10138,
+        "northwest": 10136,
+        "south": 10239,
+        "southeast": 10240,
+        "southwest": 10238,
+        "west": 10187
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "gila_kin wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10291": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -20, 0",
+      "exits": {
+        "east": 10292,
+        "north": 10240,
+        "northeast": 10241,
+        "northwest": 10239,
+        "south": 10342,
+        "southeast": 10343,
+        "southwest": 10341,
+        "west": 10290
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10292": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10290": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -20, 0",
+      "exits": {
+        "east": 10291,
+        "north": 10239,
+        "northeast": 10240,
+        "northwest": 10238,
+        "south": 10341,
+        "southeast": 10342,
+        "southwest": 10340,
+        "west": 10289
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10239": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -21, 0",
+      "exits": {
+        "east": 10240,
+        "north": 10188,
+        "northeast": 10189,
+        "northwest": 10187,
+        "south": 10290,
+        "southeast": 10291,
+        "southwest": 10289,
+        "west": 10238
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "10342": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10343": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -19, 0",
+      "exits": {
+        "east": 10344,
+        "north": 10292,
+        "northeast": 10293,
+        "northwest": 10291,
+        "south": 10392,
+        "southeast": 10393,
+        "southwest": 10391,
+        "west": 10342
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide",
+        "scrap hog"
+      ],
+      "visited": true
+    },
+    "10341": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -6, -19, 0",
+      "exits": {
+        "east": 10342,
+        "north": 10290,
+        "northeast": 10291,
+        "northwest": 10289,
+        "south": 10390,
+        "southeast": 10391,
+        "southwest": 10389,
+        "west": 10340
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10238": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10340": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -19, 0",
+      "exits": {
+        "east": 10341,
+        "north": 10289,
+        "northeast": 10290,
+        "northwest": 10288,
+        "south": 10389,
+        "southeast": 10390,
+        "southwest": 10388,
+        "west": 10339
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "caravan master",
+        "Strider766's Guide",
+        "scrap hound"
+      ],
+      "visited": true
+    },
+    "10289": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10187": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -22, 0",
+      "exits": {
+        "east": 10188,
+        "north": 10136,
+        "northeast": 10137,
+        "northwest": 10135,
+        "south": 10238,
+        "southeast": 10239,
+        "southwest": 10237,
+        "west": 10186
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "tortoise_folk wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10344": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -19, 0",
+      "exits": {
+        "east": 10345,
+        "north": 10293,
+        "northeast": 10294,
+        "northwest": 10292,
+        "south": 10393,
+        "southeast": 10394,
+        "southwest": 10392,
+        "west": 10343
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10345": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -19, 0",
+      "exits": {
+        "east": 10346,
+        "north": 10294,
+        "northeast": 10295,
+        "northwest": 10293,
+        "south": 10394,
+        "southeast": 10395,
+        "southwest": 10393,
+        "west": 10344
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "spirit walker initiate",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10346": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10394": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -18, 0",
+      "exits": {
+        "east": 10395,
+        "north": 10345,
+        "northeast": 10346,
+        "northwest": 10344,
+        "south": 10443,
+        "southeast": 10444,
+        "southwest": 10442,
+        "west": 10393
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10395": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10393": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -18, 0",
+      "exits": {
+        "east": 10394,
+        "north": 10344,
+        "northeast": 10345,
+        "northwest": 10343,
+        "south": 10442,
+        "southeast": 10443,
+        "southwest": 10441,
+        "west": 10392
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "10392": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -18, 0",
+      "exits": {
+        "east": 10393,
+        "north": 10343,
+        "northeast": 10344,
+        "northwest": 10342,
+        "south": 10441,
+        "southeast": 10442,
+        "southwest": 10440,
+        "west": 10391
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide",
+        "scrap hog"
+      ],
+      "visited": true
+    },
+    "10442": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -17, 0",
+      "exits": {
+        "east": 10443,
+        "north": 10393,
+        "northeast": 10394,
+        "northwest": 10392,
+        "south": 10491,
+        "southeast": 10492,
+        "southwest": 10490,
+        "west": 10441
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide",
+        "scrap hog"
+      ],
+      "visited": true
+    },
+    "10443": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10441": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10444": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10491": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10492": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10490": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10440": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10391": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -5, -18, 0",
+      "exits": {
+        "east": 10392,
+        "north": 10342,
+        "northeast": 10343,
+        "northwest": 10341,
+        "south": 10440,
+        "southeast": 10441,
+        "southwest": 10439,
+        "west": 10390
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10439": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10390": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10389": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10288": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -20, 0",
+      "exits": {
+        "east": 10289,
+        "north": 10237,
+        "northeast": 10238,
+        "northwest": 10236,
+        "south": 10339,
+        "southeast": 10340,
+        "southwest": 10338,
+        "west": 10287
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide",
+        "scrap hog"
+      ],
+      "visited": true
+    },
+    "10388": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10339": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -19, 0",
+      "exits": {
+        "east": 10340,
+        "north": 10288,
+        "northeast": 10289,
+        "northwest": 10287,
+        "south": 10388,
+        "southeast": 10389,
+        "west": 10338
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10287": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -9, -20, 0",
+      "exits": {
+        "east": 10288,
+        "north": 10236,
+        "northeast": 10237,
+        "northwest": 10235,
+        "south": 10338,
+        "southeast": 10339,
+        "southwest": 10337,
+        "west": 10286
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10338": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10236": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10237": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -21, 0",
+      "exits": {
+        "east": 10238,
+        "north": 10186,
+        "northeast": 10187,
+        "northwest": 10185,
+        "south": 10288,
+        "southeast": 10289,
+        "southwest": 10287,
+        "west": 10236
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10235": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10337": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10286": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10186": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -22, 0",
+      "exits": {
+        "east": 10187,
+        "north": 10135,
+        "northeast": 10136,
+        "northwest": 10134,
+        "south": 10237,
+        "southeast": 10238,
+        "southwest": 10236,
+        "west": 10185
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "scrap hound"
+      ],
+      "visited": true
+    },
+    "10185": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10135": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -8, -23, 0",
+      "exits": {
+        "east": 10136,
+        "north": 10084,
+        "northeast": 10085,
+        "northwest": 10083,
+        "south": 10186,
+        "southeast": 10187,
+        "southwest": 10185,
+        "west": 10134
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10136": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -7, -23, 0",
+      "exits": {
+        "east": 10137,
+        "north": 10085,
+        "northeast": 10086,
+        "northwest": 10084,
+        "south": 10187,
+        "southeast": 10188,
+        "southwest": 10186,
+        "west": 10135
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "gila_kin wanderer",
+        "gila_kin wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10134": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9991": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 1, -26, 0",
+      "exits": {
+        "east": 9992,
+        "north": 9940,
+        "northeast": 9941,
+        "northwest": 9939,
+        "south": 10042,
+        "southeast": 10043,
+        "southwest": 10041,
+        "west": 9990
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "gila_kin wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9992": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -26, 0",
+      "exits": {
+        "east": 9993,
+        "north": 9941,
+        "northeast": 9942,
+        "northwest": 9940,
+        "south": 10043,
+        "southeast": 10044,
+        "southwest": 10042,
+        "west": 9991
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10042": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 1, -25, 0",
+      "exits": {
+        "east": 10043,
+        "north": 9991,
+        "northeast": 9992,
+        "northwest": 9990,
+        "south": 10093,
+        "southeast": 10094,
+        "southwest": 10092,
+        "west": 10041
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10043": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -25, 0",
+      "exits": {
+        "east": 10044,
+        "north": 9992,
+        "northeast": 9993,
+        "northwest": 9991,
+        "south": 10094,
+        "southeast": 10095,
+        "southwest": 10093,
+        "west": 10042
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10041": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -25, 0",
+      "exits": {
+        "east": 10042,
+        "north": 9990,
+        "northeast": 9991,
+        "northwest": 9989,
+        "south": 10092,
+        "southeast": 10093,
+        "southwest": 10091,
+        "west": 10040
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "spirit walker initiate",
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10093": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10094": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10044": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -25, 0",
+      "exits": {
+        "east": 10045,
+        "north": 9993,
+        "northeast": 9994,
+        "northwest": 9992,
+        "south": 10095,
+        "southeast": 10096,
+        "southwest": 10094,
+        "west": 10043
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "9993": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -26, 0",
+      "exits": {
+        "east": 9994,
+        "north": 9942,
+        "northeast": 9943,
+        "northwest": 9941,
+        "south": 10044,
+        "southeast": 10045,
+        "southwest": 10043,
+        "west": 9992
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10095": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -24, 0",
+      "exits": {
+        "east": 10096,
+        "north": 10044,
+        "northeast": 10045,
+        "northwest": 10043,
+        "south": 10146,
+        "southeast": 10147,
+        "southwest": 10145,
+        "west": 10094
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9994": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10045": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 4, -25, 0",
+      "exits": {
+        "east": 10046,
+        "north": 9994,
+        "northeast": 9995,
+        "northwest": 9993,
+        "south": 10096,
+        "southeast": 10097,
+        "southwest": 10095,
+        "west": 10044
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10096": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10146": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10147": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10145": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "10046": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9995": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 5, -26, 0",
+      "exits": {
+        "east": 11271,
+        "north": 9944,
+        "northeast": 11270,
+        "northwest": 9943,
+        "south": 10046,
+        "southeast": 11272,
+        "southwest": 10045,
+        "west": 9994
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "10097": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "11271": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 6, -26, 0",
+      "exits": {
+        "north": 11270,
+        "northwest": 9944,
+        "south": 11272,
+        "southwest": 10046,
+        "west": 9995
+      },
+      "deltas": {
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "dust jackrabbit",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9944": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 5, -27, 0",
+      "exits": {
+        "east": 11270,
+        "north": 9893,
+        "northeast": 11269,
+        "northwest": 9892,
+        "south": 9995,
+        "southeast": 11271,
+        "southwest": 9994,
+        "west": 9943
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "11270": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "11272": {
+      "name": "Convoy Ruts North",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 6, -25, 0",
+      "exits": {
+        "north": 11271,
+        "northwest": 9995,
+        "south": 11273,
+        "southwest": 10097,
+        "west": 10046
+      },
+      "deltas": {
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "11273": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9893": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "11269": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 6, -28, 0",
+      "exits": {
+        "north": 11268,
+        "northwest": 9842,
+        "south": 11270,
+        "southwest": 9944,
+        "west": 9893
+      },
+      "deltas": {
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "11268": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 6, -29, 0",
+      "exits": {
+        "north": 11267,
+        "northwest": 9791,
+        "south": 11269,
+        "southwest": 9893,
+        "west": 9842
+      },
+      "deltas": {
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "sand floof",
+        "the_parched wanderer",
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "11267": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 6, -30, 0",
+      "exits": {
+        "north": 11266,
+        "northwest": 9740,
+        "south": 11268,
+        "southwest": 9842,
+        "west": 9791
+      },
+      "deltas": {
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger"
+      ],
+      "visited": true
+    },
+    "11266": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "668": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9689": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9636": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -33, 0",
+      "exits": {
+        "east": 9637,
+        "north": 9585,
+        "northeast": 9586,
+        "northwest": 9584,
+        "south": 9687,
+        "southeast": 9688,
+        "southwest": 9686,
+        "west": 9635
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "stim addict"
+      ],
+      "visited": true
+    },
+    "9637": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9635": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9638": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9585": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 3, -34, 0",
+      "exits": {
+        "east": 9586,
+        "north": 9534,
+        "northeast": 9535,
+        "northwest": 9533,
+        "south": 9636,
+        "southeast": 9637,
+        "southwest": 9635,
+        "west": 9584
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "stim addict"
+      ],
+      "visited": true
+    },
+    "9586": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9584": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9534": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9535": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9533": {
+      "name": "Grid Static Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -35, 0",
+      "exits": {
+        "east": 9534,
+        "north": 9482,
+        "northeast": 9483,
+        "northwest": 9481,
+        "south": 9584,
+        "southeast": 9585,
+        "southwest": 9583,
+        "west": 9532
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "bone-picker",
+        "salt_born wanderer",
+        "Strider766's Guide",
+        "stim addict"
+      ],
+      "visited": true
+    },
+    "9482": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9483": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9481": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 1, -36, 0",
+      "exits": {
+        "east": 9482,
+        "north": 9430,
+        "northeast": 9431,
+        "northwest": 9429,
+        "south": 9532,
+        "southeast": 9533,
+        "southwest": 9531,
+        "west": 9480
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "stim addict"
+      ],
+      "visited": true
+    },
+    "9583": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9532": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9430": {
+      "name": "Salt Brush Flat",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 1, -37, 0",
+      "exits": {
+        "east": 9431,
+        "north": 9379,
+        "northeast": 9380,
+        "northwest": 9378,
+        "south": 9481,
+        "southeast": 9482,
+        "southwest": 9480,
+        "west": 9429
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hound",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9431": {
+      "name": "Dried Oasis Run",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 2, -37, 0",
+      "exits": {
+        "east": 9432,
+        "north": 9380,
+        "northeast": 9381,
+        "northwest": 9379,
+        "south": 9482,
+        "southeast": 9483,
+        "southwest": 9481,
+        "west": 9430
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "scrap hog",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9429": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -37, 0",
+      "exits": {
+        "east": 9430,
+        "north": 9378,
+        "northeast": 9379,
+        "northwest": 9377,
+        "south": 9480,
+        "southeast": 9481,
+        "southwest": 9479,
+        "west": 9428
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9531": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9480": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9379": {
+      "name": "Militia Stencil Wash",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 1, -38, 0",
+      "exits": {
+        "east": 9380,
+        "south": 9430,
+        "southeast": 9431,
+        "southwest": 9429,
+        "west": 9378
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "petrochem wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9380": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9378": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, 0, -38, 0",
+      "exits": {
+        "east": 9379,
+        "south": 9429,
+        "southeast": 9430,
+        "southwest": 9428,
+        "west": 9377
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "stim addict",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9432": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9381": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9428": {
+      "name": "Prayer Flag Scrub",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -1, -37, 0",
+      "exits": {
+        "east": 9429,
+        "north": 9377,
+        "northeast": 9378,
+        "northwest": 9376,
+        "south": 9479,
+        "southeast": 9480,
+        "southwest": 9478,
+        "west": 9427
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "crater hermit",
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "9377": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9479": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9376": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -38, 0",
+      "exits": {
+        "east": 9377,
+        "south": 9427,
+        "southeast": 9428,
+        "southwest": 9426,
+        "west": 9375
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "feral scavenger",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9478": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9427": {
+      "name": "Tar Crust Rim",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -2, -37, 0",
+      "exits": {
+        "east": 9428,
+        "north": 9376,
+        "northeast": 9377,
+        "northwest": 9375,
+        "south": 9478,
+        "southeast": 9479,
+        "southwest": 9477,
+        "west": 9426
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "cinder vulture",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9375": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -38, 0",
+      "exits": {
+        "east": 9376,
+        "south": 9426,
+        "southeast": 9427,
+        "southwest": 9425,
+        "west": 9374
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "the_parched wanderer",
+        "Strider766's Guide"
+      ],
+      "visited": true
+    },
+    "9477": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9426": {
+      "name": "Abandoned Irrigator Cut",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -3, -37, 0",
+      "exits": {
+        "east": 9427,
+        "north": 9375,
+        "northeast": 9376,
+        "northwest": 9374,
+        "south": 9477,
+        "southeast": 9478,
+        "southwest": 9476,
+        "west": 9425
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "gila_kin wanderer",
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "9425": {
+      "name": "Wind-Stripped Field",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -37, 0",
+      "exits": {
+        "east": 9426,
+        "north": 9374,
+        "northeast": 9375,
+        "northwest": 9373,
+        "south": 9476,
+        "southeast": 9477,
+        "southwest": 9475,
+        "west": 9424
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "north": [
+          0,
+          -1,
+          0
+        ],
+        "northeast": [
+          1,
+          -1,
+          0
+        ],
+        "northwest": [
+          -1,
+          -1,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "9374": {
+      "name": "Bleached Hardpan",
+      "area": "North Pack Wastes",
+      "environment": "Mojave Wastes",
+      "coords": "North Pack Wastes, -4, -38, 0",
+      "exits": {
+        "east": 9375,
+        "south": 9425,
+        "southeast": 9426,
+        "southwest": 9424,
+        "west": 9373
+      },
+      "deltas": {
+        "east": [
+          1,
+          0,
+          0
+        ],
+        "south": [
+          0,
+          1,
+          0
+        ],
+        "southeast": [
+          1,
+          1,
+          0
+        ],
+        "southwest": [
+          -1,
+          1,
+          0
+        ],
+        "west": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "npcs": [
+        "Strider766's Guide",
+        "cinder vulture"
+      ],
+      "visited": true
+    },
+    "9476": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9373": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9475": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    },
+    "9424": {
+      "name": "",
+      "area": "",
+      "environment": "",
+      "coords": "",
+      "exits": {},
+      "deltas": {},
+      "npcs": [],
+      "visited": false
+    }
+  }
+}
