@@ -122,20 +122,25 @@ class Reviver:
             await self.cmd("look", 2.5)
             print("START:", self.status(), flush=True)
 
-            # The 'Guide' NPC slowly heals a downed character back from the edge.
-            # Wait (up to ~12 min) for HP to cross above 0 -> no longer downed.
-            print("Waiting for the Guide to revive (HP > 0)...", flush=True)
-            for i in range(72):
+            # If we're already alive and out of the shadow realm, nothing to do.
+            if self.hp is not None and self.hp > 0 and self.area and "shadow" not in self.area.lower():
+                print(f"Already alive in {self.area!r}; no revive needed.", flush=True)
+                return
+
+            # The 'Guide' NPC heals a downed character back from the edge slowly
+            # over real time while connected. Idle (send `wait`) and poll HP for up
+            # to ~30 min for it to cross above 0 -> no longer downed.
+            print("Idling for the Guide to revive (HP > 0); this is slow...", flush=True)
+            for i in range(180):
                 if self.hp is not None and self.hp > 0:
                     print(f"  REVIVED: HP={self.hp}/{self.maxhp} after ~{i*10}s", flush=True)
                     break
-                if i % 3 == 0:
-                    await self.send("look")  # nudge a fresh prompt/HP readout
+                await self.send("wait")       # pass time; healing is time-based
                 await asyncio.sleep(10)
-                print(f"  t={i*10:>4}s HP={self.hp}/{self.maxhp}", flush=True)
+                if i % 6 == 0:
+                    print(f"  t={i*10:>4}s HP={self.hp}/{self.maxhp}", flush=True)
             else:
-                print(f"  Still downed after the wait (HP={self.hp}/{self.maxhp}). "
-                      "Revival is slower than the window; leaving session.", flush=True)
+                print(f"  Still downed after ~30 min (HP={self.hp}/{self.maxhp}); giving up this cycle.", flush=True)
                 return
 
             # No longer downed: stand, then recall/leave out of the shadow realm.
