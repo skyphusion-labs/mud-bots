@@ -1,10 +1,11 @@
-"""Probe what actually completes the Packet Wastes 'Learning to Survive' lesson.
+"""Definitively test what completes Packet Wastes' 'Learning to Survive' lesson.
 
-The survival room teaches drink water / eat ration / forage (all of which the bot
-does, and foraging even succeeds repeatedly), yet any move is refused with
-"Not yet! Survival skills first." This logs into a character parked in that room
-and tries a battery of candidate completion actions, re-testing the advertised
-exits after each, reporting which action (if any) lets the character leave.
+The tutorial RESETS to 'Learning to Look' on every login, so progress only holds
+within one continuous session. This logs in, follows the instructor through the
+tutorial to the survival room, performs the taught skills (drink/eat/forage),
+then tries a battery of candidate actions, re-testing the forward exit (west)
+after each, to find what (if anything) releases the gate. If nothing does, the
+survival gate is a server-side bug like the original combat west-gate.
 
     python3 forage_probe.py --creds ai_map2_identity.json
 """
@@ -18,20 +19,19 @@ import sys
 import websockets
 
 from mapper import parse_gmcp, strip_ansi
+from tutorial import extract_command
 
 URL = os.getenv("MUD_SERVER_URL", "wss://74-208-68-248.sslip.io/ws")
 _HP_RE = re.compile(r"HP:(-?\d+)/(\d+)")
+_SAY_RE = re.compile(r'says,\s*["“]([^"”]+)["”]')
 
-# Things that might satisfy/advance the survival lesson, in rough order of
-# likelihood. Movement is re-tried after each, so these are non-move actions.
+# Tried in the survival room, re-testing the exit after each.
 CANDIDATES = [
+    "drink water", "eat ration", "forage", "forage", "forage",
+    "search", "examine scrub", "get all", "look scrub",
     "status", "score", "skills", "survival", "inventory",
-    "search", "examine scrub", "look scrub", "look plants", "get plants",
-    "drink water", "eat ration", "eat jerky strip",
-    "forage", "forage", "forage",
-    "practice survival", "learn survival", "train survival", "train",
-    "ask instructor about training", "ask instructor about survival",
-    "say done", "talk instructor", "greet instructor",
+    "practice survival", "learn survival", "train",
+    "ask instructor about training", "say done", "rest", "stand",
 ]
 
 
@@ -40,6 +40,7 @@ class Probe:
         self.username, self.password = username, password
         self.ws = None
         self.block = []
+        self.says = []
         self.in_game = False
         self.room = None
         self.area = None
@@ -62,6 +63,10 @@ class Probe:
         clean = strip_ansi(message)
         for hit in _HP_RE.finditer(clean):
             self.hp, self.maxhp = int(hit.group(1)), int(hit.group(2))
+        for t in _SAY_RE.findall(clean):
+            t = t.strip()
+            if not self.says or self.says[-1] != t:
+                self.says.append(t)
         for line in clean.splitlines():
             s = line.strip()
             if s and not s.startswith(("!!GMCP(", "!!MUSIC", "TEXTMASK")):
@@ -90,18 +95,35 @@ class Probe:
                 await self.send(self.password); sp = True; await asyncio.sleep(0.6)
         return self.in_game
 
-    async def cmd(self, c, wait=1.6):
+    async def cmd(self, c, wait=1.4):
         await self.send(c)
         await asyncio.sleep(wait)
 
-    async def try_exit(self):
-        """Try advertised exits (+ w/e/n/s) and report if we left the room."""
-        start_room = self.room
-        for mv in list(self.exits) + ["west", "east", "north", "south", "up", "down"]:
-            await self.cmd(mv, 1.4)
-            if self.room and self.room != start_room:
-                return mv
-        return None
+    async def navigate_to_survival(self, max_steps=80):
+        """Follow the instructor until we reach 'Learning to Survive'."""
+        ptr = 0
+        idle = 0
+        for _ in range(max_steps):
+            if self.room and "survive" in self.room.lower():
+                return True
+            if ptr < len(self.says):
+                text = self.says[ptr]; ptr += 1
+                cmd = extract_command(text)
+                if cmd:
+                    await self.cmd(cmd)
+                    idle = 0
+                    continue
+            # no new actionable instruction: look, and if quiet a while, nudge west
+            idle += 1
+            await self.cmd("look")
+            if idle >= 4 and "west" in [e.lower() for e in self.exits]:
+                await self.cmd("west"); idle = 0
+        return bool(self.room and "survive" in self.room.lower())
+
+    async def try_west(self):
+        start = self.room
+        await self.cmd("west", 1.4)
+        return self.room and self.room != start
 
     async def run(self):
         self.ws = await websockets.connect(URL, ping_interval=30, ping_timeout=10)
@@ -110,23 +132,26 @@ class Probe:
             if not await self.login():
                 print("LOGIN FAILED"); return
             await self.cmd("look", 2.0)
-            print(f"START room={self.room!r} area={self.area!r} exits={self.exits} hp={self.hp}/{self.maxhp}", flush=True)
+            print(f"Login room={self.room!r} area={self.area!r}", flush=True)
 
-            mv = await self.try_exit()
-            if mv:
-                print(f"Already free: left via {mv!r} -> {self.room!r}"); return
-            print("Confirmed gated. Trying candidates...", flush=True)
+            if not await self.navigate_to_survival():
+                print(f"Could not reach survival room (stuck at {self.room!r}). Aborting.", flush=True)
+                return
+            print(f"Reached survival: room={self.room!r} exits={self.exits} hp={self.hp}/{self.maxhp}", flush=True)
+
+            if await self.try_west():
+                print(f"Survival exit was already open -> {self.room!r}"); return
+            print("Gated (west refused). Trying candidate completion actions...", flush=True)
 
             for cand in CANDIDATES:
                 await self.cmd(cand, 1.6)
-                resp = " | ".join(self.block[-4:])[:160]
-                mv = await self.try_exit()
-                tag = f"ESCAPED via {mv!r}" if mv else "still gated"
-                print(f"  [{cand:<28}] {tag}   resp: {resp}", flush=True)
-                if mv:
-                    print(f"\n>>> SURVIVAL GATE RELEASED BY: {cand!r} (then move {mv!r}) -> {self.room!r}", flush=True)
+                resp = " | ".join(self.block[-3:])[:150]
+                if await self.try_west():
+                    print(f"\n>>> GATE RELEASED BY {cand!r} -> moved west to {self.room!r}", flush=True)
                     return
-            print("\nNo candidate released the gate. Likely a server-side flag bug.", flush=True)
+                print(f"  [{cand:<26}] still gated | {resp}", flush=True)
+            print("\nVERDICT: no action released the survival gate -> server-side bug "
+                  "(all taught skills done, correct exit gated, no completion path).", flush=True)
         finally:
             recv.cancel()
             await self.ws.close()
