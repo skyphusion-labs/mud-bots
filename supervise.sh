@@ -13,26 +13,31 @@ cd "$(dirname "$0")"
 IDENT="${MUD_IDENTITY_FILE:-bot_identity.json}"
 MODEL="${MUD_MODEL:-qwen3:30b-a3b-instruct-2507-q4_K_M}"
 PY=.venv/bin/python
-SLOG=supervise.log
+# Per-identity tag so multiple supervisors don't clobber each other's logs.
+TAG="${TAG:-$(basename "$IDENT" .json)}"
+SLOG="supervise_$TAG.log"
+PLOG="play_$TAG.log"
+RLOG="revive_$TAG.log"
+BUG="bug_reports_$TAG.jsonl"
 
 log() { echo "[$(date '+%F %T')] $*" >> "$SLOG"; }
 
-log "=== supervisor start (identity=$IDENT) ==="
+log "=== supervisor start (identity=$IDENT, tag=$TAG) ==="
 while true; do
     # --- REVIVE phase (no-op if already alive and out of the shadow realm) ---
     log "revive phase"
-    $PY revive.py --creds "$IDENT" >> revive_loop.log 2>&1
+    $PY revive.py --creds "$IDENT" >> "$RLOG" 2>&1
     log "revive phase done"
 
     # --- PLAY phase: LLM runs wild until the character dies ---
     log "starting play bot"
-    env MUD_MODEL="$MODEL" MUD_IDENTITY_FILE="$IDENT" MUD_BUG_FILE=bug_reports_loop.jsonl \
-        $PY bot.py > play_bot.log 2>&1 &
+    env MUD_MODEL="$MODEL" MUD_IDENTITY_FILE="$IDENT" MUD_BUG_FILE="$BUG" \
+        $PY bot.py > "$PLOG" 2>&1 &
     BOT=$!
 
     # Watch for death (the Shadow Realm waiting room text) or the bot exiting.
     while kill -0 "$BOT" 2>/dev/null; do
-        if grep -qiE 'too weak to leave|already dead|\[Shadow Realm\]' play_bot.log; then
+        if grep -qiE 'too weak to leave|already dead|\[Shadow Realm\]' "$PLOG"; then
             log "death detected -> stopping bot to revive"
             kill "$BOT" 2>/dev/null
             wait "$BOT" 2>/dev/null
