@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Credentials & identities — these hold PLAINTEXT account passwords. Never commit.
+# (covers bot_identity*.json, *_identity.json, new_identity.json, etc.)
+*.json
+
+# Live session output: run logs, crawled maps, and filed bug reports.
+*.log
+*.jsonl
+
+# Local agent / tooling config
+.claude/
