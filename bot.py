@@ -782,6 +782,13 @@ _ALL_DIRS = [
 ]
 _ESCAPE_VERBS = ["out", "leave", "exit", "enter", "continue", "go"]
 
+# The 'Learning to Survive' lesson gates its exit on survival skills, but only
+# teaches drink/eat/forage explicitly; it ALSO silently requires `search` (the
+# only confirmed unlock, found by probing) before it stops saying "Not yet!
+# Survival skills first." Cycle through these on a gate refusal so `search`
+# always gets issued.
+_SURVIVAL_SKILLS = ["search", "forage", "drink water", "eat ration"]
+
 
 class MUDBot:
     """Main bot controller."""
@@ -1034,14 +1041,16 @@ class MUDBot:
                         # On rails: obey the instructor, don't freeform.
                         if self._skill_retry_pending and self._skill_retries < 12:
                             # The exit is gated on finishing a skill lesson (the
-                            # survival room won't release you until a forage lands).
-                            # The refusal is "complete the lesson," not "dead exit,"
-                            # so clear the bounce and persist on the skill instead of
-                            # marking the door dead and stalling on 'look'.
+                            # survival room won't release you until you've also
+                            # `search`ed, which it never tells you to do). The
+                            # refusal is "complete the lesson," not "dead exit," so
+                            # clear the bounce and cycle through the survival skills
+                            # (search first) instead of marking the door dead and
+                            # stalling on 'look'.
                             self._skill_retry_pending = False
                             self._wrongdir = False
+                            action = _SURVIVAL_SKILLS[self._skill_retries % len(_SURVIVAL_SKILLS)]
                             self._skill_retries += 1
-                            action = self._last_skill_cmd or "forage"
                         elif self._wrongdir:
                             self._wrongdir = False
                             bounced = self.state.last_command
