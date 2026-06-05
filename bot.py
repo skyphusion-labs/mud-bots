@@ -423,11 +423,15 @@ class GameParser:
                    or 'which race will you be' in low or 'the void' in low
                    or 'by number or name' in low)
 
-        # This MUD has no 'welcome' string; entry is signaled by the status
-        # prompt ([... HP:x/y MP:a/b ...]) or by GMCP Char/Room.Info blocks.
+        # Entry into the real game is signaled by the status prompt
+        # ([... HP:x/y MP:a/b ...]) or a Room.Info for a REAL room. The Void
+        # ALSO emits bare GMCP Char.Vitals blocks with no Void marker, so keying
+        # off a positive room number (the Void is room -1) is what reliably
+        # tells creation apart from being in-game.
+        real_room = re.search(r'!!GMCP\(Room\.Info \{"num":\d', text) is not None
         if not in_void and (patterns['welcome'].search(text)
                 or patterns['game_prompt'].search(text)
-                or '!!GMCP(Char' in text or '!!GMCP(Room.Info' in text):
+                or real_room):
             self.state.connection = ConnectionState.IN_GAME
             self.state.character.name = self.config.character_name
             self.logger.info("Successfully entered game")
