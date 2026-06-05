@@ -251,10 +251,26 @@ class WorldMap:
 # =============================================================================
 
 class GMCPMapper:
+    # Login / character-select prompts (mirrors bot.py's GameParser.PATTERNS).
+    _LOGIN = {
+        "kick": re.compile(r"already (?:logged in|connected)|kick them", re.I),
+        "confirm_password": re.compile(r"confirm password", re.I),
+        "new_password": re.compile(r"create a new password|new password", re.I),
+        "race": re.compile(r"choose.*race|select.*race|pick.*race", re.I),
+        "klass": re.compile(r"choose.*class|select.*class|pick.*class", re.I),
+        "name": re.compile(r"enter a name|character name|name for your|by number or name", re.I),
+        "press_enter": re.compile(r"press.*enter", re.I),
+        "password": re.compile(r"enter your password|password:", re.I),
+        "username": re.compile(r'enter your username|username.*?:|\(or "new"\)', re.I),
+    }
+
     def __init__(self, config: dict, args):
         self.url = config["server_url"]
         self.username = config["username"]
         self.password = config["password"]
+        self.race = config.get("race", "")
+        self.char_class = config.get("char_class", "")
+        self.char_name = config.get("char_name", "")
         self.args = args
 
         self.ws = None
@@ -321,25 +337,54 @@ class GMCPMapper:
 
     # ---- login ------------------------------------------------------------
 
+    def _in_real_room(self) -> bool:
+        """True once we are in an actual playable room, not the post-login Void
+        staging room (num -1, area 'Nowhere')."""
+        if self.current is None or self.current < 0:
+            return False
+        r = self.world.rooms.get(self.current)
+        return r is not None and (r.area or "").lower() not in ("", "nowhere")
+
+    def _login_reply(self, recent: str) -> Optional[str]:
+        """Pick the answer for whatever login/character-select prompt is showing.
+        Order matters: creation/select prompts before the generic user/pass."""
+        P = self._LOGIN
+        if P["kick"].search(recent):
+            return "y"
+        if P["confirm_password"].search(recent) or P["new_password"].search(recent):
+            return self.password
+        if P["race"].search(recent):
+            return self.race
+        if P["klass"].search(recent):
+            return self.char_class
+        if P["name"].search(recent):
+            return self.char_name
+        if P["press_enter"].search(recent):
+            return ""
+        if P["password"].search(recent):
+            return self.password
+        if P["username"].search(recent):
+            return self.username
+        return None
+
     async def login(self) -> bool:
-        deadline = asyncio.get_event_loop().time() + 60
-        sent_user = sent_pass = False
-        while asyncio.get_event_loop().time() < deadline and not self.in_game:
+        """Answer username/password and the character-select prompts (race/class/
+        name from the identity) until we are in a real room. A persistent
+        character is re-selected; the Void staging room does not count as in-game."""
+        deadline = asyncio.get_event_loop().time() + 90
+        last = None
+        while asyncio.get_event_loop().time() < deadline:
             await asyncio.sleep(0.5)
-            recent = "\n".join(self.block[-6:]).lower()
-            if "kick them" in recent:
-                await self.send("y")
-                await asyncio.sleep(0.6)
-                continue
-            if not sent_user and "username" in recent:
-                await self.send(self.username)
-                sent_user = True
-                await asyncio.sleep(0.6)
-            elif sent_user and not sent_pass and "password" in recent:
-                await self.send(self.password)
-                sent_pass = True
-                await asyncio.sleep(0.6)
-        return self.in_game
+            if self._in_real_room():
+                return True
+            recent = "\n".join(self.block[-10:])
+            reply = self._login_reply(recent)
+            if reply is not None and (reply, recent) != last:
+                LOG.info(f"login: answering prompt -> {reply!r}")
+                await self.send(reply)
+                last = (reply, recent)
+                await asyncio.sleep(0.7)
+        return self._in_real_room()
 
     # ---- crawl ------------------------------------------------------------
 
@@ -482,6 +527,7 @@ class GMCPMapper:
 def load_creds(args) -> dict:
     user = os.getenv("MUD_USERNAME")
     pw = os.getenv("MUD_PASSWORD")
+    data: dict = {}
     if args.creds:
         data = json.loads(Path(args.creds).read_text())
         user = user or data.get("username")
@@ -495,6 +541,10 @@ def load_creds(args) -> dict:
         "server_url": os.getenv("MUD_SERVER_URL", "wss://74-208-68-248.sslip.io/ws"),
         "username": user,
         "password": pw,
+        # Used to answer the post-login character-select / creation prompts.
+        "race": data.get("race", ""),
+        "char_class": data.get("class", ""),
+        "char_name": data.get("character_name", ""),
     }
 
 
