@@ -200,6 +200,31 @@ class WorldMap:
             "open_frontier": len(self.frontier()),
         }
 
+    def load_json(self, data: dict) -> None:
+        """Seed the map from a previously saved to_json() dict (for --resume), so
+        coverage accumulates across deaths, reconnects, and separate runs."""
+        if self.start is None:
+            self.start = data.get("start")
+        for num_s, rd in (data.get("rooms") or {}).items():
+            try:
+                num = int(num_s)
+            except (TypeError, ValueError):
+                continue
+            room = self.rooms.get(num) or Room(num=num)
+            room.name = rd.get("name", room.name)
+            room.area = rd.get("area", room.area)
+            room.environment = rd.get("environment", room.environment)
+            room.coords = rd.get("coords", room.coords)
+            room.exits = {d: int(v) for d, v in (rd.get("exits") or {}).items()}
+            room.deltas = rd.get("deltas", room.deltas) or {}
+            room.npcs = rd.get("npcs", room.npcs) or []
+            room.visited = bool(rd.get("visited", room.visited))
+            self.rooms[num] = room
+        # Make sure every known exit destination exists as a node to target.
+        for r in list(self.rooms.values()):
+            for dest in r.exits.values():
+                self.rooms.setdefault(dest, Room(num=dest))
+
     def to_json(self) -> dict:
         return {
             "generated": datetime.now().isoformat(),
@@ -339,14 +364,23 @@ class GMCPMapper:
             return
 
         moves = 0
+        stuck = 0          # consecutive recovery attempts with no reachable frontier
+        since_retry = 0    # moves since we last re-opened blocked edges
         while True:
             if moves >= self.args.max_moves or self.world.stats()["rooms_visited"] >= self.args.max_rooms:
                 LOG.warning("Hit safety cap; stopping.")
                 break
 
+            # If we died mid-crawl the server dumps us in the Shadow Realm. Bail
+            # so the supervisor can revive (revive.py) and relaunch with --resume.
+            cur = self.world.rooms.get(self.current)
+            if cur and "shadow" in (cur.area or "").lower():
+                LOG.warning("In the Shadow Realm (died?). Exiting for the supervisor to revive.")
+                break
+
             frontier = self.world.frontier()
             if not frontier:
-                LOG.info("No reachable unvisited rooms left.")
+                LOG.info("No reachable unvisited rooms left. Graph exhausted from here.")
                 break
 
             # Nearest reachable frontier room from where we stand.
@@ -355,9 +389,23 @@ class GMCPMapper:
                 p = self.world.find_path(self.current, t)
                 if p is not None and (best is None or len(p) < len(best)):
                     best, target = p, t
+
             if best is None:
-                LOG.warning(f"{len(frontier)} unvisited rooms exist but none reachable from here; stopping.")
+                # Frontier rooms exist but none reachable from here: a dead-end, a
+                # one-way drop, or edges we marked blocked. Try to break out before
+                # giving up -- first re-open blocked edges, then recall to a hub.
+                if stuck == 0 and self.world.failed_edges:
+                    LOG.info("Frontier unreachable; clearing blocked edges to retry them.")
+                    self.world.failed_edges.clear()
+                    stuck += 1
+                    continue
+                if stuck <= self.args.recall_tries and await self.recall_home():
+                    LOG.info(f"Frontier unreachable; recalled to a hub (try {stuck}).")
+                    stuck += 1
+                    continue
+                LOG.warning(f"{len(frontier)} unvisited rooms remain but none reachable; stopping.")
                 break
+            stuck = 0
 
             for direction in best:
                 origin = self.current
@@ -365,11 +413,20 @@ class GMCPMapper:
                 moves += 1
                 arrived = await self.wait_for_room(self.args.max_wait)
                 if arrived is None or arrived == origin:
-                    # Move didn't take (blocked / one-way / disabled). Don't retry it.
+                    # Move didn't take (blocked / one-way / in combat / disabled).
                     self.world.failed_edges.add((origin, direction))
                     LOG.debug(f"Edge {origin} --{direction}--> failed; marking blocked.")
                     break
                 await asyncio.sleep(self.args.pace)
+
+            # Periodically re-open blocked edges: a door, a guard, or a transient
+            # "can't move while in combat" may have cleared since we first hit it.
+            since_retry += len(best)
+            if self.args.retry_blocked_every and since_retry >= self.args.retry_blocked_every:
+                if self.world.failed_edges:
+                    LOG.info(f"Retrying {len(self.world.failed_edges)} previously-blocked edges.")
+                    self.world.failed_edges.clear()
+                since_retry = 0
 
             s = self.world.stats()
             if s["rooms_visited"] % self.args.save_every == 0:
@@ -378,6 +435,18 @@ class GMCPMapper:
                 f"{s['rooms_visited']} visited, {s['rooms_known']} known, "
                 f"{s['open_frontier']} frontier"
             )
+
+    async def recall_home(self) -> bool:
+        """Recall to a hub (town) and re-establish position; True if we moved.
+        Lets the crawl escape a dead-end or one-way drop the BFS can't path out of."""
+        origin = self.current
+        await self.send("recall")
+        arrived = await self.wait_for_room(self.args.max_wait)
+        if arrived is None:
+            await self.send("look")
+            arrived = await self.wait_for_room(self.args.max_wait)
+        await asyncio.sleep(self.args.pace)
+        return arrived is not None and arrived != origin
 
     # ---- output -----------------------------------------------------------
 
@@ -438,6 +507,12 @@ def main() -> None:
     ap.add_argument("--max-rooms", type=int, default=5000)
     ap.add_argument("--max-moves", type=int, default=50000)
     ap.add_argument("--save-every", type=int, default=10)
+    ap.add_argument("--resume", action="store_true",
+                    help="load the existing --output map and continue crawling its frontier")
+    ap.add_argument("--retry-blocked-every", type=int, default=250,
+                    help="moves between re-opening blocked edges to retry them (0 = never)")
+    ap.add_argument("--recall-tries", type=int, default=3,
+                    help="recall-to-hub attempts when the frontier is unreachable from here")
     ap.add_argument("--log-level", default="INFO")
     args = ap.parse_args()
 
@@ -449,6 +524,14 @@ def main() -> None:
 
     config = load_creds(args)
     mapper = GMCPMapper(config, args)
+    if args.resume and Path(args.output).exists():
+        try:
+            mapper.world.load_json(json.loads(Path(args.output).read_text()))
+            st = mapper.world.stats()
+            LOG.info(f"Resumed {args.output}: {st['rooms_visited']} visited, "
+                     f"{st['rooms_known']} known, {st['open_frontier']} frontier")
+        except Exception as e:
+            LOG.warning(f"Could not resume {args.output}: {e}")
     try:
         asyncio.run(mapper.run())
     except KeyboardInterrupt:
