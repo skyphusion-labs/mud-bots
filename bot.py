@@ -358,9 +358,9 @@ class GameParser:
         'kick_prompt': re.compile(r'(?:already (?:logged in|connected)|kick them)', re.I),
         'new_password': re.compile(r'(?:create a new password|new password)', re.I),
         'confirm_password': re.compile(r'confirm password', re.I),
-        'character_name': re.compile(r'(?:enter a name|character name|name for your)', re.I),
-        'choose_race': re.compile(r'(?:choose.*race|select.*race|pick.*race)', re.I),
-        'choose_class': re.compile(r'(?:choose.*class|select.*class|pick.*class)', re.I),
+        'character_name': re.compile(r'(?:enter a name|character name|name for your|known as)', re.I),
+        'choose_race': re.compile(r'(?:choose.*race|select.*race|pick.*race|which race)', re.I),
+        'choose_class': re.compile(r'(?:choose.*class|select.*class|pick.*class|which class)', re.I),
         'press_enter': re.compile(r'press.*enter', re.I),
         'welcome': re.compile(r'(?:welcome back|you have entered|entering the world)', re.I),
         'game_prompt': re.compile(r'HP:\s*\d+\s*/\s*\d+.*MP:\s*\d+\s*/\s*\d+', re.I),
@@ -413,9 +413,19 @@ class GameParser:
         if self.state.connection == ConnectionState.IN_GAME:
             return
 
+        # The post-kick "Void" (character (re)creation limbo) ALSO emits GMCP
+        # Char/Room.Info, but we are NOT in game there -- a "Which race will you
+        # be?" prompt is pending (room num -1, area "Nowhere", char "nameless").
+        # If we flip to IN_GAME here the LLM takes over and flails forever, so
+        # stay in the login flow and answer the creation prompts below.
+        low = text.lower()
+        in_void = ('"area":"nowhere"' in low or '"name":"nameless"' in low
+                   or 'which race will you be' in low or 'the void' in low
+                   or 'by number or name' in low)
+
         # This MUD has no 'welcome' string; entry is signaled by the status
         # prompt ([... HP:x/y MP:a/b ...]) or by GMCP Char/Room.Info blocks.
-        if (patterns['welcome'].search(text)
+        if not in_void and (patterns['welcome'].search(text)
                 or patterns['game_prompt'].search(text)
                 or '!!GMCP(Char' in text or '!!GMCP(Room.Info' in text):
             self.state.connection = ConnectionState.IN_GAME
