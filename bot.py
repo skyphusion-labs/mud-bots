@@ -660,21 +660,29 @@ Reply with ONLY your command. Nothing else."""
         try:
             response = self.client.chat.completions.create(
                 model=self.config.model,
-                max_tokens=100,
+                max_tokens=600,  # headroom for reasoning models to think, then answer
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": prompt},
                 ]
             )
 
-            action = response.choices[0].message.content.strip()
+            msg = response.choices[0].message
+            # Reasoning models (e.g. gemma4) think before answering; ollama returns
+            # the chain-of-thought as a `reasoning` field. Surface it so we can
+            # watch the bot deliberate (and slowly starve) in real time.
+            reasoning = getattr(msg, "reasoning", None) or (msg.model_extra or {}).get("reasoning")
+            if reasoning:
+                self.logger.info(f"thinking: {' '.join(str(reasoning).split())[:600]}")
+
+            action = (msg.content or "").strip()
             # Clean up
             action = action.split('\n')[0].strip().strip('"\'`')
             if action.lower().startswith('command:'):
                 action = action[8:].strip()
-            
+
             self.logger.debug(f"AI decided: {action}")
-            return action
+            return action or "look"
             
         except Exception as e:
             self.logger.error(f"AI error: {e}")
