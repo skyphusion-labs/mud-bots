@@ -289,6 +289,7 @@ class CharacterState:
     in_combat: bool = False
     combat_target: str = ""
     inventory: list[str] = field(default_factory=list)
+    edibles: list[str] = field(default_factory=list)  # food names currently carried
     equipped: dict[str, str] = field(default_factory=dict)
 
 
@@ -334,6 +335,7 @@ Items here: {', '.join(room.items) if room.items else 'None visible'}
 Health: {char.health}/{char.health_max} | Mana: {char.mana}/{char.mana_max}
 Level: {char.level} | Gold: {char.gold}
 Combat: {'Fighting ' + char.combat_target if char.in_combat else 'Not in combat'}
+Food in your pack: {', '.join(char.edibles) if char.edibles else 'none'} (to eat, type the exact name, e.g. "eat {char.edibles[0] if char.edibles else 'ration'}")
 
 === RECENT EVENTS ===
 {chr(10).join(self.recent_messages(15))}
@@ -593,7 +595,12 @@ class AIBrain:
 
 Just play. Do whatever you want. Explore, fight, talk to people, buy stuff, do quests, cause trouble, make friends, make enemies. You're a real person in this world - act like it.
 
-Some commands: north/south/east/west/up/down, look, kill [thing], get [item], drop [item], inventory, buy [item], sell [item], say [message], tell [player] [message], yell, emote [action], status, who, quest, help
+Stay alive: when you are hungry or starving, eat food from your pack; when thirsty, drink. Rest when badly hurt.
+
+Commands take a real target, never a placeholder. Write the actual name, like "eat jerky strip" or "kill scavenger" -- NEVER type brackets or words like "[food]" or "[item]".
+Examples: north  south  east  west  up  down  look  inventory  status  who  quest  help
+  eat jerky strip   drink water   kill scavenger   get scrap   drop bone
+  buy ration   sell pelt   say hello   tell rover meet me   yell help   emote grins
 
 Reply with ONLY your command. Nothing else."""
     
@@ -907,17 +914,28 @@ class MUDBot:
     
     def _track_edibles(self, char: dict) -> None:
         """Record names of edible items from a GMCP Char inventory block so we can
-        feed the character with the right verb. Food shows up as type 'food' or
-        'botanical', or subtype 'edible'."""
+        feed the character with the right verb AND show the brain what it can eat.
+        Food shows up as type 'food' or 'botanical', or subtype 'edible'. The GMCP
+        Char block is a full snapshot, so the current list is rebuilt each time
+        (deduped) while _edible_items stays cumulative for command rewriting."""
         backpack = (((char.get("Inventory") or {}).get("Backpack")) or {})
+        current: list[str] = []
+        seen: set[str] = set()
         for item in backpack.get("items", []):
             if not isinstance(item, dict):
                 continue
-            name = str(item.get("name", "")).strip().lower()
+            name = str(item.get("name", "")).strip()
             if not name:
                 continue
             if item.get("type") in ("food", "botanical") or item.get("subtype") == "edible":
-                self._edible_items.add(name)
+                low = name.lower()
+                self._edible_items.add(low)
+                if low not in seen:
+                    seen.add(low)
+                    current.append(name)  # keep original case for the eat command
+        # Surface the current edibles to the brain (via to_context) so it issues
+        # 'eat jerky strip' instead of inventing the literal 'eat [food]'.
+        self.state.character.edibles = current
 
     def _rewrite_command(self, command: str) -> str:
         """The LLM often says 'use <food>', which the server rejects. Rewrite it
