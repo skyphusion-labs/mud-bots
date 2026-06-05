@@ -143,62 +143,56 @@ class Reviver:
                 print(f"  Still downed after ~30 min (HP={self.hp}/{self.maxhp}); giving up this cycle.", flush=True)
                 return
 
-            # No longer downed: stand, then recall/leave out of the shadow realm.
-            for verb in ("stand", "recover", "recall"):
-                await self.cmd(verb, 2.5)
-                print("  after", verb, self.status(), flush=True)
-                if self.area and "shadow" not in self.area.lower():
-                    break
+            # No longer downed: stand up, then leave the shadow realm. Once the
+            # Guide has healed you "enough to travel" the server spawns a portal:
+            #   "A shimmering portal to the world of the living appears!
+            #    Type shimmering portal to step through."
+            # Prefer that portal, but keep recall (which still works) and any
+            # advertised exit as fallbacks so a slow portal never traps us.
+            await self.cmd("stand", 2.5)
+            print("  after stand", self.status(), flush=True)
 
-            await self.cmd("look", 2.0)
+            def out_of_shadow():
+                return bool(self.area) and "shadow" not in self.area.lower()
+
+            def portal_ready():
+                return any("shimmering portal" in s.lower()
+                           or "recovered enough to travel" in s.lower()
+                           for s in self.block[-20:])
+
+            # The portal only appears once fully recovered (time-based), so idle
+            # and poll for up to ~5 min. Step through it the moment it shows; in
+            # the meantime try recall every so often, which also leaves the realm.
+            for i in range(30):
+                if out_of_shadow():
+                    break
+                if portal_ready():
+                    await self.cmd("shimmering portal", 2.5)
+                    print("  after shimmering portal", self.status(), flush=True)
+                    if out_of_shadow():
+                        break
+                if i % 3 == 0:
+                    await self.cmd("recall", 2.0)
+                    print("  after recall", self.status(), flush=True)
+                    if out_of_shadow():
+                        break
+                await self.send("wait")          # pass time; healing is time-based
+                await asyncio.sleep(9.0)
+                await self.cmd("look", 1.5)
+
+            # Last resort: walk out through any advertised exit or common verb.
+            if not out_of_shadow():
+                for mv in list(self.exits) + ["recall", "out", "leave", "north", "south", "east", "west", "up", "down"]:
+                    await self.cmd(mv, 1.5)
+                    if out_of_shadow():
+                        print(f"ESCAPED via {mv!r}", flush=True)
+                        break
+
             print("FINAL:", self.status(), flush=True)
-            if self.area and "shadow" not in (self.area or "").lower():
+            if out_of_shadow():
                 print(f"ESCAPED the shadow realm -> {self.area} / {self.room}", flush=True)
             else:
                 print("Still in the shadow realm; may need another exit verb.", flush=True)
-            return
-
-            # 1) Explicit recovery verbs (cheap, non-destructive first).
-            for verb in ("recover", "rest"):
-                await self.cmd(verb, 2.0)
-                print("  after", verb, self.status(), flush=True)
-
-            # 2) Rest and let wounds close. Poll HP for up to ~3 minutes.
-            print("Resting; polling HP...", flush=True)
-            for i in range(18):
-                await self.cmd("look", 1.0)
-                print(f"  t={i*10:>3}s {self.status()}", flush=True)
-                if self.hp is not None and self.maxhp and self.hp >= self.maxhp:
-                    print("  -> wounds closed (HP full).", flush=True)
-                    break
-                if self.area and "shadow" not in (self.area or "").lower():
-                    print("  -> already left the shadow realm!", flush=True)
-                    break
-                await asyncio.sleep(9.0)
-
-            # 3) Get up and try to leave.
-            for verb in ("stand", "wake"):
-                await self.cmd(verb, 1.5)
-            await self.cmd("look", 2.0)
-            print("AFTER REST:", self.status(), flush=True)
-
-            # 4) Attempt to walk out through any advertised exit, then fallbacks.
-            tries = list(self.exits) + ["out", "leave", "recall", "north", "south", "east", "west", "up", "down"]
-            seen = set()
-            for mv in tries:
-                if mv in seen:
-                    continue
-                seen.add(mv)
-                before = self.area
-                await self.cmd(mv, 2.0)
-                if self.area and self.area != before and "shadow" not in (self.area or "").lower():
-                    print(f"ESCAPED via {mv!r}: {self.status()}", flush=True)
-                    break
-            else:
-                print("Did not escape with the tried verbs.", flush=True)
-
-            await self.cmd("look", 2.0)
-            print("FINAL:", self.status(), flush=True)
         finally:
             recv.cancel()
             await self.ws.close()
