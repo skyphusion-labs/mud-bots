@@ -527,9 +527,16 @@ class BugReporter:
         (r"unknown command", "UNKNOWN_CMD"),
         (r"huh\?", "UNKNOWN_CMD"),
         (r"syntax error", "SYNTAX"),
-        (r"panic", "PANIC"),
         (r"exception", "EXCEPTION"),
     ]
+
+    # Verbs whose text the server echoes back verbatim (the player's own prose),
+    # so an error keyword inside the echo ("...huh?", "...in panic") is a false
+    # positive, not a server error.
+    SPEECH_VERBS = frozenset({
+        "emote", "emot", "pmote", "say", "sayto", "tell", "yell", "shout",
+        "gossip", "ooc", "whisper", "think", "describe", "recite", "sing",
+    })
     
     def __init__(self, log_file: str):
         self.log_file = Path(log_file)
@@ -539,9 +546,21 @@ class BugReporter:
     def check(self, text: str, command: str, room: str) -> Optional[dict]:
         """Check for bug indicators in game output."""
         text_lower = text.lower()
-        
+        verb = command.strip().split(" ", 1)[0].lower() if command else ""
+
+        # The server echoes roleplay verbs back verbatim, so any error keyword in
+        # the text is the player's own prose, not a server complaint. Skip them.
+        if verb in self.SPEECH_VERBS:
+            return None
+        # Login fumbles (random password attempts at the prompt) aren't game bugs.
+        if "invalid login" in text_lower:
+            return None
+
         for pattern, issue_type in self.ERROR_PATTERNS:
             if re.search(pattern, text_lower):
+                # Movement refused mid-fight is working-as-intended, not a bug.
+                if issue_type == "ACTION_BLOCKED" and "in combat" in text_lower:
+                    continue
                 key = f"{issue_type}:{command}:{text[:50]}"
                 if key not in self.reported:
                     self.reported.add(key)
@@ -841,6 +860,10 @@ class MUDBot:
         self._wrongdir_cmd: Optional[str] = None   # last move that bounced (Room.WrongDir)
         self._wrongdir_n = 0                        # consecutive bounces of that move
         self._dead_moves: set[str] = set()          # moves proven rejected; stop re-sending
+        # Edible item names (lowercased) seen in GMCP inventory. The LLM tends to
+        # say "use <food>", which the server rejects ("You can't use ..."); we
+        # rewrite to "eat <food>" so the bot actually feeds itself. See _track_edibles.
+        self._edible_items: set[str] = set()
         # Escape sweep: when the instructed exit is a dead no-op, brute-force our
         # way out of the tutorial by trying every other direction in turn.
         self._room_num: Optional[int] = None        # current GMCP room id (for move detection)
@@ -882,11 +905,40 @@ class MUDBot:
             self.logger.error(f"Connection failed: {e}")
             return False
     
+    def _track_edibles(self, char: dict) -> None:
+        """Record names of edible items from a GMCP Char inventory block so we can
+        feed the character with the right verb. Food shows up as type 'food' or
+        'botanical', or subtype 'edible'."""
+        backpack = (((char.get("Inventory") or {}).get("Backpack")) or {})
+        for item in backpack.get("items", []):
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get("name", "")).strip().lower()
+            if not name:
+                continue
+            if item.get("type") in ("food", "botanical") or item.get("subtype") == "edible":
+                self._edible_items.add(name)
+
+    def _rewrite_command(self, command: str) -> str:
+        """The LLM often says 'use <food>', which the server rejects. Rewrite it
+        to 'eat <food>' when the target is a known edible item."""
+        parts = command.strip().split(" ", 1)
+        if len(parts) == 2 and parts[0].lower() == "use":
+            target = parts[1].strip().lower()
+            if target in self._edible_items or any(
+                target in name or name in target for name in self._edible_items
+            ):
+                fixed = f"eat {parts[1].strip()}"
+                self.logger.info(f"Rewrote '{command}' -> '{fixed}' (edible item)")
+                return fixed
+        return command
+
     async def send(self, command: str) -> None:
         """Send command to game."""
         if not self.ws:
             return
-        
+
+        command = self._rewrite_command(command)
         self.state.last_command = command
         self.state.last_command_time = asyncio.get_event_loop().time()
         
@@ -916,6 +968,8 @@ class MUDBot:
                         num = data.get("num")
                         if num is not None and num != self._room_num:
                             self._on_room_change(num, data)
+                    elif pkg == "Char" and isinstance(data, dict):
+                        self._track_edibles(data)
                 if "!!GMCP(Room.WrongDir" in message:
                     self._wrongdir = True
                 self.tutorial.ingest(message)
