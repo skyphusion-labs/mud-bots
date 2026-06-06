@@ -681,7 +681,14 @@ Reply with ONLY your command. Nothing else."""
         try:
             response = self.client.chat.completions.create(
                 model=self.config.model,
-                max_tokens=600,  # headroom for reasoning models to think, then answer
+                # Reasoning models spend 2000+ tokens thinking BEFORE the answer
+                # (qwen3.6 measured at ~8k chars of CoT). The old 600 cap was
+                # consumed entirely by truncated reasoning, leaving empty content,
+                # so decide() fell back to "look" every tick and the bot looped
+                # forever. Give the chain-of-thought real room, and widen the
+                # context window so long CoT + the prompt both fit.
+                max_tokens=4000,
+                extra_body={"options": {"num_ctx": 8192}},
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": prompt},
