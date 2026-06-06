@@ -1045,6 +1045,7 @@ class MUDBot:
                     if pkg == "Room.Info" and isinstance(data, dict):
                         self.area = data.get("area", self.area)
                         num = data.get("num")
+                        self._update_room_state(data)
                         if num is not None and num != self._room_num:
                             self._on_room_change(num, data)
                     elif pkg == "Char.Vitals" and isinstance(data, dict):
@@ -1076,6 +1077,45 @@ class MUDBot:
             self.logger.error(f"Receive error: {e}")
             self.state.connection = ConnectionState.DISCONNECTED
     
+    def _update_room_state(self, data: dict) -> None:
+        """Mirror a GMCP Room.Info into the LLM-facing RoomState.
+
+        Packet Wastes is GMCP-native: it does not print 'obvious exits:' prose or
+        a parseable occupant list, so the text parser leaves RoomState almost
+        empty and the brain sees an Unknown room with no exits and nobody in it
+        every tick -- which is why it loops on 'look'. GMCP carries name / exits /
+        Contents directly; surface them so the model can actually navigate and
+        interact. Occupants refresh on every Room.Info (they change without the
+        room id changing).
+        """
+        room = self.state.room
+        if data.get("name"):
+            room.name = data["name"]
+        exits = data.get("exits")
+        if isinstance(exits, dict) and exits:
+            room.exits = [str(d).lower() for d in exits.keys()]
+
+        def _names(seq, mark_aggro: bool = False) -> list[str]:
+            out: list[str] = []
+            for x in seq or []:
+                if isinstance(x, dict):
+                    nm = x.get("name") or x.get("short") or x.get("id") or ""
+                    if mark_aggro and x.get("aggro"):
+                        nm += " (aggressive)"
+                    elif x.get("quest_flag"):
+                        nm += " (quest)"
+                else:
+                    nm = str(x)
+                if nm:
+                    out.append(nm)
+            return out
+
+        contents = data.get("Contents") or {}
+        me = (self.config.character_name or "").strip()
+        room.players = [p for p in _names(contents.get("Players")) if p != me]
+        room.mobs = _names(contents.get("Npcs"), mark_aggro=True)
+        room.items = _names(contents.get("Items"))
+
     def _on_room_change(self, num: int, data: dict) -> None:
         """A new Room.Info room id arrived. If we actually moved, a brute-force
         escape attempt worked (or the instructor moved us) — drop the stale
