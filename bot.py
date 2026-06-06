@@ -959,6 +959,22 @@ class MUDBot:
         # 'eat jerky strip' instead of inventing the literal 'eat [food]'.
         self.state.character.edibles = current
 
+    def _update_vitals(self, v: dict) -> None:
+        """Update HP/SP from GMCP Char.Vitals -- the authoritative source. The
+        prose status line ([... HP:-1/47 ...]) is parsed by a regex that doesn't
+        even match negative HP, so without this the context reported the DEFAULT
+        100/100 and the bot never knew it was dying. Real numbers now flow to
+        to_context(), so the brain can finally see when it's bleeding out."""
+        char = self.state.character
+        if isinstance(v.get("hp"), int):
+            char.health = v["hp"]
+        if isinstance(v.get("hp_max"), int):
+            char.health_max = v["hp_max"]
+        if isinstance(v.get("sp"), int):
+            char.mana = v["sp"]
+        if isinstance(v.get("sp_max"), int):
+            char.mana_max = v["sp_max"]
+
     def _rewrite_command(self, command: str) -> str:
         """The LLM often says 'use <food>', which the server rejects. Rewrite it
         to 'eat <food>' when the target is a known edible item."""
@@ -1008,8 +1024,12 @@ class MUDBot:
                         num = data.get("num")
                         if num is not None and num != self._room_num:
                             self._on_room_change(num, data)
+                    elif pkg == "Char.Vitals" and isinstance(data, dict):
+                        self._update_vitals(data)
                     elif pkg == "Char" and isinstance(data, dict):
                         self._track_edibles(data)
+                        if isinstance(data.get("Vitals"), dict):
+                            self._update_vitals(data["Vitals"])
                 if "!!GMCP(Room.WrongDir" in message:
                     self._wrongdir = True
                 self.tutorial.ingest(message)
