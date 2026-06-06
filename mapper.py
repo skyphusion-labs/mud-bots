@@ -281,6 +281,7 @@ class GMCPMapper:
         self.block: list[str] = []           # clean prose since last command
         self.room_event = asyncio.Event()    # set when a Room.Info arrives
         self.last_room_num: Optional[int] = None
+        self.last_live_room: Optional[int] = None  # last non-Shadow room (the death site)
 
     # ---- connection -------------------------------------------------------
 
@@ -324,6 +325,10 @@ class GMCPMapper:
             room = self.world.upsert(data)
             self.current = room.num
             self.last_room_num = room.num
+            # Remember the last live room so we can name the death site when the
+            # server later dumps us in the Shadow Realm.
+            if "shadow" not in (room.area or "").lower():
+                self.last_live_room = room.num
             self.room_event.set()
 
     async def wait_for_room(self, timeout: float) -> Optional[int]:
@@ -420,7 +425,14 @@ class GMCPMapper:
             # so the supervisor can revive (revive.py) and relaunch with --resume.
             cur = self.world.rooms.get(self.current)
             if cur and "shadow" in (cur.area or "").lower():
-                LOG.warning("In the Shadow Realm (died?). Exiting for the supervisor to revive.")
+                died = self.world.rooms.get(self.last_live_room) if self.last_live_room is not None else None
+                if died is not None:
+                    LOG.warning(
+                        f"In the Shadow Realm (died?). Death site: [{died.num}] "
+                        f"{died.name} (area={died.area!r}). Exiting for the supervisor to revive."
+                    )
+                else:
+                    LOG.warning("In the Shadow Realm (died?). Exiting for the supervisor to revive.")
                 break
 
             frontier = self.world.frontier()
