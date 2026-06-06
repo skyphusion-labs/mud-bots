@@ -302,7 +302,8 @@ class GameState:
     message_buffer: list[str] = field(default_factory=list)
     last_command: str = ""
     last_command_time: float = 0.0
-    
+    recent_commands: list[str] = field(default_factory=list)
+
     def add_message(self, msg: str) -> None:
         """Add message lines to buffer (last 100), dropping GMCP/protocol noise."""
         clean = ANSIProcessor.strip(msg)
@@ -321,7 +322,24 @@ class GameState:
         """Generate context string for AI."""
         room = self.room
         char = self.character
-        
+
+        # The brain is stateless per tick, so without this it cannot tell it has
+        # been repeating itself and loops forever (e.g. spamming "talk trader").
+        # Surface the recent actions and, if the latest one keeps recurring with
+        # no effect, tell it plainly to do something else.
+        recent = self.recent_commands[-8:]
+        actions_block = chr(10).join(recent) if recent else 'None yet'
+        repeat_note = ''
+        if recent:
+            last = recent[-1]
+            reps = sum(1 for c in recent if c == last)
+            if reps >= 3:
+                repeat_note = (
+                    f"\nNOTE: you have done '{last}' {reps} times recently and it "
+                    "is not working. STOP repeating it. Do something DIFFERENT: "
+                    "move through an exit to a new room, or interact with something else."
+                )
+
         return f"""=== CURRENT SITUATION ===
 Location: {room.name or 'Unknown'}
 {room.description[:300] if room.description else 'No description'}
@@ -339,6 +357,9 @@ Food in your pack: {', '.join(char.edibles) if char.edibles else 'none'} (to eat
 
 === RECENT EVENTS ===
 {chr(10).join(self.recent_messages(15))}
+
+=== YOUR RECENT ACTIONS (most recent last) ===
+{actions_block}{repeat_note}
 
 === LAST COMMAND ===
 {self.last_command or 'None'}"""
@@ -997,7 +1018,9 @@ class MUDBot:
         command = self._rewrite_command(command)
         self.state.last_command = command
         self.state.last_command_time = asyncio.get_event_loop().time()
-        
+        self.state.recent_commands.append(command)
+        self.state.recent_commands = self.state.recent_commands[-12:]
+
         self.logger.info(f">>> {command}")
         await self.ws.send(command)
     
