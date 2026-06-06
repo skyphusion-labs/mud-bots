@@ -283,6 +283,18 @@ class GMCPMapper:
         self.last_room_num: Optional[int] = None
         self.last_live_room: Optional[int] = None  # last non-Shadow room (the death site)
 
+        # Survival state. Desert zones (Whispering Dunes/Mojave) tick thirst and
+        # starvation that crush stats and eventually kill the crawler; we drink/
+        # eat to clear them. The map checkpoints every --save-every rooms, so
+        # staying alive just means more continuous coverage.
+        self.hp: Optional[int] = None
+        self.hp_max: Optional[int] = None
+        self.affects: set[str] = set()              # active affect names, lowercased
+        self.drinks: list[str] = ["canteen"]        # drinkable keywords (refined from GMCP)
+        self.foods: list[str] = ["bark", "fungus"]  # edible keywords (refined from GMCP)
+        self._last_drink = 0.0
+        self._last_eat = 0.0
+
     # ---- connection -------------------------------------------------------
 
     async def connect(self) -> bool:
@@ -320,7 +332,19 @@ class GMCPMapper:
     def _handle_gmcp(self, pkg: str, data) -> None:
         if pkg in ("Char", "Char.Info", "Game"):
             self.in_game = True
-        elif pkg == "Room.Info" and isinstance(data, dict) and "num" in data:
+        # Survival telemetry. Arrives either as the big "Char" package (nested
+        # Vitals/Affects/Inventory) or as incremental "Char.Vitals"/"Char.Affects".
+        if pkg == "Char" and isinstance(data, dict):
+            self._update_vitals(data.get("Vitals"))
+            self._update_affects(data.get("Affects"))
+            self._update_inventory(data.get("Inventory"))
+        elif pkg == "Char.Vitals":
+            self._update_vitals(data)
+        elif pkg == "Char.Affects":
+            self._update_affects(data)
+        elif pkg == "Char.Inventory":
+            self._update_inventory(data)
+        if pkg == "Room.Info" and isinstance(data, dict) and "num" in data:
             self.in_game = True
             room = self.world.upsert(data)
             self.current = room.num
@@ -330,6 +354,68 @@ class GMCPMapper:
             if "shadow" not in (room.area or "").lower():
                 self.last_live_room = room.num
             self.room_event.set()
+
+    def _update_vitals(self, data) -> None:
+        if isinstance(data, dict):
+            if data.get("hp") is not None:
+                self.hp = data.get("hp")
+            if data.get("hp_max") is not None:
+                self.hp_max = data.get("hp_max")
+
+    def _update_affects(self, data) -> None:
+        # GMCP pushes the full current affect set, so replace wholesale; a
+        # cleared affect simply stops appearing.
+        if isinstance(data, dict):
+            self.affects = {str(k).lower() for k in data}
+
+    def _update_inventory(self, data) -> None:
+        # Harvest drinkable/edible keywords from the backpack so we can target
+        # them by name, e.g. "Founder's Canteen" -> "canteen".
+        if not isinstance(data, dict):
+            return
+        bp = data.get("Backpack")
+        items = bp.get("items") if isinstance(bp, dict) else None
+        if not isinstance(items, list):
+            return
+        drinks, foods = [], []
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            name = (it.get("name") or "").strip()
+            if not name:
+                continue
+            kw = name.split()[-1].lower()
+            t = (it.get("type") or "").lower()
+            if t == "drink" and kw not in drinks:
+                drinks.append(kw)
+            elif t == "food" and kw not in foods:
+                foods.append(kw)
+        if drinks:
+            self.drinks = drinks
+        if foods:
+            self.foods = foods
+
+    async def maybe_survive(self) -> None:
+        """Drink/eat to clear thirst/starvation so survival ticks don't cripple
+        stats (or kill the crawler). No-op unless a Thirsty/Starving affect is
+        actually showing; rate-limited by --survive-cooldown."""
+        if self.args.no_survive:
+            return
+        now = asyncio.get_event_loop().time()
+        if (self.drinks and now - self._last_drink > self.args.survive_cooldown
+                and any(a in self.affects for a in ("thirsty", "dehydrated", "parched"))):
+            kw = self.drinks[0]
+            LOG.info(f"survival: thirsty -> drink {kw}")
+            await self.send(f"drink {kw}")
+            self._last_drink = now
+            await asyncio.sleep(self.args.pace)
+        if (self.foods and now - self._last_eat > self.args.survive_cooldown
+                and any(a in self.affects for a in ("starving", "hungry", "famished"))):
+            kw = self.foods[0]
+            LOG.info(f"survival: starving -> eat {kw}")
+            await self.send(f"eat {kw}")
+            self._last_eat = now
+            await asyncio.sleep(self.args.pace)
 
     async def wait_for_room(self, timeout: float) -> Optional[int]:
         """Wait for the next Room.Info; return its num (or None on timeout)."""
@@ -434,6 +520,9 @@ class GMCPMapper:
                 else:
                     LOG.warning("In the Shadow Realm (died?). Exiting for the supervisor to revive.")
                 break
+
+            # Stay alive in survival zones before deciding where to step next.
+            await self.maybe_survive()
 
             frontier = self.world.frontier()
             if not frontier:
@@ -575,6 +664,10 @@ def main() -> None:
                     help="moves between re-opening blocked edges to retry them (0 = never)")
     ap.add_argument("--recall-tries", type=int, default=3,
                     help="recall-to-hub attempts when the frontier is unreachable from here")
+    ap.add_argument("--survive-cooldown", type=float, default=8.0,
+                    help="seconds between auto drink/eat attempts while thirsty/starving")
+    ap.add_argument("--no-survive", action="store_true",
+                    help="disable auto drink/eat (let the crawler take survival damage)")
     ap.add_argument("--log-level", default="INFO")
     args = ap.parse_args()
 
