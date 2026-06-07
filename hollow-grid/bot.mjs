@@ -35,6 +35,7 @@
 //   CF_AIG_GATEWAY    gateway name          (default skyphusion-llm)
 //   BOT_THINK_MS      min ms between moves   (default 4000; raise it to spend less)
 //   BOT_QUIET_MS      settle window         (default 700)
+//   BOT_ROOM_LIMIT    decisions in one room before a forced move (default 8)
 //   BOT_LOG           tee output to a file  (optional)
 //
 // Note: the bot acts every few seconds, so the anthropic/gateway brains bill
@@ -70,6 +71,11 @@ const CFG = {
   thinkMs: Number(process.env.BOT_THINK_MS ?? 4000),
   quietMs: Number(process.env.BOT_QUIET_MS ?? 700),
   logFile: process.env.BOT_LOG ?? "",
+  // Force a move out after this many model decisions in one room without leaving.
+  // Breaks a VARIED but unproductive loop (e.g. attack/free/get cycling in the
+  // holding pit once the rescue is done) that isLooping() misses because the
+  // commands differ. Raise it for rooms that legitimately need many actions.
+  roomStreakLimit: Number(process.env.BOT_ROOM_LIMIT ?? 8),
   // Survival tuning (fractions of maxHp).
   restBelow: 0.35,
   restUntil: 0.85,
@@ -115,6 +121,8 @@ const state = {
   resting: false, // we issued rest and are waiting to heal up
   recentCommands: [], // last commands we sent, for anti-loop nudging
   lastRoomId: null, // room we were in before the most recent move
+  roomStreak: 0, // consecutive model decisions made without the room changing
+  lastDecisionRoom: null, // room id at the previous model decision
 };
 
 function ingest(chunk) {
@@ -176,6 +184,8 @@ function applyEvent(name, data) {
         state.room = null;
         state.actions = null;
         state.recentCommands = [];
+        state.roomStreak = 0;
+        state.lastDecisionRoom = null;
         sinceTravel = 0;
       }
       break;
@@ -447,8 +457,20 @@ async function decideAndAct() {
     return;
   }
 
+  // Track how long we have lingered in one room across model decisions. A varied
+  // but stuck loop (the model cycling attack/free/get in the holding pit after
+  // the rescue is already done) never trips isLooping(), so without this the bot
+  // can grind a single room indefinitely.
+  const curRoom = state.room?.id ?? null;
+  state.roomStreak = curRoom && curRoom === state.lastDecisionRoom ? state.roomStreak + 1 : 0;
+  state.lastDecisionRoom = curRoom;
+
   let cmd;
-  if (isLooping()) {
+  if (state.roomStreak >= CFG.roomStreakLimit) {
+    cmd = escapeMove();
+    state.roomStreak = 0;
+    log(`stuck in ${curRoom} for ${CFG.roomStreakLimit} decisions -> escape move (${cmd})`);
+  } else if (isLooping()) {
     cmd = escapeMove();
     log("loop detected -> escape move");
   } else {
