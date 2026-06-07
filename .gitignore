@@ -18,3 +18,7 @@ venv/
 # ...but DO commit curated sample artifacts (a crawled map + its render) so the
 # repo can show example output. These contain only public game-world data.
 !samples/map_world.json
+
+# The Hollow Grid bot's manifest is a real (non-secret) package.json, not an
+# identity file; keep it tracked despite the blanket *.json ignore above.
+!hollow-grid/package.json

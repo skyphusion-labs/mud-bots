@@ -1,0 +1,13 @@
+{
+  "name": "hollow-grid-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An AI player for The Hollow Grid MUD (WebSocket client over the @event channel; pluggable ollama/anthropic/gateway brain).",
+  "scripts": {
+    "bot": "node bot.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
