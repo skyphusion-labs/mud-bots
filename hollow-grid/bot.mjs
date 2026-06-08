@@ -172,9 +172,11 @@ const GENERIC_VERBS = new Set([
   "yell", "tell", "emote", "ping", "title",
 ]);
 
-// Common server refusal phrasings. Conservative on purpose: better to miss one
-// than to cry wolf. Tune against real Hollow Grid prose.
-const REJECTION = /\b(you can'?t|you cannot|you do ?n'?t|there'?s? no|nothing happens|you fail|not here|isn'?t here|no ?one (is )?here|nobody (is )?here)\b/i;
+// Direct command refusals. Tightened after a soak false-positive: bare "you don't"
+// / "there's no" matched ambient flavor prose ("if you don't think about why"), so
+// perception verbs are now required and the match is further gated by length + a
+// broadcast filter in checkActionRejection().
+const REJECTION = /\b(you can'?t\b|you cannot\b|you don'?t (see|have|hear|find|know|understand)\b|there'?s no \w+ (here|to)\b|nothing happens|you fail\b|not here\b|isn'?t here\b|no ?one (is )?here\b|nobody'?s? here\b|to whom\b)/i;
 
 // We just sent a command: if it was an enumerated, non-generic verb, arm a watch
 // for a refusal over the next few seconds of prose.
@@ -197,8 +199,12 @@ function checkActionRejection(line) {
     state.pendingAction = null;
     return;
   }
-  if (REJECTION.test(line)) {
-    reportBug("action-rejected", `server offered "${pa.verb}" here but refused it: "${line.slice(0, 160)}"`, { verb: pa.verb });
+  // Strip ANSI, then ignore ambient world broadcasts (">> ... <<") and long
+  // narrative prose: real command refusals are short and direct, flavor is not.
+  const clean = line.replace(/\x1b\[[0-9;]*m/g, "").trim();
+  if (clean.length > 80 || /^>>/.test(clean) || /<<\s*$/.test(clean)) return;
+  if (REJECTION.test(clean)) {
+    reportBug("action-rejected", `server offered "${pa.verb}" here but refused it: "${clean.slice(0, 160)}"`, { verb: pa.verb });
     state.pendingAction = null;
   }
 }
