@@ -11,9 +11,10 @@
 //
 // Credentials (Jenkins -> Manage Credentials):
 //   mudbots-deploy   SSH Username with private key (user "ubuntu"); its public
-//                    key is in ubuntu@stan / ubuntu@wendy authorized_keys. Used by
-//                    deploy.sh for rsync + the remote `systemctl --user restart`.
-// Requires the SSH Agent plugin (sshagent step).
+//                    key is in ubuntu@stan / ubuntu@wendy authorized_keys. Bound
+//                    with withCredentials(sshUserPrivateKey) and handed to
+//                    deploy.sh as MUDBOTS_SSH_KEY for rsync + remote restarts.
+// Uses credentials-binding (ssh-agent plugin is not installed here).
 
 pipeline {
     agent any
@@ -53,7 +54,7 @@ pipeline {
             steps {
                 // The deploy key lets rsync + the remote systemctl --user reach the
                 // boxes; deploy.sh does the rest (rolling restart, idempotent).
-                sshagent(['mudbots-deploy']) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'mudbots-deploy', keyFileVariable: 'MUDBOTS_SSH_KEY')]) {
                     sh 'bash deploy.sh'
                 }
             }

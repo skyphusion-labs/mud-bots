@@ -22,10 +22,14 @@ EXCLUDES=(
   --exclude samples --exclude '*_identity.json' --exclude bot_identity.json
 )
 SSH_OPTS=(-o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10)
+# Jenkins passes a deploy key via MUDBOTS_SSH_KEY (withCredentials); a laptop run
+# leaves it unset and uses the user's ssh-agent / default key.
+[ -n "${MUDBOTS_SSH_KEY:-}" ] && SSH_OPTS+=(-i "$MUDBOTS_SSH_KEY")
+RSH="ssh ${SSH_OPTS[*]}"
 
 for host in "${BOXES[@]}"; do
   echo ">>> [$host] rsync code"
-  rsync -az --delete "${EXCLUDES[@]}" "$REPO_DIR"/ "ubuntu@$host:/home/ubuntu/dev/bots/"
+  rsync -az -e "$RSH" --delete "${EXCLUDES[@]}" "$REPO_DIR"/ "ubuntu@$host:/home/ubuntu/dev/bots/"
 
   echo ">>> [$host] rolling-restart bot services"
   ssh "${SSH_OPTS[@]}" "ubuntu@$host" 'bash -s' <<'REMOTE'
