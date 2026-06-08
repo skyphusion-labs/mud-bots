@@ -688,7 +688,7 @@ Reply with ONLY your command. Nothing else."""
                 # forever. Give the chain-of-thought real room, and widen the
                 # context window so long CoT + the prompt both fit.
                 max_tokens=4000,
-                extra_body={"options": {"num_ctx": 8192}},
+                extra_body={"options": {"num_ctx": 16384}},
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": prompt},
