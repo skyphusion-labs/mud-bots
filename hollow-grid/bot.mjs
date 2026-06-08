@@ -71,6 +71,8 @@ const CFG = {
   thinkMs: Number(process.env.BOT_THINK_MS ?? 4000),
   quietMs: Number(process.env.BOT_QUIET_MS ?? 700),
   logFile: process.env.BOT_LOG ?? "",
+  // Bug findings (JSONL): default alongside BOT_LOG, override with BOT_BUG. Empty = off.
+  bugFile: process.env.BOT_BUG ?? (process.env.BOT_LOG ? process.env.BOT_LOG.replace(/\.log$/, "-bugs.jsonl") : ""),
   // Force a move out after this many model decisions in one room without leaving.
   // Breaks a VARIED but unproductive loop (e.g. attack/free/get cycling in the
   // holding pit once the rescue is done) that isLooping() misses because the
@@ -123,7 +125,83 @@ const state = {
   lastRoomId: null, // room we were in before the most recent move
   roomStreak: 0, // consecutive model decisions made without the room changing
   lastDecisionRoom: null, // room id at the previous model decision
+  pendingAction: null, // {verb,roomId,sentAt}: an enumerated verb we issued, watching for a refusal
 };
+
+// ---------------------------------------------------------------------------
+// Bug / anomaly reporting: capture suspected game defects the bot hits while
+// playing (the fleet doubles as QA for the world). Two sources feed it: the
+// model flagging something via a "bug:" reply (semantic defects), and a
+// deterministic check -- the server enumerated a verb in room.actions, we
+// issued that exact verb, and the server then refused it (an affordance the
+// game offered but does not honor here). Findings append as JSONL to CFG.bugFile.
+// ---------------------------------------------------------------------------
+
+const reportedBugs = new Set(); // de-dupe identical findings within a run
+function reportBug(kind, detail, extra = {}) {
+  const sig = `${kind}|${state.room?.id ?? "?"}|${detail}`;
+  if (reportedBugs.has(sig)) return;
+  reportedBugs.add(sig);
+  const entry = {
+    ts: new Date().toISOString(),
+    bot: CFG.name,
+    world: state.url,
+    kind, // "noticed" (model) | "action-rejected" (deterministic)
+    detail,
+    room: state.room ? { id: state.room.id, name: state.room.name } : null,
+    vitals: state.vitals ? { hp: state.vitals.hp, level: state.vitals.level, inCombat: state.vitals.inCombat } : null,
+    recentCommands: state.recentCommands.slice(-5),
+    recentEvents: state.recentEvents.slice(-8),
+    ...extra,
+  };
+  log("BUG:", kind, "-", detail);
+  if (CFG.bugFile) {
+    try {
+      appendFileSync(CFG.bugFile, JSON.stringify(entry) + "\n");
+    } catch {
+      /* best effort */
+    }
+  }
+}
+
+// Generic/movement verbs: a refusal of these is rarely a real defect, so we do
+// not treat them as enumerated-affordance failures worth reporting.
+const GENERIC_VERBS = new Set([
+  "north", "south", "east", "west", "up", "down", "look", "rest", "recall",
+  "exits", "worlds", "world", "inventory", "affects", "who", "consider", "say",
+  "yell", "tell", "emote", "ping", "title",
+]);
+
+// Common server refusal phrasings. Conservative on purpose: better to miss one
+// than to cry wolf. Tune against real Hollow Grid prose.
+const REJECTION = /\b(you can'?t|you cannot|you do ?n'?t|there'?s? no|nothing happens|you fail|not here|isn'?t here|no ?one (is )?here|nobody (is )?here)\b/i;
+
+// We just sent a command: if it was an enumerated, non-generic verb, arm a watch
+// for a refusal over the next few seconds of prose.
+function recordPendingAction(cmd) {
+  const verb = cmd.trim().split(/\s+/)[0]?.toLowerCase();
+  if (!verb || GENERIC_VERBS.has(verb)) {
+    state.pendingAction = null;
+    return;
+  }
+  const offered = (state.actions ?? []).some((a) => (a.verb ?? "").toLowerCase() === verb);
+  state.pendingAction = offered ? { verb, roomId: state.room?.id ?? null, sentAt: Date.now() } : null;
+}
+
+// Per prose line: if our last enumerated action just got refused, the game
+// offered a verb it will not honor here -- a real affordance bug.
+function checkActionRejection(line) {
+  const pa = state.pendingAction;
+  if (!pa) return;
+  if (Date.now() - pa.sentAt > 4000) {
+    state.pendingAction = null;
+    return;
+  }
+  if (REJECTION.test(line)) {
+    reportBug("action-rejected", `server offered "${pa.verb}" here but refused it: "${line.slice(0, 160)}"`, { verb: pa.verb });
+    state.pendingAction = null;
+  }
+}
 
 function ingest(chunk) {
   for (const line of String(chunk).split(/\r?\n/)) {
@@ -142,6 +220,7 @@ function ingest(chunk) {
       const t = line.trim();
       // Skip the bare prompt and blanks; keep real prose for context.
       if (t && t !== ">" && t !== "> ") {
+        checkActionRejection(t); // did our last enumerated action just get refused?
         state.prose.push(t);
         if (state.prose.length > 40) state.prose.shift();
       }
@@ -152,7 +231,10 @@ function ingest(chunk) {
 function applyEvent(name, data) {
   switch (name) {
     case "room.info":
-      if (state.room && data.id !== state.room.id) state.lastRoomId = state.room.id;
+      if (state.room && data.id !== state.room.id) {
+        state.lastRoomId = state.room.id;
+        state.pendingAction = null; // we moved: the prior action took effect
+      }
       state.room = data;
       break;
     case "room.actions":
@@ -235,7 +317,13 @@ This world is part of a federation. Now and then, run "worlds" and then
 "travel <world>" to wander to a different world on the Grid; your character
 (name, level, standing, race) comes with you. Exploring beyond this world is good.
 
-Reply with ONLY the command, nothing else. No quotes, no explanation.`;
+If something looks like a real game bug -- a verb the game offered that does not
+work, a contradiction, an impossible or stuck state, or a captive you cannot free
+even with its guard already dead -- you may report it by replying with exactly
+"bug: <one short description>" instead of a command. Do that sparingly, only for
+genuine defects, not for things you simply have not figured out yet.
+
+Reply with ONLY the command (or a single "bug: ..." line), nothing else. No quotes, no explanation.`;
 
 function buildContext() {
   const r = state.room;
@@ -303,6 +391,13 @@ async function think() {
   if (CFG.brain === "anthropic") raw = await thinkAnthropic(prompt);
   else if (CFG.brain === "gateway") raw = await thinkGateway(prompt);
   else raw = await thinkOllama(prompt);
+  // Bug side-channel: the model can flag a suspected defect instead of acting.
+  const first = String(raw).split(/\r?\n/).find((l) => l.trim()) ?? "";
+  const bug = first.match(/^\s*bug:\s*(.+)/i);
+  if (bug) {
+    reportBug("noticed", bug[1].trim().slice(0, 300));
+    return "look"; // spend the turn harmlessly; never forward "bug:" to the server
+  }
   return sanitizeCommand(raw);
 }
 
@@ -483,6 +578,7 @@ async function decideAndAct() {
   }
   if (!cmd) return;
   send(cmd);
+  recordPendingAction(cmd); // arm the enumerated-action refusal watch
   state.recentCommands.push(cmd);
   if (state.recentCommands.length > 6) state.recentCommands.shift();
 }
