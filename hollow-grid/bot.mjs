@@ -78,6 +78,10 @@ const CFG = {
   // holding pit once the rescue is done) that isLooping() misses because the
   // commands differ. Raise it for rooms that legitimately need many actions.
   roomStreakLimit: Number(process.env.BOT_ROOM_LIMIT ?? 8),
+  // Break off a fight that never resolves: if inCombat stays true this long the bot
+  // has been WAITing silently (it wedges, and its heartbeat goes stale -> false page).
+  // Flag it via the bug reporter and disengage instead of riding a stuck combat forever.
+  combatMaxMs: Number(process.env.BOT_COMBAT_MAX_MS ?? 120000),
   // Survival tuning (fractions of maxHp).
   restBelow: 0.35,
   restUntil: 0.85,
@@ -126,6 +130,7 @@ const state = {
   roomStreak: 0, // consecutive model decisions made without the room changing
   lastDecisionRoom: null, // room id at the previous model decision
   pendingAction: null, // {verb,roomId,sentAt}: an enumerated verb we issued, watching for a refusal
+  combatSince: 0, // when inCombat first went true; watchdog for stuck/non-resolving fights
 };
 
 // ---------------------------------------------------------------------------
@@ -483,8 +488,20 @@ function sanitizeCommand(raw) {
 function reflex() {
   const v = state.vitals;
   if (!v) return null;
-  // Ride out combat; the server resolves a round per alarm tick on its own.
-  if (v.inCombat) return "WAIT";
+  // Ride out combat; the server resolves a round per tick. But a fight that never
+  // resolves (inCombat stuck) would WAIT silently forever and wedge the bot -- after
+  // combatMaxMs, flag it via the bug reporter and break off by moving.
+  if (v.inCombat) {
+    if (!state.combatSince) state.combatSince = Date.now();
+    if (Date.now() - state.combatSince > CFG.combatMaxMs) {
+      const mob = (state.room?.mobs ?? []).map((m) => m.name ?? m.id)[0] ?? "?";
+      reportBug("combat-stuck", `inCombat for >${Math.round(CFG.combatMaxMs / 1000)}s without resolving (mob: ${mob})`);
+      state.combatSince = 0;
+      return escapeMove(); // disengage the unresolving fight
+    }
+    return "WAIT";
+  }
+  state.combatSince = 0; // not in combat: reset the watchdog
   // Heal up before doing anything risky.
   if (state.resting) {
     if (v.hp >= v.maxHp * CFG.restUntil) {
