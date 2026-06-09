@@ -3,18 +3,22 @@
 # services. Runs from anywhere with SSH access to the boxes -- a laptop, or
 # Jenkins on mindcrime via the 'mudbots-deploy' key. Idempotent; safe to re-run.
 #
-# Usage:  ./deploy.sh                       # whole fleet (stan + wendy)
-#         ./deploy.sh stan.skyphusion.net   # one box
+# SSH note: public :22 is closed on all boxes (hardened 2026-06-09). Reach stan
+# and wendy via the WARP mesh names (stan.internal / wendy.internal). Jenkins on
+# mindcrime is a mesh node so it hits them directly; a laptop run needs WARP up.
+#
+# Usage:  ./deploy.sh                    # whole fleet (stan + wendy)
+#         ./deploy.sh stan.internal      # one box
 #
 # Per-box bots are systemd --user units (linger on): we restart whatever
-# hollowbot@* instances are enabled there, plus pwbot.service if present. Code,
-# character identities, the Python venv and logs all live under ~/dev/bots on the
-# box; we never sync secrets or state back (see EXCLUDES), and --delete only
-# prunes tracked code, not those excluded paths.
+# hollowbot@* and discordbot instances are enabled there, plus pwbot.service if
+# present. Code, character identities, the Python venv and logs all live under
+# ~/dev/bots on the box; we never sync secrets or state back (see EXCLUDES), and
+# --delete only prunes tracked code, not those excluded paths.
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-if [ "$#" -gt 0 ]; then BOXES=("$@"); else BOXES=(stan.skyphusion.net wendy.skyphusion.net); fi
+if [ "$#" -gt 0 ]; then BOXES=("$@"); else BOXES=(stan.internal wendy.internal); fi
 
 EXCLUDES=(
   --exclude .git --exclude __pycache__ --exclude .claude
