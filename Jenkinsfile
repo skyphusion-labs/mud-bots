@@ -40,8 +40,9 @@ pipeline {
 
         stage('lint') {
             steps {
-                // Dependency-free Node bot + the Python suite: syntax-check both.
+                // Dependency-free Node bots + the Python suite: syntax-check all.
                 sh 'node --check hollow-grid/bot.mjs'
+                sh 'node --check discord/bot.mjs'
                 sh 'python3 -m py_compile bot.py onboard.py mapper.py tutorial.py revive.py'
             }
         }

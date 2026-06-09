@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Repo scope (`mud-bots`, formerly `packet-wastes-bots`):** this repo collects the bots for more than one MUD. Everything at the root is the **Packet Wastes** suite (Python; documented below). The `hollow-grid/` subdirectory holds the bot for **The Hollow Grid** (`bot.mjs`, a dependency-free Node 24+ WebSocket client; its world engine lives in the separate `the-hollow-grid` repo). See `hollow-grid/README.md`. The rest of this file describes the Packet Wastes tools.
+**Repo scope (`mud-bots`, formerly `packet-wastes-bots`):** this repo collects the bots for more than one MUD. Everything at the root is the **Packet Wastes** suite (Python; documented below). The `hollow-grid/` subdirectory holds the bot for **The Hollow Grid** (`bot.mjs`, a dependency-free Node 24+ WebSocket client; its world engine lives in the separate `the-hollow-grid` repo). The `discord/` subdirectory holds the Discord-to-ollama relay bot. See `hollow-grid/README.md`. The rest of this file describes the Packet Wastes tools.
 
 A suite of Python tools that play and probe the **Packet Wastes** MUD (a text MUD reached over WebSocket at `wss://74-208-68-248.sslip.io/ws`). The flagship is `bot.py`, an AI-driven player that explores, fights, socializes, and files bug reports; the rest create accounts, walk the tutorial, and map/diagnose the game. The LLM is a **local model served by ollama** through its OpenAI-compatible API, so there is no per-token API cost, but everything connects to the **live** game server.
 
@@ -53,6 +53,45 @@ All runtime config is environment-driven via `BotConfig.from_env()` (`bot.py`): 
 - **The tutorial is instanced per character** (two characters in it cannot see each other), so it cannot be escaped by another player's help.
 - The server's v1.5 refactor wiped pre-existing accounts.
 - The bot uses local ollama (no API cost), but it connects to and acts on the live server; be cost/impact-conscious before long unattended live runs.
+
+## discord/ -- Discord-to-ollama relay bot
+
+`discord/bot.mjs` is a Discord bot (Node 24+, `discord.js`) that relays messages to a local
+ollama model and sends the reply back. It works across multiple servers simultaneously.
+
+**Trigger logic:**
+- Responds to every message in channels listed in `DISCORD_CHANNEL_IDS`.
+- Always responds to DMs.
+- Always responds to @mentions (anywhere in any server).
+- `!reset` clears the conversation history for that channel.
+
+**Key env vars:**
+
+| Var | Default | Notes |
+|-----|---------|-------|
+| `DISCORD_TOKEN` | (required) | Bot token from Developer Portal |
+| `DISCORD_CHANNEL_IDS` | (empty = DMs + mentions only) | Comma-separated channel IDs |
+| `OLLAMA_BASE_URL` | `http://wendy.internal:11434/v1` | OpenAI-compat ollama base |
+| `DISCORD_MODEL` | `qwen3.6:27b-ctx8k` | Model id on that ollama host |
+| `DISCORD_HISTORY` | `10` | Rolling exchange-pair history depth per channel |
+| `DISCORD_LOG` | (none) | Path to tee logs into |
+
+**Developer Portal requirements:** Bot -> Privileged Gateway Intents -> **MESSAGE CONTENT: ON**.
+
+**One-time setup on the host box:**
+
+```bash
+cd ~/dev/bots/discord
+npm ci
+# create ~/.config/systemd/user/discordbot.service (template in bot.mjs header)
+systemctl --user daemon-reload
+systemctl --user enable --now discordbot
+```
+
+`deploy.sh` runs `npm ci` automatically on subsequent deploys if `package-lock.json` exists,
+and restarts `discordbot.service` if it is enabled on that box.
+
+**Lint check:** `node --check discord/bot.mjs` (already wired into the Jenkinsfile).
 
 ## Conventions (SkyPhusion house style)
 

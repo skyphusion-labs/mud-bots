@@ -34,7 +34,14 @@ for host in "${BOXES[@]}"; do
   echo ">>> [$host] rolling-restart bot services"
   ssh "${SSH_OPTS[@]}" "ubuntu@$host" 'bash -s' <<'REMOTE'
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"   # systemctl --user needs this over SSH
-units=$(systemctl --user list-units --no-legend --plain 'hollowbot@*.service' 'pwbot.service' 2>/dev/null | awk '{print $1}')
+
+# Install/update discord bot node_modules when package-lock.json is present
+if [ -f ~/dev/bots/discord/package-lock.json ]; then
+  echo "  npm ci (discord/)"
+  (cd ~/dev/bots/discord && npm ci --omit=dev --silent)
+fi
+
+units=$(systemctl --user list-units --no-legend --plain 'hollowbot@*.service' 'pwbot.service' 'discordbot.service' 2>/dev/null | awk '{print $1}')
 if [ -z "$units" ]; then echo "  no bot units found"; exit 0; fi
 for u in $units; do systemctl --user restart "$u"; sleep 2; done   # one at a time, keep the world populated
 echo "  restarted:" $units
