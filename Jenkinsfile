@@ -10,12 +10,12 @@
 // discovery, Script Path Jenkinsfile) on mindcrime (`agent any`, host node/python).
 //
 // Credentials (Jenkins -> Manage Credentials):
-//   mudbots-deploy          SSH Username with private key (user "ubuntu"); its public
-//                           key is in ubuntu@stan / ubuntu@wendy authorized_keys.
-//   cf-access-client-id     Secret text -- Cloudflare Access service token client ID
-//   cf-access-client-secret Secret text -- Cloudflare Access service token client secret
-// The service token must be allowed on the stan-ssh + wendy-ssh Access apps
-// (Zero Trust -> Access -> Applications -> <app> -> Service Auth).
+//   mudbots-deploy   SSH Username with private key (user "ubuntu"); its public
+//                    key is in ubuntu@stan / ubuntu@wendy authorized_keys. Bound
+//                    with withCredentials(sshUserPrivateKey) and handed to
+//                    deploy.sh as MUDBOTS_SSH_KEY for rsync + remote restarts.
+// Jenkins runs on the mindcrime host (not in Docker), so it is a WARP mesh node
+// and reaches stan/wendy at stan.internal / wendy.internal directly.
 // Uses credentials-binding (ssh-agent plugin is not installed here).
 
 pipeline {
@@ -55,13 +55,9 @@ pipeline {
                 expression { return env.GIT_REF == 'main' }
             }
             steps {
-                // SSH key authenticates to ubuntu@; service token lets cloudflared
-                // bypass Access browser SSO for the CI-to-box tunnel path.
-                withCredentials([
-                    sshUserPrivateKey(credentialsId: 'mudbots-deploy', keyFileVariable: 'MUDBOTS_SSH_KEY'),
-                    string(credentialsId: 'cf-access-client-id',     variable: 'CF_ACCESS_CLIENT_ID'),
-                    string(credentialsId: 'cf-access-client-secret', variable: 'CF_ACCESS_CLIENT_SECRET'),
-                ]) {
+                // The deploy key lets rsync + the remote systemctl --user reach the
+                // boxes; deploy.sh does the rest (rolling restart, idempotent).
+                withCredentials([sshUserPrivateKey(credentialsId: 'mudbots-deploy', keyFileVariable: 'MUDBOTS_SSH_KEY')]) {
                     sh 'bash deploy.sh'
                 }
             }
