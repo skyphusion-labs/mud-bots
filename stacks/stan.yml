@@ -1,0 +1,85 @@
+# Stan fleet stack: HG bot trio + Stanwald PW bot + Discord relay.
+#
+# All services join the existing openwebui_ai-net network (external) to
+# reach the containerized ollama already running in that stack. The ollama
+# host inside that network is "openwebui-ollama-1".
+#
+# Secrets that must be set in Portainer's environment section (never git):
+#   STANWALD_PASSWORD  - Stanwald's game account password (from stan_identity.json)
+#   DISCORD_TOKEN      - Discord bot token (from the current discordbot.service unit)
+#
+# After validating all containers, disable the host systemd services:
+#   systemctl --user disable --now discordbot.service
+
+services:
+  stanbot:
+    image: ghcr.io/skyphusion/mud-bots-hg:latest
+    restart: unless-stopped
+    environment:
+      MUD_URL: wss://hollow.skyphusion.org/ws
+      MUD_NAME: stanbot
+      MUD_MODEL: qwen3.6:27b-ctx8k
+      BOT_MAX_TOKENS: "4000"
+      BOT_THINK_MS: "4500"
+      OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
+      BOT_LOG: /dev/stdout
+    networks:
+      - openwebui_ai-net
+
+  ashbot:
+    image: ghcr.io/skyphusion/mud-bots-hg:latest
+    restart: unless-stopped
+    environment:
+      MUD_URL: wss://hollow.skyphusion.org/ws
+      MUD_NAME: ashbot
+      MUD_MODEL: qwen3.6:27b-ctx8k
+      BOT_MAX_TOKENS: "4000"
+      BOT_THINK_MS: "4500"
+      OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
+      BOT_LOG: /dev/stdout
+    networks:
+      - openwebui_ai-net
+
+  rustbot:
+    image: ghcr.io/skyphusion/mud-bots-hg:latest
+    restart: unless-stopped
+    environment:
+      MUD_URL: wss://hollow.skyphusion.org/ws
+      MUD_NAME: rustbot
+      MUD_MODEL: qwen3.6:27b-ctx8k
+      BOT_MAX_TOKENS: "4000"
+      BOT_THINK_MS: "4500"
+      OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
+      BOT_LOG: /dev/stdout
+    networks:
+      - openwebui_ai-net
+
+  stanwald:
+    image: ghcr.io/skyphusion/mud-bots-pw:latest
+    restart: unless-stopped
+    environment:
+      MUD_SERVER_URL: wss://74-208-68-248.sslip.io/ws
+      MUD_USERNAME: ai_stan1
+      MUD_PASSWORD: ${STANWALD_PASSWORD}
+      MUD_CHARACTER: Stanwald
+      MUD_MODEL: qwen3.6:27b-ctx8k
+      OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
+      MUD_BUG_FILE: /dev/null
+    networks:
+      - openwebui_ai-net
+
+  discord:
+    image: ghcr.io/skyphusion/mud-bots-discord:latest
+    restart: unless-stopped
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_CHANNEL_IDS: "1513838828991811616"
+      OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
+      DISCORD_MODEL: gemma-4-26B-A4B-it-qat-GGUF:UD-Q4_K_XL
+      DISCORD_LOG: /dev/stdout
+    networks:
+      - openwebui_ai-net
+
+networks:
+  openwebui_ai-net:
+    external: true

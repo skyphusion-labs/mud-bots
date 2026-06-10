@@ -1,28 +1,29 @@
 // Jenkins pipeline for mud-bots (the Packet Wastes + Hollow Grid AI players).
 //
-// What it does: lints the bots (syntax only -- there is no test suite by design),
-// and on push to main, rsyncs the code to the GPU boxes (stan, wendy) and
-// rolling-restarts their user bot services. The bots are plain interpreted code
-// with no build step, so landing on main IS the release (like skyphusion.net).
-// Non-main branches are linted but never deployed.
-//
-// Jenkins job: a multibranch pipeline (GitHub source SkyPhusion/mud-bots, branch
-// discovery, Script Path Jenkinsfile) on mindcrime (`agent any`, host node/python).
+// Stages:
+//   checkout  - check out source, detect ref type (branch vs. tag)
+//   lint      - syntax-check all bots (no test suite by design)
+//   build     - build Docker images for hg-bot, pw-bot, discord-bot (tags only)
+//   push      - push images to GHCR as :latest + :<tag> (tags only)
+//   deploy    - rsync + rolling-restart systemd services on stan/wendy (main only)
+//               NOTE: this stage is DEPRECATED; it will be removed once the
+//               Portainer-managed container stacks are live and validated on both
+//               boxes. See stacks/wendy.yml and stacks/stan.yml.
 //
 // Credentials (Jenkins -> Manage Credentials):
-//   mudbots-deploy   SSH Username with private key (user "ubuntu"); its public
-//                    key is in ubuntu@stan / ubuntu@wendy authorized_keys. Bound
-//                    with withCredentials(sshUserPrivateKey) and handed to
-//                    deploy.sh as MUDBOTS_SSH_KEY for rsync + remote restarts.
-// Jenkins runs on the mindcrime host (not in Docker), so it is a WARP mesh node
-// and reaches stan/wendy at stan.internal / wendy.internal directly.
-// Uses credentials-binding (ssh-agent plugin is not installed here).
+//   mudbots-deploy    SSH Username with private key (user "ubuntu"); public key
+//                     in ubuntu@stan / ubuntu@wendy authorized_keys.
+//   ghcr-skyphusion   Username/password for ghcr.io (user=skyphusion, pass=PAT
+//                     with write:packages scope).
+//
+// Jenkins runs on the mindcrime host (WARP mesh node); reaches stan/wendy at
+// their .internal names directly.
 
 pipeline {
     agent any
 
     options {
-        timeout(time: 15, unit: 'MINUTES')
+        timeout(time: 20, unit: 'MINUTES')
         timestamps()
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '30'))
@@ -35,28 +36,69 @@ pipeline {
                 script {
                     env.GIT_REF = (env.BRANCH_NAME ?: env.GIT_BRANCH ?: '')
                         .replaceFirst(/^origin\//, '')
-                    echo "ref: ${env.GIT_REF ?: '(unknown)'}"
+                    // TAG_NAME is set by multibranch tag discovery; GIT_REF stays
+                    // the branch/tag name for display, IS_TAG gates image builds.
+                    env.IS_TAG = (env.TAG_NAME != null && env.TAG_NAME != '').toString()
+                    echo "ref: ${env.GIT_REF ?: '(unknown)'}  is_tag: ${env.IS_TAG}"
                 }
             }
         }
 
         stage('lint') {
             steps {
-                // Dependency-free Node bots + the Python suite: syntax-check all.
                 sh 'node --check hollow-grid/bot.mjs'
                 sh 'node --check discord/bot.mjs'
                 sh 'python3 -m py_compile bot.py onboard.py mapper.py tutorial.py revive.py'
             }
         }
 
+        stage('build') {
+            when {
+                expression { return env.IS_TAG == 'true' }
+            }
+            steps {
+                sh 'docker build -t mud-bots-hg:build      -f hollow-grid/Dockerfile hollow-grid/'
+                sh 'docker build -t mud-bots-pw:build      -f Dockerfile .'
+                sh 'docker build -t mud-bots-discord:build -f discord/Dockerfile   discord/'
+            }
+        }
+
+        stage('push') {
+            when {
+                expression { return env.IS_TAG == 'true' }
+            }
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'ghcr-skyphusion',
+                    usernameVariable: 'GHCR_USER',
+                    passwordVariable: 'GHCR_TOKEN'
+                )]) {
+                    sh 'echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin'
+                    script {
+                        def tag = env.TAG_NAME
+                        [
+                            ['mud-bots-hg:build',      "ghcr.io/skyphusion/mud-bots-hg"],
+                            ['mud-bots-pw:build',      "ghcr.io/skyphusion/mud-bots-pw"],
+                            ['mud-bots-discord:build', "ghcr.io/skyphusion/mud-bots-discord"],
+                        ].each { local, remote ->
+                            sh "docker tag  ${local} ${remote}:${tag}"
+                            sh "docker tag  ${local} ${remote}:latest"
+                            sh "docker push ${remote}:${tag}"
+                            sh "docker push ${remote}:latest"
+                        }
+                    }
+                }
+            }
+        }
+
         stage('deploy') {
-            // Only main reaches the fleet; side branches stop after a green lint.
+            // DEPRECATED: rsync + systemctl path; runs on main until container
+            // stacks on stan + wendy are validated and the systemd services are
+            // retired. Remove this stage once cutover is complete.
             when {
                 expression { return env.GIT_REF == 'main' }
             }
             steps {
-                // The deploy key lets rsync + the remote systemctl --user reach the
-                // boxes; deploy.sh does the rest (rolling restart, idempotent).
                 withCredentials([sshUserPrivateKey(credentialsId: 'mudbots-deploy', keyFileVariable: 'MUDBOTS_SSH_KEY')]) {
                     sh 'bash deploy.sh'
                 }
@@ -67,17 +109,20 @@ pipeline {
     post {
         success {
             script {
-                if (env.GIT_REF == 'main') {
-                    echo 'Deployed mud-bots to stan + wendy.'
+                if (env.IS_TAG == 'true') {
+                    echo "Built + pushed images for tag ${env.TAG_NAME}."
+                } else if (env.GIT_REF == 'main') {
+                    echo 'Deployed mud-bots to stan + wendy (legacy rsync path).'
                 } else {
                     echo "Branch '${env.GIT_REF}' linted (not deployed)."
                 }
             }
         }
         failure {
-            echo 'Build failed. Check the lint / deploy logs above.'
+            echo 'Build failed. Check the lint / build / deploy logs above.'
         }
         always {
+            sh 'docker logout ghcr.io || true'
             cleanWs(notFailBuild: true)
         }
     }
