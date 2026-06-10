@@ -91,7 +91,7 @@ class Onboarder:
             ("reg_new",      'username (or "new")',          "new"),
             ("reg_user",     "choose your username",          self.username),
             ("reg_pass",     "choose your password",          self.password),
-            ("reg_pass2",    "repeat your password",          self.password),
+            ("reg_pass2",    "your password",                 self.password),
             ("reg_email",    "email address",                 ""),
             ("reg_reader",   "screen reader",                 "n"),
             ("reg_confirm",  "would you like to create a new user", "y"),

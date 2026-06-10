@@ -5,8 +5,12 @@
 # host inside that network is "openwebui-ollama-1".
 #
 # Secrets that must be set in Portainer's environment section (never git):
-#   STANWALD_PASSWORD  - Stanwald's game account password (from stan_identity.json)
 #   DISCORD_TOKEN      - Discord bot token (from the current discordbot.service unit)
+#
+# The stanwald PW bot reads its identity (username/password/character) from
+# /home/ubuntu/bot-identities/stanwald.json on the stan host (bind-mounted
+# read-only into the container). Recreate it with onboard.py if the account
+# is ever wiped.
 #
 # After validating all containers, disable the host systemd services:
 #   systemctl --user disable --now discordbot.service
@@ -57,11 +61,11 @@ services:
   stanwald:
     image: ghcr.io/skyphusion/mud-bots-pw:latest
     restart: unless-stopped
+    volumes:
+      - /home/ubuntu/bot-identities:/identity:ro
     environment:
       MUD_SERVER_URL: wss://74-208-68-248.sslip.io/ws
-      MUD_USERNAME: ai_stan1
-      MUD_PASSWORD: ${STANWALD_PASSWORD}
-      MUD_CHARACTER: Stanwald
+      MUD_IDENTITY_FILE: /identity/stanwald.json
       MUD_MODEL: qwen3.6:27b-ctx8k
       OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
       MUD_BUG_FILE: /dev/null
