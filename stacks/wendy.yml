@@ -12,7 +12,9 @@
 
 services:
   ollama:
-    image: ollama/ollama:latest
+    # Pinned to the digest that ships cuda_v12 (supports V100S cc=7.0).
+    # ollama/ollama:latest dropped V100 support when it moved to cuda_v13-only.
+    image: ollama/ollama@sha256:46399ef084d97b381955b5dc585c5d836dbe7ed3f79f170d1c04660fed511e3a
     restart: unless-stopped
     volumes:
       - /usr/share/ollama/.ollama:/root/.ollama
