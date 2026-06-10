@@ -75,12 +75,17 @@ pipeline {
                 )]) {
                     sh 'echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin'
                     script {
-                        def tag = env.TAG_NAME
-                        [
-                            ['mud-bots-hg:build',      "ghcr.io/skyphusion/mud-bots-hg"],
-                            ['mud-bots-pw:build',      "ghcr.io/skyphusion/mud-bots-pw"],
-                            ['mud-bots-discord:build', "ghcr.io/skyphusion/mud-bots-discord"],
-                        ].each { local, remote ->
+                        // In multibranch tag builds TAG_NAME is unset; the tag
+                        // name comes through as BRANCH_NAME (e.g. "v1.0.0").
+                        def tag = env.BRANCH_NAME
+                        def images = [
+                            ['mud-bots-hg:build',      'ghcr.io/skyphusion/mud-bots-hg'],
+                            ['mud-bots-pw:build',      'ghcr.io/skyphusion/mud-bots-pw'],
+                            ['mud-bots-discord:build', 'ghcr.io/skyphusion/mud-bots-discord'],
+                        ]
+                        images.each { pair ->
+                            def local  = pair[0]
+                            def remote = pair[1]
                             sh "docker tag  ${local} ${remote}:${tag}"
                             sh "docker tag  ${local} ${remote}:latest"
                             sh "docker push ${remote}:${tag}"
