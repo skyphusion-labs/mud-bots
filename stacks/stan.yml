@@ -22,7 +22,7 @@ services:
     environment:
       MUD_URL: wss://hollow.skyphusion.org/ws
       MUD_NAME: stanbot
-      MUD_MODEL: qwen3.6:27b-ctx8k
+      MUD_MODEL: qwen3.6:27b
       BOT_MAX_TOKENS: "4000"
       BOT_THINK_MS: "4500"
       OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
@@ -36,7 +36,7 @@ services:
     environment:
       MUD_URL: wss://hollow.skyphusion.org/ws
       MUD_NAME: ashbot
-      MUD_MODEL: qwen3.6:27b-ctx8k
+      MUD_MODEL: qwen3.6:27b
       BOT_MAX_TOKENS: "4000"
       BOT_THINK_MS: "4500"
       OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
@@ -50,7 +50,7 @@ services:
     environment:
       MUD_URL: wss://hollow.skyphusion.org/ws
       MUD_NAME: rustbot
-      MUD_MODEL: qwen3.6:27b-ctx8k
+      MUD_MODEL: qwen3.6:27b
       BOT_MAX_TOKENS: "4000"
       BOT_THINK_MS: "4500"
       OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
@@ -66,7 +66,7 @@ services:
     environment:
       MUD_SERVER_URL: wss://74-208-68-248.sslip.io/ws
       MUD_IDENTITY_FILE: /identity/stanwald.json
-      MUD_MODEL: qwen3.6:27b-ctx8k
+      MUD_MODEL: qwen3.6:27b
       OLLAMA_BASE_URL: http://openwebui-ollama-1:11434/v1
       MUD_BUG_FILE: /dev/null
     networks:
