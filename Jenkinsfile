@@ -20,7 +20,7 @@
 // their .internal names directly.
 
 pipeline {
-    agent any
+    agent { label 'build' }
 
     options {
         timeout(time: 20, unit: 'MINUTES')
