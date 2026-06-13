@@ -5,19 +5,17 @@
 //   lint      - syntax-check all bots (no test suite by design)
 //   build     - build Docker images for hg-bot, pw-bot, discord-bot (tags only)
 //   push      - push images to GHCR as :latest + :<tag> (tags only)
-//   deploy    - rsync + rolling-restart systemd services on stan/wendy (main only)
-//               NOTE: this stage is DEPRECATED; it will be removed once the
-//               Portainer-managed container stacks are live and validated on both
-//               boxes. See stacks/wendy.yml and stacks/stan.yml.
+//
+// Bots run as containerized Docker stacks on wendy (all bots as of 2026-06-10).
+// Deployment is done by updating the stack compose file and redeploying -- no
+// rsync or systemd path remains. The mudbots-deploy SSH credential is no longer
+// used by CI.
 //
 // Credentials (Jenkins -> Manage Credentials):
-//   mudbots-deploy    SSH Username with private key (user "ubuntu"); public key
-//                     in ubuntu@stan / ubuntu@wendy authorized_keys.
-//   ghcr-skyphusion   Username/password for ghcr.io (user=skyphusion, pass=PAT
-//                     with write:packages scope).
+//   ghcr-skyphusion   Username/password for ghcr.io (user=skyphusion-strummer,
+//                     pass=PAT with write:packages scope).
 //
-// Jenkins runs on the mindcrime host (WARP mesh node); reaches stan/wendy at
-// their .internal names directly.
+// Jenkins runs on dischord (ci.skyphusion.org) directing the HEL1 fleet agents.
 
 pipeline {
     agent { label 'build' }
@@ -96,19 +94,6 @@ pipeline {
             }
         }
 
-        stage('deploy') {
-            // DEPRECATED: rsync + systemctl path; runs on main until container
-            // stacks on stan + wendy are validated and the systemd services are
-            // retired. Remove this stage once cutover is complete.
-            when {
-                expression { return env.GIT_REF == 'main' }
-            }
-            steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'mudbots-deploy', keyFileVariable: 'MUDBOTS_SSH_KEY')]) {
-                    sh 'bash deploy.sh'
-                }
-            }
-        }
     }
 
     post {
@@ -116,10 +101,8 @@ pipeline {
             script {
                 if (env.IS_TAG == 'true') {
                     echo "Built + pushed images for tag ${env.TAG_NAME}."
-                } else if (env.GIT_REF == 'main') {
-                    echo 'Deployed mud-bots to stan + wendy (legacy rsync path).'
                 } else {
-                    echo "Branch '${env.GIT_REF}' linted (not deployed)."
+                    echo "Branch '${env.GIT_REF}' linted."
                 }
             }
         }
