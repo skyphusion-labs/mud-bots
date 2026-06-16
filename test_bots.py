@@ -1,4 +1,9 @@
 import sys
+from unittest.mock import MagicMock
+
+sys.modules['openai'] = MagicMock()
+sys.modules['websockets'] = MagicMock()
+
 import pytest
 
 def test_bot_initialization():
