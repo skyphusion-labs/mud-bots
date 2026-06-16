@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 sys.modules['openai'] = MagicMock()
 sys.modules['websockets'] = MagicMock()
+sys.modules['websockets.client'] = MagicMock()
 
 import pytest
 
