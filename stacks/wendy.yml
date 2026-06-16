@@ -36,7 +36,7 @@ services:
     environment:
       MUD_URL: wss://hollow.skyphusion.org/ws
       MUD_NAME: wendybot
-      MUD_MODEL: qwen3.6:27b-ctx8k
+      MUD_MODEL: qwen3.6:27b
       BOT_MAX_TOKENS: "4000"
       BOT_THINK_MS: "4500"
       OLLAMA_BASE_URL: http://ollama:11434/v1
@@ -52,7 +52,7 @@ services:
     environment:
       MUD_URL: wss://hollow.skyphusion.org/ws
       MUD_NAME: cinderbot
-      MUD_MODEL: qwen3.6:27b-ctx8k
+      MUD_MODEL: qwen3.6:27b
       BOT_MAX_TOKENS: "4000"
       BOT_THINK_MS: "4500"
       OLLAMA_BASE_URL: http://ollama:11434/v1
@@ -68,7 +68,7 @@ services:
     environment:
       MUD_URL: wss://hollow.skyphusion.org/ws
       MUD_NAME: dustbot
-      MUD_MODEL: qwen3.6:27b-ctx8k
+      MUD_MODEL: qwen3.6:27b
       BOT_MAX_TOKENS: "4000"
       BOT_THINK_MS: "4500"
       OLLAMA_BASE_URL: http://ollama:11434/v1
