@@ -7,16 +7,25 @@ sys.modules['websockets.client'] = MagicMock()
 
 import pytest
 
+class MockBotConfig:
+    def __init__(self, entries):
+        self.__dict__.update(entries)
+    def __getattr__(self, name):
+        return "" 
+
 def test_bot_initialization():
     """Import and test-instantiate the main MUD bot class layout template."""
     import bot
     
-    mock_config = {
+    config_data = {
         "host": "localhost",
         "port": 8787,
         "username": "ci_test_runner",
-        "password": "mock_password_string"
+        "password": "mock_password_string",
+        "base_url": "" 
     }
+    
+    mock_config = MockBotConfig(config_data)
     
     test_bot_instance = bot.MUDBot(mock_config)
     assert test_bot_instance is not None
