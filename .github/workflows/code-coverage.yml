@@ -7,12 +7,9 @@ on:
 
 jobs:
   coverage:
-    runs-on: [self-hosted, fleet]
+    runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write      
-      code-quality: write    # Required for GitHub Enterprise Code Coverage API
-      pull-requests: write   # Allows appending the widget inside the PR
 
     steps:
       - name: Checkout repository
@@ -36,10 +33,11 @@ jobs:
       - name: Run Bot Smoke Tests with Coverage
         run: pytest --cov=. --cov-report=xml:coverage.xml
 
-      # 4. Upload raw telemetry schemas straight to your PR dashboard widget
-      - name: Upload coverage report
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/upload-code-coverage@v1
+      # 4. Publish the coverage report as a standard build artifact (fork-safe;
+      #    the GitHub Enterprise code-coverage API does not exist on public github.com)
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
         with:
-          file: ./coverage.xml
-          language: python
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: warn
