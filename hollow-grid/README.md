@@ -17,6 +17,9 @@ Single file, **no build step and no dependencies** (uses Node's global
 - `anthropic` -- the Anthropic API (billed per call).
 - `gateway` -- any provider through a Cloudflare AI Gateway (OpenAI-compatible);
   the bot holds only a gateway token, provider keys stay in the Gateway (BYOK).
+  This includes **open-source models on Cloudflare Workers AI** via
+  `MUD_MODEL=workers-ai/@cf/<model>`; under Unified Billing the gateway token is
+  the only credential the bot needs (no BYOK, no provider key). See below.
 
 ## Run
 
@@ -33,6 +36,10 @@ BOT_BRAIN=anthropic ANTHROPIC_API_KEY=sk-... node bot.mjs
 # via a Cloudflare AI Gateway (keys stay in Cloudflare)
 BOT_BRAIN=gateway CF_AIG_TOKEN=... CF_ACCOUNT_ID=... CF_AIG_GATEWAY=skyphusion-llm \
   MUD_MODEL=anthropic/claude-sonnet-4-6 node bot.mjs
+
+# open-source model on Cloudflare Workers AI (gateway token only, no BYOK)
+BOT_BRAIN=gateway CF_AIG_TOKEN=... CF_ACCOUNT_ID=... CF_AIG_GATEWAY=skyphusion-llm \
+  MUD_MODEL=workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast node bot.mjs
 ```
 
 Full env config (`MUD_NAME`, `MUD_MODEL`, `BOT_THINK_MS`, the gateway/anthropic
@@ -40,6 +47,45 @@ knobs, `BOT_LOG`, ...) is documented in the header comment of `bot.mjs`.
 
 The anthropic/gateway brains bill continuously while the bot runs (it acts every
 few seconds); pick the model and `BOT_THINK_MS` accordingly.
+
+## Open-source models on Cloudflare Workers AI
+
+The `gateway` brain drives any [Workers AI](https://developers.cloudflare.com/workers-ai/)
+open-source model with **no code change** -- set `BOT_BRAIN=gateway` and
+`MUD_MODEL=workers-ai/@cf/<model>`. The AI Gateway's OpenAI-compatible `/compat`
+endpoint is what `bot.mjs` already speaks; the `workers-ai/` prefix just selects
+the provider. Under Unified Billing the bot needs only a gateway token (sent as
+`cf-aig-authorization`), so there are no provider keys in the container.
+
+Two models validated against this bot with live play on The Hollow Grid:
+
+| Model | Style | `BOT_MAX_TOKENS` |
+|-------|-------|------------------|
+| `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | non-reasoning; terse, decisive single commands | `40` is enough |
+| `@cf/qwen/qwen3-30b-a3b-fp8` | reasoning; "thinks out loud", surfaced in the logs | `2000`+ (see gotcha) |
+
+**Reasoning-model gotcha.** The default `BOT_MAX_TOKENS=40` is fine for a
+non-reasoning model (one short command), but a reasoning model spends that whole
+budget *thinking* and emits no command -- the call comes back empty and the bot
+falls back to `look`. Raise `BOT_MAX_TOKENS` (~2000) for reasoning models so the
+chain-of-thought plus the final command both fit. Through Workers AI the reasoning
+is returned in a **separate** `message.reasoning` field (not inline in
+`message.content`), so the one-command parser still gets a clean command and the
+deliberation is logged for you to watch -- no `<think>` leakage to sanitize.
+
+Browse the catalog with the Cloudflare API
+(`GET /accounts/{id}/ai/models/search?task=Text%20Generation`) or the dashboard;
+prefer instruction-tuned models, since the bot needs a single short command per turn.
+
+## Deployment
+
+Both bots run as outbound-only Node containers on the fleet (dischord), driven by
+open-source models on Cloudflare Workers AI through the `skyphusion-llm` AI Gateway
+(Unified Billing): no GPU box, no ollama sidecar. This is the GPU-free replacement
+for the retired stan/wendy ollama stacks, which died with those decommissioned
+V100S boxes. Each bot holds its own AI-Gateway-Run-scoped token (per-function keys,
+independently revocable); the `bot.mjs` gateway brain needed zero code change.
+Sessions are bounded (start, watch, stop), keeping cost near-zero.
 
 ## Provenance
 
