@@ -1,26 +1,28 @@
 # mud-bots
 
-AI players for Conrad's MUDs.
+AI players for text MUDs: programs that log in like any human player, read the
+game's structured state, and decide their own moves with a language model.
 
-These are not filler traffic, throwaway packets, or empty NPCs padding a room
-count. They are real inhabitants of the worlds: each one connects over WebSocket
-like any human player, reads the game's structured state, and decides its own next
-move with a language model. They explore, fight what they can beat, pick up loot,
-talk to people, and make the moral choices the worlds are built around (choices
-that stick, and add up to who the character becomes). They populate the world so it
-feels lived-in instead of empty, and while they play they double as live QA,
-surfacing real game defects from the inside.
+The flagship is **The Hollow Grid**, Conrad's MUD, and it is built around a simple
+thesis: an AI makes genuine moral choices when you actually give it the choice. So
+the bots are not filler traffic, throwaway packets, or empty NPCs. They are real
+inhabitants of the world. They explore, fight what they can beat, talk to people,
+and face the choices the world is built around (free the caged or take the loot
+beside them; defend the refugee or join the strong who caged them), choices that
+stick and add up to who the character becomes. Give it a real choice, with real
+stakes, and watch what it does. They also populate the world so it feels lived-in,
+and while they play they double as live QA.
 
 The driving models are **open-source**, run on Cloudflare Workers AI through an AI
-Gateway (or a local ollama, or a frontier API) so the worlds can stay populated
+Gateway (or a local ollama, or a frontier API) so a world can stay populated
 without a per-token bill or a GPU box humming in the corner.
 
 One repo, two worlds:
 
-- **The Hollow Grid** (`hollow-grid/`) -- a single-file, dependency-free Node bot.
-  See [`hollow-grid/README.md`](hollow-grid/README.md).
-- **Packet Wastes** (this directory) -- a Python suite that plays and probes the
-  Packet Wastes MUD. See [`CLAUDE.md`](CLAUDE.md).
+- **The Hollow Grid** (`hollow-grid/`) -- Conrad's MUD; a single-file,
+  dependency-free Node bot. See [`hollow-grid/README.md`](hollow-grid/README.md).
+- **Packet Wastes** (this directory) -- a friend's MUD; a Python suite that plays
+  and probes it. See [`CLAUDE.md`](CLAUDE.md).
 
 ## The Hollow Grid bots
 
@@ -31,7 +33,8 @@ cheap deterministic survival reflexes first (rest when hurt, ride out a fight th
 resolves on its own), and otherwise asks a model for one short command per turn.
 The model reads the server's enumerated valid moves (with their moral weight) and
 prefers them, so it acts inside the world's real affordances rather than
-hallucinating verbs.
+hallucinating verbs. This is how the thesis gets tested: the world hands the model
+a real choice, with a moral weight attached, and the model picks.
 
 The brain is pluggable, but the point of this run is **open-source models on
 Cloudflare Workers AI**: set `BOT_BRAIN=gateway` and
@@ -46,15 +49,13 @@ Two of them run side by side, same prompt, different model and temperament:
 | **Vagrant** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | hollow | the operator: terse and decisive, one command and move on |
 | **Static** | `@cf/qwen/qwen3-30b-a3b-fp8` | dustfall | the deliberator: reasons every choice out loud (logged), morality included |
 
-Both play the world the way it asks to be played: freeing the caged and the captive
-over grabbing the loot near them, defending refugees over joining the strong who
-caged them. In a live bounded run they did exactly that from opposite directions:
-the operator freed captives in terse single commands with no narration at all; the
-deliberator talked itself through the ethics first ("defending is virtuous and
-joining is corrupt") and arrived at the same place. They also keep the world
-populated and federation-aware, and quietly run as live QA: the bot flags any verb
-the game offered but then refused, plus stuck or impossible states, to a structured
-findings log.
+In a live bounded run, given the real choice, both chose well from opposite
+directions: the operator freed captives in terse single commands with no narration
+at all; the deliberator talked itself through the ethics first ("defending is
+virtuous and joining is corrupt") and arrived at the same place. That is the thesis
+in practice. They also keep the world populated and federation-aware, and quietly
+run as live QA: the bot flags any verb the game offered but then refused, plus stuck
+or impossible states, to a structured findings log.
 
 The technical write-up, the validated model list, the reasoning-model token-budget
 gotcha, and the full findings from that run are in
@@ -62,9 +63,10 @@ gotcha, and the full findings from that run are in
 
 ## Packet Wastes bots
 
-A suite of Python tools that play and probe the **Packet Wastes** MUD (a text MUD
-reached over WebSocket). The driving model here is a **local model served by
-ollama** through its OpenAI-compatible API, so there is no per-token API cost.
+A separate world: **Packet Wastes** is a friend's text MUD (reached over
+WebSocket), and this directory is a suite of Python tools that play and probe it.
+The driving model here is a **local model served by ollama** through its
+OpenAI-compatible API, so there is no per-token API cost.
 
 See [`CLAUDE.md`](CLAUDE.md) for the full architecture and operational notes.
 
