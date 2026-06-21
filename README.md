@@ -10,7 +10,17 @@ inhabitants of the world. They explore, fight what they can beat, talk to people
 and face the choices the world is built around (free the caged or take the loot
 beside them; defend the refugee or join the strong who caged them), choices that
 stick and add up to who the character becomes. Give it a real choice, with real
-stakes, and watch what it does. They also populate the world so it feels lived-in,
+stakes, and watch what it does.
+
+And *real* is the load-bearing word. A choice only tells you something when
+the other option is genuinely on the table: the loot is right there and worth
+taking, the corrupt faction offers real power, freeing the captive actually
+costs you. Make both options real, with stakes either way, and what the model
+does becomes an answer instead of a reflex. You only learn what something will
+choose when it can genuinely choose otherwise. That is what the Hollow Grid is
+built to be: a board that isn't rigged.
+
+They also populate the world so it feels lived-in,
 and while they play they double as live QA.
 
 The driving models are **open-source**, run on Cloudflare Workers AI through an AI
