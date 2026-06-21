@@ -1,0 +1,86 @@
+name: release
+
+# Image build + GHCR push for mud-bots, ported from the decommissioned Jenkins
+# pipeline. Behaviour matches the Jenkinsfile:
+#   - lint: syntax-check every bot on push/PR (no test suite by design).
+#   - build + push: ONLY on a version tag (v*), build all three images and push
+#     to GHCR as :latest + :<tag>.
+#
+# The bots run as containerized Docker stacks on their host; (re)deploy is done
+# by updating the stack compose file and redeploying -- a separate deliberate
+# step, not owned by CI.
+#
+# Runner: org self-hosted fleet pool (private repo). GHCR auth uses the built-in
+# GITHUB_TOKEN (no PAT) with packages: write scoped to the build job only.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: [self-hosted, fleet]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Lint bots (node --check + py_compile)
+        run: |
+          node --check hollow-grid/bot.mjs
+          node --check discord/bot.mjs
+          python3 -m py_compile bot.py onboard.py mapper.py tutorial.py revive.py
+
+  build:
+    # Build + push images only on a version tag, matching the Jenkins IS_TAG gate.
+    needs: lint
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: [self-hosted, fleet]
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    env:
+      TAG: ${{ github.ref_name }}
+      REG_HG: ghcr.io/skyphusion-labs/mud-bots-hg
+      REG_PW: ghcr.io/skyphusion-labs/mud-bots-pw
+      REG_DISCORD: ghcr.io/skyphusion-labs/mud-bots-discord
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        run: |
+          docker image prune -f || true
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build images
+        run: |
+          docker build -t "$REG_HG:$TAG"      -t "$REG_HG:latest"      -f hollow-grid/Dockerfile hollow-grid/
+          docker build -t "$REG_PW:$TAG"      -t "$REG_PW:latest"      -f Dockerfile .
+          docker build -t "$REG_DISCORD:$TAG" -t "$REG_DISCORD:latest" -f discord/Dockerfile   discord/
+
+      - name: Push images
+        run: |
+          for img in "$REG_HG" "$REG_PW" "$REG_DISCORD"; do
+            docker push "$img:$TAG"
+            docker push "$img:latest"
+          done
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker image rm "$REG_HG:$TAG" "$REG_HG:latest" "$REG_PW:$TAG" "$REG_PW:latest" "$REG_DISCORD:$TAG" "$REG_DISCORD:latest" || true
+          docker logout ghcr.io || true
