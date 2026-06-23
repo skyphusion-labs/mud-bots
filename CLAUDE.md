@@ -91,7 +91,7 @@ systemctl --user enable --now discordbot
 `deploy.sh` runs `npm ci` automatically on subsequent deploys if `package-lock.json` exists,
 and restarts `discordbot.service` if it is enabled on that box.
 
-**Lint check:** `node --check discord/bot.mjs` (already wired into the Jenkinsfile).
+**Lint check:** `node --check discord/bot.mjs` (wired into the GitHub Actions CI; Jenkins retired).
 
 ## Conventions (SkyPhusion house style)
 
