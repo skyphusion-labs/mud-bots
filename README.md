@@ -116,3 +116,7 @@ python3 mapper.py --creds creds.json --output map.json
 # AI player (local ollama)
 MUD_MODEL='<your-ollama-tag>' python3 bot.py
 ```
+
+## License
+
+[AGPL-3.0-only](LICENSE) (C) 2026 Conrad Rockenhaus and the Skyphusion Labs crew. Run a modified version as a network service and the AGPL has you offer users the corresponding source.

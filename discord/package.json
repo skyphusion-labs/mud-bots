@@ -1,6 +1,7 @@
 {
   "name": "discord-ollama-bot",
   "version": "0.1.0",
+  "license": "AGPL-3.0-only",
   "private": true,
   "type": "module",
   "description": "Discord bot that forwards channel/DM messages to a local ollama model and replies; maintains per-channel conversation history.",

@@ -1,6 +1,7 @@
 {
   "name": "hollow-grid-bot",
   "version": "0.1.0",
+  "license": "AGPL-3.0-only",
   "private": true,
   "type": "module",
   "description": "An AI player for The Hollow Grid MUD (WebSocket client over the @event channel; pluggable ollama/anthropic/gateway brain).",
