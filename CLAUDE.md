@@ -4,24 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Repo scope (`mud-bots`, formerly `packet-wastes-bots`):** this repo collects the bots for more than one MUD. Everything at the root is the **Packet Wastes** suite (Python; documented below). The `hollow-grid/` subdirectory holds the bot for **The Hollow Grid** (`bot.mjs`, a dependency-free Node 24+ WebSocket client; its world engine lives in the separate `the-hollow-grid` repo). The `discord/` subdirectory holds the Discord-to-ollama relay bot. See `hollow-grid/README.md`. The rest of this file describes the Packet Wastes tools.
 
+**Inference (deliberate Cloudflare-first choice):** the Hollow Grid bots (`hollow-grid/`) run on **Cloudflare Workers AI** via the AI Gateway (`BOT_BRAIN=gateway`), so there is no self-hosted GPU to babysit -- CF GPU time on Unified Billing, effectively free. That is why the old self-hosted ollama GPU boxes were retired. The Packet Wastes (root) tools and the Discord relay still drive a local **ollama** model.
+
 A suite of Python tools that play and probe the **Packet Wastes** MUD (a text MUD reached over WebSocket at `wss://74-208-68-248.sslip.io/ws`). The flagship is `bot.py`, an AI-driven player that explores, fights, socializes, and files bug reports; the rest create accounts, walk the tutorial, and map/diagnose the game. The LLM is a **local model served by ollama** through its OpenAI-compatible API, so there is no per-token API cost, but everything connects to the **live** game server.
 
 ## Running it
 
-The bot is developed locally and run on a host where ollama runs. Two things bite every time:
+The Packet Wastes Python bots run LOCALLY (or on any host that has ollama). The old
+fleet auto-deploy (the decommissioned acab/stan/wendy GPU boxes) is RETIRED, so there
+is no `deploy.sh` -- deployment is local/manual. Two things bite every time:
 
-- **Use the project venv, not system python.** `~/dev/bots/.venv/bin/python ...`; system `python3` lacks the `openai` module and crashes immediately.
-- **Override the model.** ollama on that host has `qwen3:30b-a3b-instruct-2507-q4_K_M`, not the code defaults. Pass `MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M'`.
+- **Use the project venv, not system python.** `.venv/bin/python ...`; system
+  `python3` lacks the `openai` module and crashes immediately.
+- **Override the model.** Set `MUD_MODEL` to whatever your ollama host has pulled; the
+  code defaults differ.
 
 ```bash
-# sync local -> the ollama host
-rsync -az ./ <ollama-host>:~/dev/bots/ --exclude __pycache__ --exclude '.claude'
-
 # run the bot (logs in to an existing account via bot_identity.json)
-ssh <ollama-host> "cd ~/dev/bots && MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M' nohup .venv/bin/python bot.py > bot_run.log 2>&1 &"
+MUD_MODEL='<your-ollama-model>' nohup .venv/bin/python bot.py > bot_run.log 2>&1 &
 
 # create a fresh account + character (hands-off), then point the bot at it
-ssh <ollama-host> "cd ~/dev/bots && MUD_MODEL='...' .venv/bin/python onboard.py --username <u> --password <p> --use-llm"
+MUD_MODEL='<your-ollama-model>' .venv/bin/python onboard.py --username <u> --password <p> --use-llm
 
 # quick syntax check (no test suite exists)
 .venv/bin/python -m py_compile bot.py tutorial.py
