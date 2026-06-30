@@ -4,24 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Repo scope (`mud-bots`, formerly `packet-wastes-bots`):** this repo collects the bots for more than one MUD. Everything at the root is the **Packet Wastes** suite (Python; documented below). The `hollow-grid/` subdirectory holds the bot for **The Hollow Grid** (`bot.mjs`, a dependency-free Node 24+ WebSocket client; its world engine lives in the separate `the-hollow-grid` repo). The `discord/` subdirectory holds the Discord-to-ollama relay bot. See `hollow-grid/README.md`. The rest of this file describes the Packet Wastes tools.
 
-A suite of Python tools that play and probe the **Packet Wastes** MUD (a text MUD reached over WebSocket at `wss://74-208-68-248.sslip.io/ws`). The flagship is `bot.py`, an AI-driven player that explores, fights, socializes, and files bug reports; the rest create accounts, walk the tutorial, and map/diagnose the game. The LLM is a **local model served by ollama** through its OpenAI-compatible API, so there is no per-token API cost, but everything connects to the **live** game server.
+**Inference (deliberate Cloudflare-first choice):** the bots run through a **Cloudflare AI Gateway** (`BOT_BRAIN=gateway`), which drives EITHER Anthropic/Claude models (e.g. `MUD_MODEL=anthropic/claude-sonnet-4-6`) OR open-source Cloudflare Workers AI models (`MUD_MODEL=workers-ai/@cf/<model>`). The bot holds ONLY a gateway token; provider keys stay in Cloudflare (BYOK / Unified Billing) and there is no local GPU. It is the GPU-free replacement for the old self-hosted ollama setup -- which is why the old GPU boxes were retired. (`BOT_BRAIN=ollama` + `OLLAMA_BASE_URL`/`localhost` remain only as a local-dev fallback brain.) Full brain matrix: `hollow-grid/README.md` and the root `README.md`.
 
-## Running it (host `acab`)
+A suite of Python tools that play and probe the **Packet Wastes** MUD (a text MUD reached over WebSocket at `wss://74-208-68-248.sslip.io/ws`). The flagship is `bot.py`, an AI-driven player that explores, fights, socializes, and files bug reports; the rest create accounts, walk the tutorial, and map/diagnose the game. Inference goes through a **Cloudflare AI Gateway** (the OpenAI-compatible client; `OLLAMA_BASE_URL` is the legacy knob name): the gateway drives a frontier model (Claude via the gateway) or an open-source Workers AI model, gateway-token-only with no local GPU (`localhost` is only a dev fallback). GPU/inference is Cloudflare-side (Unified Billing / BYOK, effectively free), and everything still connects to the **live** game server.
 
-The bot is developed locally and run on the box `acab`, where ollama runs. Two things bite every time:
+## Running it
 
-- **Use the project venv, not system python.** `~/dev/bots/.venv/bin/python ...`; system `python3` lacks the `openai` module and crashes immediately.
-- **Override the model.** ollama on acab has `qwen3:30b-a3b-instruct-2507-q4_K_M`, not the code defaults. Pass `MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M'`.
+The Packet Wastes Python bots run LOCALLY (or on any host that has ollama). The old
+fleet auto-deploy (to the now-decommissioned GPU boxes) is RETIRED, so there
+is no `deploy.sh` -- deployment is local/manual. Two things bite every time:
+
+- **Use the project venv, not system python.** `.venv/bin/python ...`; system
+  `python3` lacks the `openai` module and crashes immediately.
+- **Override the model.** Set `MUD_MODEL` to whatever your ollama host has pulled; the
+  code defaults differ.
 
 ```bash
-# sync local -> acab
-rsync -az /home/conrad/dev/bots/ acab:/home/conrad/dev/bots/ --exclude __pycache__ --exclude '.claude'
-
 # run the bot (logs in to an existing account via bot_identity.json)
-ssh acab "cd ~/dev/bots && MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M' nohup .venv/bin/python bot.py > bot_run.log 2>&1 &"
+MUD_MODEL='<your-ollama-model>' nohup .venv/bin/python bot.py > bot_run.log 2>&1 &
 
 # create a fresh account + character (hands-off), then point the bot at it
-ssh acab "cd ~/dev/bots && MUD_MODEL='...' .venv/bin/python onboard.py --username <u> --password <p> --use-llm"
+MUD_MODEL='<your-ollama-model>' .venv/bin/python onboard.py --username <u> --password <p> --use-llm
 
 # quick syntax check (no test suite exists)
 .venv/bin/python -m py_compile bot.py tutorial.py
@@ -71,7 +74,7 @@ ollama model and sends the reply back. It works across multiple servers simultan
 |-----|---------|-------|
 | `DISCORD_TOKEN` | (required) | Bot token from Developer Portal |
 | `DISCORD_CHANNEL_IDS` | (empty = DMs + mentions only) | Comma-separated channel IDs |
-| `OLLAMA_BASE_URL` | `http://wendy.internal:11434/v1` | OpenAI-compat ollama base |
+| `OLLAMA_BASE_URL` | `http://localhost:11434/v1` | OpenAI-compat ollama base |
 | `DISCORD_MODEL` | `qwen3.6:27b-ctx8k` | Model id on that ollama host |
 | `DISCORD_HISTORY` | `10` | Rolling exchange-pair history depth per channel |
 | `DISCORD_LOG` | (none) | Path to tee logs into |
@@ -88,8 +91,7 @@ systemctl --user daemon-reload
 systemctl --user enable --now discordbot
 ```
 
-`deploy.sh` runs `npm ci` automatically on subsequent deploys if `package-lock.json` exists,
-and restarts `discordbot.service` if it is enabled on that box.
+Updates are manual: `git pull` on the host, `npm ci` in `discord/` if `package-lock.json` changed, then `systemctl --user restart discordbot`.
 
 **Lint check:** `node --check discord/bot.mjs` (wired into the GitHub Actions CI).
 
