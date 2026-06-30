@@ -11,7 +11,7 @@ A suite of Python tools that play and probe the **Packet Wastes** MUD (a text MU
 ## Running it
 
 The Packet Wastes Python bots run LOCALLY (or on any host that has ollama). The old
-fleet auto-deploy (the decommissioned acab/stan/wendy GPU boxes) is RETIRED, so there
+fleet auto-deploy (to the now-decommissioned GPU boxes) is RETIRED, so there
 is no `deploy.sh` -- deployment is local/manual. Two things bite every time:
 
 - **Use the project venv, not system python.** `.venv/bin/python ...`; system
@@ -91,8 +91,7 @@ systemctl --user daemon-reload
 systemctl --user enable --now discordbot
 ```
 
-`deploy.sh` runs `npm ci` automatically on subsequent deploys if `package-lock.json` exists,
-and restarts `discordbot.service` if it is enabled on that box.
+Updates are manual: `git pull` on the host, `npm ci` in `discord/` if `package-lock.json` changed, then `systemctl --user restart discordbot`.
 
 **Lint check:** `node --check discord/bot.mjs` (wired into the GitHub Actions CI).
 
