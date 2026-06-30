@@ -6,22 +6,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A suite of Python tools that play and probe the **Packet Wastes** MUD (a text MUD reached over WebSocket at `wss://74-208-68-248.sslip.io/ws`). The flagship is `bot.py`, an AI-driven player that explores, fights, socializes, and files bug reports; the rest create accounts, walk the tutorial, and map/diagnose the game. The LLM is a **local model served by ollama** through its OpenAI-compatible API, so there is no per-token API cost, but everything connects to the **live** game server.
 
-## Running it (host `acab`)
+## Running it
 
-The bot is developed locally and run on the box `acab`, where ollama runs. Two things bite every time:
+The bot is developed locally and run on a host where ollama runs. Two things bite every time:
 
 - **Use the project venv, not system python.** `~/dev/bots/.venv/bin/python ...`; system `python3` lacks the `openai` module and crashes immediately.
-- **Override the model.** ollama on acab has `qwen3:30b-a3b-instruct-2507-q4_K_M`, not the code defaults. Pass `MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M'`.
+- **Override the model.** ollama on that host has `qwen3:30b-a3b-instruct-2507-q4_K_M`, not the code defaults. Pass `MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M'`.
 
 ```bash
-# sync local -> acab
-rsync -az /home/conrad/dev/bots/ acab:/home/conrad/dev/bots/ --exclude __pycache__ --exclude '.claude'
+# sync local -> the ollama host
+rsync -az ./ <ollama-host>:~/dev/bots/ --exclude __pycache__ --exclude '.claude'
 
 # run the bot (logs in to an existing account via bot_identity.json)
-ssh acab "cd ~/dev/bots && MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M' nohup .venv/bin/python bot.py > bot_run.log 2>&1 &"
+ssh <ollama-host> "cd ~/dev/bots && MUD_MODEL='qwen3:30b-a3b-instruct-2507-q4_K_M' nohup .venv/bin/python bot.py > bot_run.log 2>&1 &"
 
 # create a fresh account + character (hands-off), then point the bot at it
-ssh acab "cd ~/dev/bots && MUD_MODEL='...' .venv/bin/python onboard.py --username <u> --password <p> --use-llm"
+ssh <ollama-host> "cd ~/dev/bots && MUD_MODEL='...' .venv/bin/python onboard.py --username <u> --password <p> --use-llm"
 
 # quick syntax check (no test suite exists)
 .venv/bin/python -m py_compile bot.py tutorial.py
@@ -71,7 +71,7 @@ ollama model and sends the reply back. It works across multiple servers simultan
 |-----|---------|-------|
 | `DISCORD_TOKEN` | (required) | Bot token from Developer Portal |
 | `DISCORD_CHANNEL_IDS` | (empty = DMs + mentions only) | Comma-separated channel IDs |
-| `OLLAMA_BASE_URL` | `http://wendy.internal:11434/v1` | OpenAI-compat ollama base |
+| `OLLAMA_BASE_URL` | `http://localhost:11434/v1` | OpenAI-compat ollama base |
 | `DISCORD_MODEL` | `qwen3.6:27b-ctx8k` | Model id on that ollama host |
 | `DISCORD_HISTORY` | `10` | Rolling exchange-pair history depth per channel |
 | `DISCORD_LOG` | (none) | Path to tee logs into |

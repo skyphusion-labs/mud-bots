@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 # Deploy the mud-bots fleet: rsync the repo to each GPU box and restart its bot
 # services. Runs from anywhere with SSH access to the boxes -- a laptop, or
-# Jenkins on mindcrime via the 'mudbots-deploy' key. Idempotent; safe to re-run.
+# a CI host via the 'mudbots-deploy' key. Idempotent; safe to re-run.
 #
-# SSH note: public :22 is closed on all boxes (hardened 2026-06-09). Jenkins
-# runs directly on the mindcrime host (not in Docker), so it is a WARP mesh node
-# and can reach stan/wendy at their .internal names without any proxy.
-# Interactive laptop runs also work as long as WARP is up.
+# SSH note: the deploy host needs key-based SSH reach to each target box. If
+# public :22 is closed, run from a host on the boxes' private network. Set
+# MUDBOTS_HOSTS to your target boxes.
 #
-# Usage:  ./deploy.sh                # whole fleet (stan + wendy)
-#         ./deploy.sh stan.internal  # one box
+# Usage:  ./deploy.sh                # all configured boxes (MUDBOTS_HOSTS)
+#         ./deploy.sh <box>         # one box
 #
 # Per-box bots are systemd --user units (linger on): we restart whatever
 # hollowbot@*, discordbot, and pwbot instances are enabled there. Code,
@@ -19,7 +18,7 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-if [ "$#" -gt 0 ]; then BOXES=("$@"); else BOXES=(stan.internal wendy.internal); fi
+if [ "$#" -gt 0 ]; then BOXES=("$@"); else BOXES=(${MUDBOTS_HOSTS:-}); fi
 
 EXCLUDES=(
   --exclude .git --exclude __pycache__ --exclude .claude

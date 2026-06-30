@@ -38,8 +38,8 @@ class BotConfig:
     """Bot configuration - edit these values."""
     # LLM API (ollama via its OpenAI-compatible endpoint)
     api_key: str = "ollama"  # ollama requires a key but ignores its value
-    base_url: str = "http://localhost:11434/v1"  # acab-local; override if bot runs off-box
-    model: str = "llama3.2"  # set to whatever you've pulled on acab (ollama list)
+    base_url: str = "http://localhost:11434/v1"  # localhost ollama; override if bot runs off-box
+    model: str = "llama3.2"  # set to whatever you've pulled on the ollama host (ollama list)
     
     # Game server
     server_url: str = "wss://74-208-68-248.sslip.io/ws"

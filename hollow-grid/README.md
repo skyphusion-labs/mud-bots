@@ -79,11 +79,10 @@ prefer instruction-tuned models, since the bot needs a single short command per 
 
 ## Deployment
 
-Both bots run as outbound-only Node containers on the fleet (dischord), driven by
+Both bots run as outbound-only Node containers on the operator's container host, driven by
 open-source models on Cloudflare Workers AI through the `skyphusion-llm` AI Gateway
 (Unified Billing): no GPU box, no ollama sidecar. This is the GPU-free replacement
-for the retired stan/wendy ollama stacks, which died with those decommissioned
-V100S boxes. Each bot holds its own AI-Gateway-Run-scoped token (per-function keys,
+for the retired self-hosted ollama stacks, which died with those decommissioned GPU boxes. Each bot holds its own AI-Gateway-Run-scoped token (per-function keys,
 independently revocable); the `bot.mjs` gateway brain needed zero code change.
 Sessions are bounded (start, watch, stop), keeping cost near-zero.
 
