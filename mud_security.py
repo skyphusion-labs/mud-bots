@@ -25,13 +25,13 @@ def log_connect(logger: logging.Logger, url: str) -> None:
 
 
 def log_outbound(logger: logging.Logger, command: str, *, password: str = "") -> None:
-    logger.info(">>> %r", redact_command(command, password))
+    logger.info(">>> %r", _REDACTED)
 
 
 def log_outbound_tagged(
     logger: logging.Logger, command: str, tag: str, *, password: str = ""
 ) -> None:
-    logger.info(">>> [%s] %r", tag, redact_command(command, password))
+    logger.info(">>> [%s] %r", tag, _REDACTED)
 
 
 def log_login_reply(logger: logging.Logger, reply: str, *, password: str = "") -> None:
