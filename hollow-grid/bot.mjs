@@ -307,42 +307,30 @@ function applyEvent(name, data) {
       }
       break;
     case "grid.travel":
-      if (data.url && typeof data.url === "string") {
+      // The server hands us off to another world and closes the socket; point
+      // the reconnect there so we arrive as the same character (name/level/
+      // standing -- and now race -- travel with us across the Grid).
+      if (data && typeof data === "object" && typeof data.url === "string") {
+        // Only accept ws/wss URLs, max reasonable length
+        if (data.url.length > 2048) {
+          log(`refusing oversized travel URL`);
+          break;
+        }
         const next = trustedWsUrl(data.url);
         if (next) {
           log(`TRAVELING -> ${data.to ?? "?"} (${next})`);
           state.url = next;
-          // ... rest of travel logic
+          state.room = null;
+          state.actions = null;
+          state.recentCommands = [];
+          state.roomStreak = 0;
+          state.lastDecisionRoom = null;
+          sinceTravel = 0;
         } else {
           log(`refusing untrusted travel URL: ${data.url}`);
         }
       }
       break;
-case "grid.travel":
-  // The server hands us off to another world and closes the socket; point
-  // the reconnect there so we arrive as the same character (name/level/
-  // standing -- and now race -- travel with us across the Grid).
-  if (data && typeof data === "object" && typeof data.url === "string") {
-    // Only accept ws/wss URLs, max reasonable length
-    if (data.url.length > 2048) {
-      log(`refusing oversized travel URL`);
-      break;
-    }
-    const next = trustedWsUrl(data.url);
-    if (next) {
-      log(`TRAVELING -> ${data.to ?? "?"} (${next})`);
-      state.url = next;
-      state.room = null;
-      state.actions = null;
-      state.recentCommands = [];
-      state.roomStreak = 0;
-      state.lastDecisionRoom = null;
-      sinceTravel = 0;
-    } else {
-      log(`refusing untrusted travel URL: ${data.url}`);
-    }
-  }
-  break;
     default:
       break; // combat.*, world.*, grid.*, comm.* flow into recentEvents/prose
   }
