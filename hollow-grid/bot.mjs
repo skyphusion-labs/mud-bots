@@ -50,6 +50,7 @@
 // Requires Node 24+ (global WebSocket + fetch). No build step, no deps.
 
 import { appendFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const BRAIN = (process.env.BOT_BRAIN ?? "ollama").toLowerCase();
 const DEFAULT_MODEL = {
@@ -58,7 +59,7 @@ const DEFAULT_MODEL = {
   ollama: "qwen3:30b-a3b-instruct-2507-q4_K_M",
 }[BRAIN] ?? "qwen3:30b-a3b-instruct-2507-q4_K_M";
 
-const CFG = {
+export const CFG = {
   url: process.env.MUD_URL ?? "ws://localhost:8787/ws",
   name: process.env.MUD_NAME ?? "grid_" + Math.random().toString(36).slice(2, 7),
   brain: BRAIN,
@@ -93,7 +94,7 @@ const CFG = {
 
 // The AI Gateway OpenAI-compatible chat/completions endpoint, from either an
 // explicit base URL or the account-id + gateway-name pair.
-function gatewayEndpoint() {
+export function gatewayEndpoint() {
   const base = CFG.gatewayBase
     ? CFG.gatewayBase.replace(/\/+$/, "")
     : `https://gateway.ai.cloudflare.com/v1/${CFG.cfAccountId}/${CFG.cfGateway}/compat`;
@@ -107,7 +108,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // CodeQL js/request-forgery requires the dial target to come from fixed strings.
 const HOME_WS_PATH = new URL(CFG.url).pathname;
 
-function parseConfiguredWsUrl(raw) {
+export function parseConfiguredWsUrl(raw) {
   try {
     const parsed = new URL(raw);
     if (parsed.protocol !== "ws:" && parsed.protocol !== "wss:") return null;
@@ -118,7 +119,7 @@ function parseConfiguredWsUrl(raw) {
   }
 }
 
-function buildWorldRegistry() {
+export function buildWorldRegistry() {
   const urls = Object.create(null);
   urls.home = CFG.url;
 
@@ -148,7 +149,7 @@ function buildWorldRegistry() {
   return Object.freeze(urls);
 }
 
-function buildWorldAliases(urls) {
+export function buildWorldAliases(urls) {
   const aliases = Object.create(null);
   const raw = process.env.MUD_WORLD_ALIASES ?? "";
   if (raw) {
@@ -168,18 +169,18 @@ function buildWorldAliases(urls) {
   return Object.freeze(aliases);
 }
 
-const WORLD_WS = buildWorldRegistry();
+export const WORLD_WS = buildWorldRegistry();
 const WORLD_ALIASES = buildWorldAliases(WORLD_WS);
 const WORLD_KEYS = Object.freeze(Object.keys(WORLD_WS));
 
-function resolveWorldKey(serverName) {
+export function resolveWorldKey(serverName) {
   if (typeof serverName !== "string" || !serverName) return null;
   const key = WORLD_ALIASES[serverName];
   if (typeof key !== "string" || !WORLD_WS[key]) return null;
   return key;
 }
 
-function worldWsUrl(key) {
+export function worldWsUrl(key) {
   if (key === "home") return WORLD_WS.home;
   for (let i = 0; i < WORLD_KEYS.length; i++) {
     const k = WORLD_KEYS[i];
@@ -188,7 +189,7 @@ function worldWsUrl(key) {
   return WORLD_WS.home;
 }
 
-function redactForLog(text) {
+export function redactForLog(text) {
   let out = String(text);
   for (const secret of [CFG.gatewayToken, CFG.anthropicKey, CFG.ollamaKey]) {
     if (secret && secret.length >= 4) {
@@ -214,7 +215,7 @@ function log(...args) {
 // Game state, rebuilt from the structured @event channel.
 // ---------------------------------------------------------------------------
 
-const state = {
+export const state = {
   loggedIn: false,
   worldKey: "home", // slug into WORLD_WS; grid.travel selects a configured world
   room: null, // { id, name, exits[], mobs[], items[], players[] }
@@ -242,8 +243,8 @@ const state = {
 // game offered but does not honor here). Findings append as JSONL to CFG.bugFile.
 // ---------------------------------------------------------------------------
 
-const reportedBugs = new Set(); // de-dupe identical findings within a run
-function reportBug(kind, detail, extra = {}) {
+export const reportedBugs = new Set(); // de-dupe identical findings within a run
+export function reportBug(kind, detail, extra = {}) {
   const sig = `${kind}|${state.room?.id ?? "?"}|${detail}`;
   if (reportedBugs.has(sig)) return;
   reportedBugs.add(sig);
@@ -286,7 +287,7 @@ const REJECTION = /\b(you can'?t\b|you cannot\b|you don'?t (see|have|hear|find|k
 
 // We just sent a command: if it was an enumerated, non-generic verb, arm a watch
 // for a refusal over the next few seconds of prose.
-function recordPendingAction(cmd) {
+export function recordPendingAction(cmd) {
   const verb = cmd.trim().split(/\s+/)[0]?.toLowerCase();
   if (!verb || GENERIC_VERBS.has(verb)) {
     state.pendingAction = null;
@@ -298,7 +299,7 @@ function recordPendingAction(cmd) {
 
 // Per prose line: if our last enumerated action just got refused, the game
 // offered a verb it will not honor here -- a real affordance bug.
-function checkActionRejection(line) {
+export function checkActionRejection(line) {
   const pa = state.pendingAction;
   if (!pa) return;
   if (Date.now() - pa.sentAt > 4000) {
@@ -315,7 +316,7 @@ function checkActionRejection(line) {
   }
 }
 
-function ingest(chunk) {
+export function ingest(chunk) {
   // Validate chunk is a string and not absurdly large
   if (typeof chunk !== "string" || chunk.length > 65536) {
     return;
@@ -350,7 +351,7 @@ function ingest(chunk) {
   }
 }
 
-function applyEvent(name, data) {
+export function applyEvent(name, data) {
   // Validate event name
   if (typeof name !== "string" || !/^[\w.]+$/.test(name)) return;
   
@@ -442,7 +443,7 @@ genuine defects, not for things you simply have not figured out yet.
 
 Reply with ONLY the command (or a single "bug: ..." line), nothing else. No quotes, no explanation.`;
 
-function buildContext() {
+export function buildContext() {
   const r = state.room;
   const v = state.vitals;
   const a = state.affects;
@@ -484,7 +485,7 @@ function buildContext() {
 
 // True when the last few commands are the same thing over and over: the model
 // is stuck (e.g. talking to an NPC that has nothing left to say).
-function isLooping() {
+export function isLooping() {
   const rc = state.recentCommands;
   if (rc.length < 3) return false;
   const last3 = rc.slice(-3);
@@ -492,7 +493,7 @@ function isLooping() {
 }
 
 // Break a loop by walking somewhere new: prefer an exit we did not just come from.
-function escapeMove() {
+export function escapeMove() {
   const exits = state.room?.exits ?? [];
   if (!exits.length) return "look";
   const back = { north: "south", south: "north", east: "west", west: "east", up: "down", down: "up" };
@@ -502,7 +503,7 @@ function escapeMove() {
   return pick;
 }
 
-async function think() {
+export async function think() {
   const prompt = `${buildContext()}\n\nWhat is your next command?`;
   let raw;
   if (CFG.brain === "anthropic") raw = await thinkAnthropic(prompt);
@@ -558,7 +559,7 @@ const thinkGateway = (prompt) =>
     { "cf-aig-authorization": `Bearer ${CFG.gatewayToken}` }, prompt);
 
 // Paid frontier brain: the Anthropic Messages API (native, no SDK/deps).
-async function thinkAnthropic(prompt) {
+export async function thinkAnthropic(prompt) {
   const res = await fetch(`${CFG.anthropicBase}/messages`, {
     method: "POST",
     headers: {
@@ -579,7 +580,7 @@ async function thinkAnthropic(prompt) {
 }
 
 // Models sometimes wrap the answer in prose/markdown; take the first real line.
-function sanitizeCommand(raw) {
+export function sanitizeCommand(raw) {
   let cmd = String(raw).split(/\r?\n/).find((l) => l.trim()) ?? "";
   cmd = cmd.replace(/^[`*">\-\s]+/, "").replace(/[`*"]+$/, "").trim();
   // Drop a leading "command:" / "action:" label if the model adds one.
@@ -591,7 +592,7 @@ function sanitizeCommand(raw) {
 // Reflexes: cheap, deterministic decisions that pre-empt the model.
 // ---------------------------------------------------------------------------
 
-function reflex() {
+export function reflex() {
   const v = state.vitals;
   if (!v) return null;
   // Ride out combat; the server resolves a round per tick. But a fight that never
@@ -666,7 +667,7 @@ function send(cmd) {
   ws.send(cmd);
 }
 
-async function decideAndAct() {
+export async function decideAndAct() {
   const r = reflex();
   if (r === "WAIT") return;
   if (r) {
@@ -760,35 +761,50 @@ async function run() {
   }
 }
 
-process.on("SIGINT", () => {
-  log("shutting down");
-  try {
-    ws?.close();
-  } catch {
-    /* ignore */
+// Config problems that make the chosen brain unusable. Returns a list of
+// human-readable errors; empty means the config is runnable.
+export function validateConfig(cfg = CFG) {
+  const errors = [];
+  if (!["ollama", "anthropic", "gateway"].includes(cfg.brain)) {
+    errors.push(`unknown BOT_BRAIN "${cfg.brain}" (use "ollama", "anthropic", or "gateway")`);
+    return errors;
   }
-  process.exit(0);
-});
+  if (cfg.brain === "anthropic" && !cfg.anthropicKey) {
+    errors.push("BOT_BRAIN=anthropic requires ANTHROPIC_API_KEY (it is never hard-coded)");
+  }
+  if (cfg.brain === "gateway") {
+    if (!cfg.gatewayToken) {
+      errors.push("BOT_BRAIN=gateway requires CF_AIG_TOKEN (the gateway token; provider keys stay in the gateway)");
+    }
+    if (!cfg.gatewayBase && !cfg.cfAccountId) {
+      errors.push("BOT_BRAIN=gateway needs CF_AIG_BASE_URL, or CF_ACCOUNT_ID (+ optional CF_AIG_GATEWAY)");
+    }
+  }
+  return errors;
+}
 
-if (!["ollama", "anthropic", "gateway"].includes(CFG.brain)) {
-  console.error(`unknown BOT_BRAIN "${CFG.brain}" (use "ollama", "anthropic", or "gateway")`);
-  process.exit(1);
-}
-if (CFG.brain === "anthropic" && !CFG.anthropicKey) {
-  console.error("BOT_BRAIN=anthropic requires ANTHROPIC_API_KEY (it is never hard-coded)");
-  process.exit(1);
-}
-if (CFG.brain === "gateway") {
-  if (!CFG.gatewayToken) {
-    console.error("BOT_BRAIN=gateway requires CF_AIG_TOKEN (the gateway token; provider keys stay in the gateway)");
+// Only start playing when executed directly (node bot.mjs); importing the
+// module (the test suite does) must stay side-effect free.
+const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+
+if (isMain) {
+  process.on("SIGINT", () => {
+    log("shutting down");
+    try {
+      ws?.close();
+    } catch {
+      /* ignore */
+    }
+    process.exit(0);
+  });
+
+  const configErrors = validateConfig();
+  if (configErrors.length) {
+    for (const err of configErrors) console.error(err);
     process.exit(1);
   }
-  if (!CFG.gatewayBase && !CFG.cfAccountId) {
-    console.error("BOT_BRAIN=gateway needs CF_AIG_BASE_URL, or CF_ACCOUNT_ID (+ optional CF_AIG_GATEWAY)");
-    process.exit(1);
-  }
-  log("gateway brain configured");
-}
-log(`brain: ${CFG.brain} (model ${CFG.model})`);
+  if (CFG.brain === "gateway") log("gateway brain configured");
+  log(`brain: ${CFG.brain} (model ${CFG.model})`);
 
-run();
+  run();
+}

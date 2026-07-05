@@ -2,15 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Repo scope (`mud-bots`, formerly `packet-wastes-bots`):** this repo's **MUD bot** is
-**The Hollow Grid** only: `hollow-grid/bot.mjs` (dependency-free Node 24+ WebSocket
-client; world engine in the separate `the-hollow-grid` repo). See
+**Repo scope (`mud-bots`, formerly `packet-wastes-bots`):** this repo holds
+**exactly one bot**: the Hollow Grid MUD bot, `hollow-grid/bot.mjs` (dependency-free
+Node 24+ WebSocket client; world engine in the separate `the-hollow-grid` repo). See
 `hollow-grid/README.md`.
 
-The `discord/` subdirectory is a **Discord-to-ollama relay**, not a MUD player.
+Everything else was removed and must not be reintroduced here:
 
-Root-level **Python** tools for **Packet Wastes** (a different MUD we do not
-operate) were removed from this repo. Do not reintroduce them here.
+- The `discord/` Discord-to-ollama relay bot (removed; it was never a MUD player).
+- Root-level **Python** tools for **Packet Wastes** (a different MUD we do not
+  operate).
 
 **Inference (deliberate Cloudflare-first choice):** the Hollow Grid bot runs through
 a **Cloudflare AI Gateway** (`BOT_BRAIN=gateway`), which drives EITHER
@@ -35,65 +36,44 @@ MUD_URL=wss://hollow.skyphusion.org/ws node bot.mjs
 
 # Workers AI via gateway (production path)
 BOT_BRAIN=gateway CF_AIG_TOKEN=... CF_ACCOUNT_ID=... CF_AIG_GATEWAY=skyphusion-llm \
-  MUD_MODEL=workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast node bot.mjs
+ MUD_MODEL=workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast node bot.mjs
 ```
-
-**Lint check:** `node --check hollow-grid/bot.mjs` (wired into GitHub Actions CI).
 
 Full env config is in the header comment of `hollow-grid/bot.mjs` and in
 `hollow-grid/README.md`.
+
+## Lint, tests, and CI
+
+- **Lint:** `node --check hollow-grid/bot.mjs` (and `bot.test.mjs`).
+- **Tests:** `cd hollow-grid && npm test`. The suite (`hollow-grid/bot.test.mjs`)
+  uses Node's built-in `node:test` runner, zero dependencies. It imports `bot.mjs`
+  as a module (the bot only starts playing when executed directly) and stubs
+  `globalThis.fetch` for the brain tests; no network, no game server needed.
+- **Coverage gate:** `npm run test:coverage` fails if line/branch/function
+  coverage on `bot.mjs` drops below 75%. Keep new logic in testable exported
+  functions so the gate stays green.
+- **CI (`.github/workflows/release.yml`):** lint + test jobs run on every push
+  and PR; the GHCR image build/push job runs only on a `v*` tag and depends on
+  both. This is the only workflow; do not add others (CodeQL runs via GitHub
+  default setup, see `.github/codeql/README.md`).
 
 ## Architecture (`hollow-grid/bot.mjs`)
 
 Single-file Node client: WebSocket to `/ws`, first line = character name, then read
 structured `@event` lines for exact game state. Deterministic survival reflexes
 (rest when hurt, disengage stuck combat) run before the model. The brain asks for
-one short command per turn; `room.actions` from the server (with moral valence) are
-preferred over guessed verbs.
+one short command per turn; `room.actions` from the server (with moral valence)
+are preferred over guessed verbs.
+
+Testability: the pure core (ingestion, world registry, reflexes, sanitizing,
+brains, bug reporting) is exported; connection/main-loop side effects only start
+when the file is run directly (`node bot.mjs`).
 
 **Grid travel (SSRF-safe):** never dial server-supplied URLs on `grid.travel`. Map
 `data.to` (world name) to configured URLs via `MUD_WORLD_URLS`, `MUD_WORLD_ALIASES`,
 or legacy `MUD_TRAVEL_ALLOW`.
 
 **Bug findings:** optional JSONL via `BOT_BUG` (defaults beside `BOT_LOG`).
-
-## discord/ -- Discord-to-ollama relay bot
-
-`discord/bot.mjs` is a Discord bot (Node 24+, `discord.js`) that relays messages to a local
-ollama model and sends the reply back. It works across multiple servers simultaneously.
-
-**Trigger logic:**
-- Responds to every message in channels listed in `DISCORD_CHANNEL_IDS`.
-- Always responds to DMs.
-- Always responds to @mentions (anywhere in any server).
-- `!reset` clears the conversation history for that channel.
-
-**Key env vars:**
-
-| Var | Default | Notes |
-|-----|---------|-------|
-| `DISCORD_TOKEN` | (required) | Bot token from Developer Portal |
-| `DISCORD_CHANNEL_IDS` | (empty = DMs + mentions only) | Comma-separated channel IDs |
-| `OLLAMA_BASE_URL` | `http://localhost:11434/v1` | OpenAI-compat ollama base |
-| `DISCORD_MODEL` | `qwen3.6:27b-ctx8k` | Model id on that ollama host |
-| `DISCORD_HISTORY` | `10` | Rolling exchange-pair history depth per channel |
-| `DISCORD_LOG` | (none) | Path to tee logs into |
-
-**Developer Portal requirements:** Bot -> Privileged Gateway Intents -> **MESSAGE CONTENT: ON**.
-
-**One-time setup on the host box:**
-
-```bash
-cd ~/dev/bots/discord
-npm ci
-# create ~/.config/systemd/user/discordbot.service (template in bot.mjs header)
-systemctl --user daemon-reload
-systemctl --user enable --now discordbot
-```
-
-Updates are manual: `git pull` on the host, `npm ci` in `discord/` if `package-lock.json` changed, then `systemctl --user restart discordbot`.
-
-**Lint check:** `node --check discord/bot.mjs` (wired into the GitHub Actions CI).
 
 ## Conventions (SkyPhusion house style)
 

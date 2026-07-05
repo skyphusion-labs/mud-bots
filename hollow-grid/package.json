@@ -6,7 +6,9 @@
   "type": "module",
   "description": "An AI player for The Hollow Grid MUD (WebSocket client over the @event channel; pluggable ollama/anthropic/gateway brain).",
   "scripts": {
-    "bot": "node bot.mjs"
+    "bot": "node bot.mjs",
+    "test": "node --test bot.test.mjs",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=bot.mjs --test-coverage-lines=75 --test-coverage-branches=75 --test-coverage-functions=75 bot.test.mjs"
   },
   "engines": {
     "node": ">=24"
