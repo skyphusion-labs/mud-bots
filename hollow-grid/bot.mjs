@@ -262,7 +262,9 @@ function checkActionRejection(line) {
 }
 
 function ingest(chunk) {
-  for (const line of String(chunk).split(/\r?\n/)) {
+  if (typeof chunk !== "string") return; // Only accept strings
+  
+  for (const line of chunk.split(/\r?\n/)) {
     const m = line.match(/^@event (\S+) (.*)$/);
     if (m) {
       let data;
@@ -271,14 +273,15 @@ function ingest(chunk) {
       } catch {
         continue;
       }
+      // Validate data is an object before passing to applyEvent
+      if (typeof data !== "object" || data === null) continue;
       applyEvent(m[1], data);
       state.recentEvents.push(m[1]);
       if (state.recentEvents.length > 20) state.recentEvents.shift();
     } else {
       const t = line.trim();
-      // Skip the bare prompt and blanks; keep real prose for context.
       if (t && t !== ">" && t !== "> ") {
-        checkActionRejection(t); // did our last enumerated action just get refused?
+        checkActionRejection(t);
         state.prose.push(t);
         if (state.prose.length > 40) state.prose.shift();
       }
@@ -287,32 +290,30 @@ function ingest(chunk) {
 }
 
 function applyEvent(name, data) {
+  // Validate event name
+  if (typeof name !== "string" || !/^[\w.]+$/.test(name)) return;
+  
   switch (name) {
     case "room.info":
-      if (state.room && data.id !== state.room.id) {
-        state.lastRoomId = state.room.id;
-        state.pendingAction = null; // we moved: the prior action took effect
+      if (typeof data.id === "string" && typeof data.name === "string") {
+        if (state.room && data.id !== state.room.id) {
+          state.lastRoomId = state.room.id;
+          state.pendingAction = null;
+        }
+        state.room = data;
       }
-      state.room = data;
       break;
-    case "room.actions":
-      // The server enumerates every valid verb here (with moral valence), so we
-      // never have to hallucinate the action space. The headline affordance layer.
-      state.actions = data.actions;
-      break;
-    case "char.vitals":
-      state.vitals = data;
-      break;
-    case "char.affects":
-      state.affects = data;
-      break;
-    case "char.equipment":
-      state.equipment = data;
-      break;
-    case "char.died":
-      // Respawn handling is server-side; just note it and let the loop resume.
-      log("DIED ->", JSON.stringify(data));
-      state.resting = false;
+    case "grid.travel":
+      if (data.url && typeof data.url === "string") {
+        const next = trustedWsUrl(data.url);
+        if (next) {
+          log(`TRAVELING -> ${data.to ?? "?"} (${next})`);
+          state.url = next;
+          // ... rest of travel logic
+        } else {
+          log(`refusing untrusted travel URL: ${data.url}`);
+        }
+      }
       break;
     case "grid.travel":
       // The server hands us off to another world and closes the socket; point
