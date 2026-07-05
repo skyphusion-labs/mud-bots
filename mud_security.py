@@ -42,7 +42,7 @@ def log_login_reply(logger: logging.Logger, reply: str, *, password: str = "") -
 
 
 def log_username_login(logger: logging.Logger, username: str) -> None:
-    logger.info("Logging in as %s", username)
+    logger.info("Logging in with configured credentials")
 
 
 def write_creds_json(path: Path | str, payload: dict) -> None:
