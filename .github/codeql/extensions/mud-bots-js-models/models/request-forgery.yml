@@ -1,8 +1,0 @@
-extensions:
-  - addsTo:
-      pack: codeql/javascript-all
-      extensible: barrierModel
-    data:
-      - ["global", "Member[resolveWorldKey].ReturnValue", "request-forgery", 0]
-      - ["global", "Member[worldWsUrl].ReturnValue", "request-forgery", 1]
-      - ["global", "Member[redactForLog].ReturnValue", "clear-text-logging", 2]

@@ -50,8 +50,7 @@ header comment of `bot.mjs`.
 
 The bot never dials server-supplied URLs on `grid.travel`. It maps the world name
 (`data.to`) to ws endpoints configured at startup via `MUD_WORLD_URLS` /
-`MUD_WORLD_ALIASES`. Code scanning uses GitHub CodeQL default setup; see
-`.github/codeql/README.md` for the local model pack.
+`MUD_WORLD_ALIASES`. Code scanning uses GitHub CodeQL default setup.
 
 The anthropic/gateway brains bill continuously while the bot runs (it acts every
 few seconds); pick the model and `BOT_THINK_MS` accordingly.
