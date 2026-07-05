@@ -13,7 +13,9 @@ def redact_command(command: str, password: str = "") -> str:
     """Return a command string that is safe to log."""
     if not command:
         return command
-    if password and command == password:
+    # If a password context is present, never log outbound command text.
+    # This avoids accidental disclosure of secrets through prompt/value drift.
+    if password:
         return _REDACTED
     if "pass" in command.lower():
         return _REDACTED
