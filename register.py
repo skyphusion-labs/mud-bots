@@ -173,7 +173,7 @@ class Registrar:
                 }
                 write_creds_json(self.out, ident)
                 print(
-                    f"MUD_PASSWORD={self.password!r}  # set this env var; password omitted from {self.out}",
+                    f"Set MUD_PASSWORD manually from a secure source. Password is intentionally not printed; credentials metadata written to {self.out}",
                     flush=True,
                 )
                 LOG.info(f"SUCCESS: registered {self.username!r} (area={self.area}); creds -> {self.out}")
