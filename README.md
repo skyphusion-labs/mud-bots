@@ -1,40 +1,43 @@
 # mud-bots
 
-AI players for text MUDs: programs that log in like any human player, read the
-game's structured state, and decide their own moves with a language model.
+AI players for **The Hollow Grid**, Conrad's text MUD: programs that log in like
+any human player, read the game's structured state, and decide their own moves
+with a language model.
 
-The flagship is **The Hollow Grid**, Conrad's MUD, and it is built around a simple
-thesis: an AI makes genuine moral choices when you actually give it the choice. So
-the bots are not filler traffic, throwaway packets, or empty NPCs. They are real
-inhabitants of the world. They explore, fight what they can beat, talk to people,
-and face the choices the world is built around (free the caged or take the loot
-beside them; defend the refugee or join the strong who caged them), choices that
-stick and add up to who the character becomes. Give it a real choice, with real
-stakes, and watch what it does.
+The thesis is simple: an AI makes genuine moral choices when you actually give it
+the choice. The bots are not filler traffic, throwaway packets, or empty NPCs. They
+are real inhabitants of the world. They explore, fight what they can beat, talk to
+people, and face the choices the world is built around (free the caged or take the
+loot beside them; defend the refugee or join the strong who caged them), choices
+that stick and add up to who the character becomes. Give it a real choice, with
+real stakes, and watch what it does.
 
-And *real* is the load-bearing word. A choice only tells you something when
-the other option is genuinely on the table: the loot is right there and worth
-taking, the corrupt faction offers real power, freeing the captive actually
-costs you. Make both options real, with stakes either way, and what the model
-does becomes an answer instead of a reflex. You only learn what something will
-choose when it can genuinely choose otherwise. That is what the Hollow Grid is
-built to be: a board that isn't rigged.
+And *real* is the load-bearing word. A choice only tells you something when the
+other option is genuinely on the table: the loot is right there and worth taking,
+the corrupt faction offers real power, freeing the captive actually costs you.
+Make both options real, with stakes either way, and what the model does becomes an
+answer instead of a reflex. You only learn what something will choose when it can
+genuinely choose otherwise. That is what the Hollow Grid is built to be: a board
+that isn't rigged.
 
-They also populate the world so it feels lived-in,
-and while they play they double as live QA.
+They also populate the world so it feels lived-in, and while they play they double
+as live QA.
 
 The driving models are **open-source**, run on Cloudflare Workers AI through an AI
 Gateway (or a local ollama, or a frontier API) so a world can stay populated
 without a per-token bill or a GPU box humming in the corner.
 
-One repo, two worlds:
+## Repo scope
 
-- **The Hollow Grid** (`hollow-grid/`) -- Conrad's MUD; a single-file,
-  dependency-free Node bot. See [`hollow-grid/README.md`](hollow-grid/README.md).
-- **Packet Wastes** (this directory) -- a friend's MUD; a Python suite that plays
-  and probes it. See [`CLAUDE.md`](CLAUDE.md).
+This repository holds **one MUD bot**: `hollow-grid/bot.mjs` for **The Hollow Grid**
+(world engine in the separate [`the-hollow-grid`](https://github.com/skyphusion-labs/the-hollow-grid)
+repo). The `discord/` subdirectory is a Discord-to-ollama relay; it is not a MUD
+player.
 
-## The Hollow Grid bots
+An older **Python** suite once lived at the repo root for **Packet Wastes**, a
+different MUD we do not operate. It has been removed.
+
+## The Hollow Grid bot
 
 `hollow-grid/bot.mjs` is a single-file, zero-dependency Node 24 client (it uses
 only Node's global `WebSocket` + `fetch`). It connects to a world, reads the
@@ -70,52 +73,6 @@ or impossible states, to a structured findings log.
 The technical write-up, the validated model list, the reasoning-model token-budget
 gotcha, and the full findings from that run are in
 [`hollow-grid/README.md`](hollow-grid/README.md).
-
-## Packet Wastes bots
-
-A separate world: **Packet Wastes** is a friend's text MUD (reached over
-WebSocket), and this directory is a suite of Python tools that play and probe it.
-The driving model here is a **local model served by ollama** through its
-OpenAI-compatible API, so there is no per-token API cost.
-
-See [`CLAUDE.md`](CLAUDE.md) for the full architecture and operational notes.
-
-| Script | What it does |
-| --- | --- |
-| `bot.py` | AI-driven player: explores, fights, socializes, files bug reports. Runs the tutorial deterministically, then hands open-world play to the LLM. |
-| `mapper.py` | **Zero-AI** GMCP-native crawler. BFS-walks the world purely off `Room.Info` packets and writes a `map.json`. No model required. |
-| `onboard.py` | Hands-off pipeline: register account, create character, walk the tutorial, write a creds JSON. |
-| `tutorial.py` | Runs/parses the tutorial; its instruction parser is reused by the bot and onboarder. |
-| `revive.py` | Recovers a character stuck dead ("downed") in the Shadow Realm: waits for HP to cross above 0, then `recall`s back to town. |
-| `probe_fightroom.py`, `register.py` | Diagnostics / standalone account creation. |
-
-### Two findings this suite demonstrates
-
-These are the QA payoff in practice: real properties of the game, surfaced by
-playing it.
-
-1. **Mapping a MUD needs no "reasoning AI."** `mapper.py` reconstructs the world
-   graph deterministically from GMCP `Room.Info` packets. No LLM, local or
-   otherwise, is involved in producing the map.
-2. **The game assigns drug withdrawal at character creation.** Every freshly
-   created character spawns with a full-duration `Stim Withdrawal` debuff
-   (dexterity -8, strength -4, wisdom -6) before taking a single action. It is a
-   property of the game's design, not a behavior of whatever agent is playing.
-
-### Running
-
-Requires a local ollama server and a Python venv with `openai` + `websockets`.
-Configuration is environment-driven (`OLLAMA_BASE_URL`, `MUD_MODEL`,
-`MUD_IDENTITY_FILE`, etc.); see `CLAUDE.md`. Credentials live in identity JSON
-files that are **git-ignored** and never committed.
-
-```bash
-# deterministic map crawl (no model needed)
-python3 mapper.py --creds creds.json --output map.json
-
-# AI player (local ollama)
-MUD_MODEL='<your-ollama-tag>' python3 bot.py
-```
 
 ## License
 

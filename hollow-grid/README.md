@@ -1,8 +1,11 @@
 # Hollow Grid bot
 
-An AI player for **The Hollow Grid** (Conrad's MUD on Cloudflare Workers, world
-engine lives in the separate `the-hollow-grid` repo). It connects like any other
-client (WebSocket to `/ws`, first line = character name), reads the structured
+The **only MUD bot in this repository**. An AI player for **The Hollow Grid**
+(Conrad's MUD on Cloudflare Workers; world engine in the separate `the-hollow-grid`
+repo). Packet Wastes tooling (a different MUD we do not operate) was removed
+from this repository.
+
+It connects like any other client (WebSocket to `/ws`, first line = character name), reads the structured
 `@event` channel for exact game state (the same lines `smoke.mjs` asserts on),
 and asks a model for the next command. Deterministic survival reflexes (rest when
 hurt, ride out combat) run before the model so it never burns a round, or its
@@ -43,7 +46,14 @@ BOT_BRAIN=gateway CF_AIG_TOKEN=... CF_ACCOUNT_ID=... CF_AIG_GATEWAY=skyphusion-l
 ```
 
 Full env config (`MUD_NAME`, `MUD_MODEL`, `BOT_THINK_MS`, the gateway/anthropic
-knobs, `BOT_LOG`, ...) is documented in the header comment of `bot.mjs`.
+knobs, `BOT_LOG`, `MUD_WORLD_URLS`, `MUD_WORLD_ALIASES`, ...) is documented in the
+header comment of `bot.mjs`.
+
+### Grid travel (SSRF-safe)
+
+The bot never dials server-supplied URLs on `grid.travel`. It maps the world name
+(`data.to`) to ws endpoints configured at startup via `MUD_WORLD_URLS` /
+`MUD_WORLD_ALIASES`. Code scanning uses GitHub CodeQL default setup.
 
 The anthropic/gateway brains bill continuously while the bot runs (it acts every
 few seconds); pick the model and `BOT_THINK_MS` accordingly.

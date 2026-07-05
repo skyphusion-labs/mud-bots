@@ -1,23 +1,13 @@
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
-
 # Credentials & identities — these hold PLAINTEXT account passwords. Never commit.
 # (covers bot_identity*.json, *_identity.json, new_identity.json, etc.)
 *.json
 
-# Live session output: run logs, crawled maps, and filed bug reports.
+# Live session output: run logs and filed bug reports.
 *.log
 *.jsonl
 
 # Local agent / tooling config
 .claude/
-
-# ...but DO commit curated sample artifacts (a crawled map + its render) so the
-# repo can show example output. These contain only public game-world data.
-!samples/map_world.json
 
 # The Hollow Grid and Discord bots' manifests are real (non-secret) package files,
 # not identity files; keep them tracked despite the blanket *.json ignore above.
