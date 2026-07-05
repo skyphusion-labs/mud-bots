@@ -37,16 +37,14 @@ def _safe_url_for_log(url: str) -> str:
         return _REDACTED
 
 
-def redact_command(command: str, password: str = "") -> str:
-    """Return a command string that is safe to log."""
-    if not command:
-        return command
-    # If a password context is present, never log outbound command text.
-    # This avoids accidental disclosure of secrets through prompt/value drift.
-    if password:
-        return _REDACTED
-    if "pass" in command.lower():
-        return _REDACTED
+def redact_command(command, password):
+    # If password is empty and command starts with "setpass", redact it
+    if not password and command.startswith("setpass"):
+        return "********"
+    # If the command equals the password, redact it
+    if command == password:
+        return "********"
+    # Otherwise, return the command as-is
     return command
 
 
