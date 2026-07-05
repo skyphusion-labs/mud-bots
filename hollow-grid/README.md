@@ -1,8 +1,11 @@
 # Hollow Grid bot
 
-An AI player for **The Hollow Grid** (Conrad's MUD on Cloudflare Workers, world
-engine lives in the separate `the-hollow-grid` repo). It connects like any other
-client (WebSocket to `/ws`, first line = character name), reads the structured
+The **only MUD bot in this repository**. An AI player for **The Hollow Grid**
+(Conrad's MUD on Cloudflare Workers; world engine in the separate `the-hollow-grid`
+repo). Packet Wastes tooling (a different MUD we do not operate) was removed
+from this repository.
+
+It connects like any other client (WebSocket to `/ws`, first line = character name), reads the structured
 `@event` channel for exact game state (the same lines `smoke.mjs` asserts on),
 and asks a model for the next command. Deterministic survival reflexes (rest when
 hurt, ride out combat) run before the model so it never burns a round, or its
