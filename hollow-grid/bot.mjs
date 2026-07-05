@@ -99,6 +99,7 @@ function gatewayEndpoint() {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const HOME_WS = new URL(CFG.url);
+const HOME_WS_PATH = HOME_WS.pathname;
 const TRAVEL_ALLOW = (process.env.MUD_TRAVEL_ALLOW ?? "")
   .split(",")
   .map((s) => s.trim())
@@ -125,7 +126,9 @@ function trustedWsUrl(raw) {
   }
   if (parsed.protocol !== "ws:" && parsed.protocol !== "wss:") return null;
   if (!trustedWsOrigin(parsed.origin)) return null;
-  return parsed.toString();
+  if (parsed.pathname !== HOME_WS_PATH) return null;
+  // Canonicalize: keep only scheme/host/port/path; drop query + fragment.
+  return `${parsed.protocol}//${parsed.host}${parsed.pathname}`;
 }
 
 function redactForLog(text) {
