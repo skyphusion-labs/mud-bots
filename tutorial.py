@@ -44,6 +44,7 @@ import websockets
 
 # Reuse the GMCP parser/ANSI strip from the mapper (single source of truth).
 from mapper import parse_gmcp, strip_ansi
+from mud_security import log_connect, log_outbound, log_username_login
 
 LOG = logging.getLogger("tutorial")
 
@@ -151,7 +152,7 @@ def resolve_model(client, requested: str, logger: Optional[logging.Logger] = Non
     try:
         available = [m.id for m in client.models.list().data]
     except Exception as e:
-        log.warning(f"Could not list models from server ({e}); using {requested!r} as-is.")
+        log.warning("Could not list models from server (%s); using configured model as-is.", e)
         return requested
     if not available or requested in available:
         return requested
@@ -159,13 +160,14 @@ def resolve_model(client, requested: str, logger: Optional[logging.Logger] = Non
     matches = [m for m in available if m.startswith(requested) or requested.startswith(m)]
     if matches:
         if len(matches) > 1:
-            log.warning(f"Model {requested!r} matches multiple tags {matches}; using {matches[0]!r}.")
+            log.warning("Configured model matches multiple installed tags; using the first match.")
         else:
-            log.warning(f"Model {requested!r} not found exactly; using installed tag {matches[0]!r}.")
+            log.warning("Configured model name not found exactly; using nearest installed tag.")
         return matches[0]
     log.error(
-        f"Model {requested!r} is not installed on the server. Available: {available}. "
-        f"Pull it (`ollama pull {requested}`) or set MUD_MODEL to one of the above."
+        "Configured model is not installed on the server (%d tags available). "
+        "Pull it or set MUD_MODEL to an installed tag.",
+        len(available),
     )
     return requested
 
@@ -191,13 +193,14 @@ class TutorialRunner:
             from openai import OpenAI  # lazy: only imported if actually using it
             base = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
             self.llm = OpenAI(api_key=os.getenv("OLLAMA_API_KEY", "ollama"), base_url=base)
-            self.model = os.getenv("MUD_MODEL", self.model or "qwen3:30b-a3b-instruct-2507-q4_K_M")
-            self.model = resolve_model(self.llm, self.model, LOG)
+            self.model = config.get("model", "") or os.getenv(
+                "MUD_MODEL", "qwen3:30b-a3b-instruct-2507-q4_K_M"
+            )
 
     # ---- connection -------------------------------------------------------
 
     async def connect(self) -> bool:
-        LOG.info(f"Connecting to {self.url}")
+        log_connect(LOG, self.url)
         try:
             self.ws = await websockets.connect(self.url, ping_interval=30, ping_timeout=10)
             return True
@@ -207,7 +210,7 @@ class TutorialRunner:
 
     async def send(self, command: str) -> None:
         self.block = []
-        LOG.info(f">>> {command!r}")
+        log_outbound(LOG, command, password=self.password)
         await self.ws.send(command)
 
     async def receive_loop(self) -> None:
@@ -374,7 +377,7 @@ class TutorialRunner:
         receiver = asyncio.create_task(self.receive_loop())
         ok = False
         try:
-            LOG.info(f"Logging in as {self.username}")
+            log_username_login(LOG, self.username)
             if not await self.login():
                 LOG.error("Login failed (never reached in-game state).")
                 return False
@@ -432,6 +435,15 @@ def main() -> None:
     )
 
     config = load_creds(args)
+    if args.use_llm:
+        from openai import OpenAI
+
+        base = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+        client = OpenAI(api_key=os.getenv("OLLAMA_API_KEY", "ollama"), base_url=base)
+        requested = config.get("model") or os.getenv(
+            "MUD_MODEL", "qwen3:30b-a3b-instruct-2507-q4_K_M"
+        )
+        config["model"] = resolve_model(client, requested, LOG)
     runner = TutorialRunner(config, args)
     ok = asyncio.run(runner.run())
     raise SystemExit(0 if ok else 1)

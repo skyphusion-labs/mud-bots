@@ -50,6 +50,7 @@ from typing import Optional
 import websockets
 
 from mapper import parse_gmcp, strip_ansi
+from mud_security import log_connect, log_outbound, write_creds_json
 from tutorial import extract_command, _PRAISE  # reuse the tested tutorial parsing
 
 LOG = logging.getLogger("onboard")
@@ -117,7 +118,7 @@ class Onboarder:
     # ---- connection -------------------------------------------------------
 
     async def connect(self) -> bool:
-        LOG.info(f"Connecting to {self.url}")
+        log_connect(LOG, self.url)
         try:
             self.ws = await websockets.connect(self.url, ping_interval=30, ping_timeout=10)
             return True
@@ -127,8 +128,7 @@ class Onboarder:
 
     async def send(self, command: str) -> None:
         self.block = []
-        shown = command if "pass" not in command.lower() else "********"
-        LOG.info(f">>> {shown!r}")
+        log_outbound(LOG, command, password=self.password)
         await self.ws.send(command)
 
     async def receive_loop(self) -> None:
@@ -345,11 +345,14 @@ def main() -> None:
 
     if ok:
         out = Path(args.out or f"{args.username}.json")
-        out.write_text(json.dumps({
-            "username": args.username, "password": args.password,
+        write_creds_json(out, {
+            "username": args.username,
             "character_name": name,
-        }, indent=2))
-        LOG.info(f"Onboarded '{name}'. Credentials written to {out}.")
+        })
+        LOG.info(
+            f"Onboarded '{name}'. Credentials written to {out} "
+            "(password omitted; set MUD_PASSWORD or pass --password on the CLI)."
+        )
         LOG.info(f"Now run: python3 mapper.py --creds {out}")
     else:
         LOG.error("Onboarding did not complete. See logs above.")

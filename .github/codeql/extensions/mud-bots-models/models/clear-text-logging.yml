@@ -1,0 +1,12 @@
+extensions:
+  - addsTo:
+      pack: codeql/python-all
+      extensible: barrierModel
+    data:
+      - ["mud_security", "Function[redact_command].ReturnValue", "clear-text-logging-sensitive-data"]
+      - ["mud_security", "Function[write_creds_json]", "clear-text-storage-sensitive-data"]
+  - addsTo:
+      pack: codeql/python-all
+      extensible: barrierGuardModel
+    data:
+      - ["mud_security", "Function[_command_is_safe_to_log].Argument[0]", "true", "clear-text-logging-sensitive-data"]

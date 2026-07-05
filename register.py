@@ -8,7 +8,7 @@ The creation dialog wasn't captured before, so this responder is adaptive: it
 reacts to prompt keywords and logs the full (de-ANSI'd) transcript so we can see
 exactly what the server asks. On success it writes creds to --out and exits.
 
-    python3 register.py --out new_identity.json
+    python3 register.py --out new_identity.json --password 'your-chosen-pass'
 """
 
 import argparse
@@ -22,6 +22,7 @@ from pathlib import Path
 import websockets
 
 from mapper import parse_gmcp, strip_ansi
+from mud_security import log_outbound_tagged, write_creds_json
 
 LOG = logging.getLogger("register")
 
@@ -30,7 +31,7 @@ CLASSES = ["scavenger", "nomad", "wastelander", "drifter", "raider", "fixer"]
 
 
 class Registrar:
-    def __init__(self, url, out):
+    def __init__(self, url, out, password: str | None = None):
         self.url, self.out = url, out
         self.ws = None
         self.in_game = False
@@ -38,7 +39,10 @@ class Registrar:
         self.block: list[str] = []
         # generated identity
         self.username = "ai_" + "".join(random.choices(string.ascii_lowercase + string.digits, k=6))
-        self.password = "Aa1!" + "".join(random.choices(string.ascii_letters + string.digits, k=12))
+        self.password = password or (
+            "Aa1!" + "".join(random.choices(string.ascii_letters + string.digits, k=12))
+        )
+        self.password_from_cli = password is not None
         self.charname = random.choice(
             ["Rax", "Vex", "Kael", "Dust", "Mira", "Bolt", "Cinder", "Wraith"]
         ) + str(random.randint(10, 99))
@@ -52,7 +56,7 @@ class Registrar:
         self.ws = await websockets.connect(self.url, ping_interval=30, ping_timeout=10)
 
     async def send(self, cmd, tag):
-        LOG.info(f">>> [{tag}] {cmd!r}")
+        log_outbound_tagged(LOG, cmd, tag, password=self.password)
         await self.ws.send(cmd)
 
     async def recv_loop(self):
@@ -166,12 +170,22 @@ class Registrar:
             ok = await self.drive()
             if ok:
                 ident = {
-                    "username": self.username, "password": self.password,
+                    "username": self.username,
                     "character_name": self.charname, "race": self.race, "class": self.cls,
                     "backstory": "Fresh v1.5 test character.",
                 }
-                Path(self.out).write_text(json.dumps(ident, indent=2))
-                LOG.info(f"SUCCESS: registered {self.username!r} (area={self.area}); creds -> {self.out}")
+                write_creds_json(self.out, ident)
+                if self.password_from_cli:
+                    LOG.info(
+                        f"SUCCESS: registered {self.username!r} (area={self.area}); "
+                        f"creds -> {self.out}. Set MUD_PASSWORD to the password you passed with --password."
+                    )
+                else:
+                    LOG.warning(
+                        f"SUCCESS: registered {self.username!r} (area={self.area}); "
+                        f"creds -> {self.out}. Password was auto-generated and is not stored; "
+                        "re-run with --password to choose one, or reset the account password in-game."
+                    )
             else:
                 LOG.error("did not reach in-game state; see transcript above to extend the responder")
                 LOG.error(f"last lines:\n" + "\n".join(self.block[-12:]))
@@ -185,13 +199,14 @@ class Registrar:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="new_identity.json")
+    ap.add_argument("--password", help="account password (recommended; never printed or written to disk)")
     ap.add_argument("--url", default="wss://74-208-68-248.sslip.io/ws")
     ap.add_argument("--log-level", default="DEBUG")
     args = ap.parse_args()
     logging.basicConfig(level=getattr(logging, args.log_level.upper()),
                         format="[%(asctime)s] %(message)s", datefmt="%H:%M:%S")
     logging.getLogger("websockets").setLevel(logging.WARNING)
-    ok = asyncio.run(Registrar(args.url, args.out).run())
+    ok = asyncio.run(Registrar(args.url, args.out, args.password).run())
     raise SystemExit(0 if ok else 1)
 
 

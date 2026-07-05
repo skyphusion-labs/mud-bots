@@ -43,7 +43,15 @@ BOT_BRAIN=gateway CF_AIG_TOKEN=... CF_ACCOUNT_ID=... CF_AIG_GATEWAY=skyphusion-l
 ```
 
 Full env config (`MUD_NAME`, `MUD_MODEL`, `BOT_THINK_MS`, the gateway/anthropic
-knobs, `BOT_LOG`, ...) is documented in the header comment of `bot.mjs`.
+knobs, `BOT_LOG`, `MUD_WORLD_URLS`, `MUD_WORLD_ALIASES`, ...) is documented in the
+header comment of `bot.mjs`.
+
+### Grid travel (SSRF-safe)
+
+The bot never dials server-supplied URLs on `grid.travel`. It maps the world name
+(`data.to`) to ws endpoints configured at startup via `MUD_WORLD_URLS` /
+`MUD_WORLD_ALIASES`. Code scanning uses GitHub CodeQL default setup; see
+`.github/codeql/README.md` for the local model pack.
 
 The anthropic/gateway brains bill continuously while the bot runs (it acts every
 few seconds); pick the model and `BOT_THINK_MS` accordingly.
