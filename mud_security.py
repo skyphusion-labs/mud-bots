@@ -49,9 +49,9 @@ def redact_command(command: str, password: str = "") -> str:
         return _REDACTED
     return command
 
-    logger.info("Connecting to %s", _safe_url_for_log(url))
+
 def log_connect(logger: logging.Logger, url: str) -> None:
-    logger.info("Connecting to %s", url)
+    logger.info("Connecting to %s", _safe_url_for_log(url))
 
 
 def log_outbound(logger: logging.Logger, command: str, *, password: str = "") -> None:
