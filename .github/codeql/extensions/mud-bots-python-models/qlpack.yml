@@ -1,5 +1,5 @@
 name: skyphusion-labs/mud-bots-python-models
-version: 0.0.3
+version: 0.0.4
 library: true
 extensionTargets:
   codeql/python-all: "*"
