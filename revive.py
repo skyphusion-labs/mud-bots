@@ -41,7 +41,10 @@ class Reviver:
 
     async def send(self, cmd):
         self.block = []
-        print(f">>> {redact_command(cmd, self.password)}", flush=True)
+        if cmd == self.password:
+            print(">>> ********", flush=True)
+        else:
+            print(f">>> {redact_command(cmd, self.password)}", flush=True)
         await self.ws.send(cmd)
 
     def _note(self, message):
