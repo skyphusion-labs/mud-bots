@@ -109,11 +109,7 @@ function trustedWsOrigin(origin) {
   if (origin === HOME_WS.origin) return true;
   for (const entry of TRAVEL_ALLOW) {
     try {
-      // Entry should be in format: scheme://host:port or just host:port
-      const entryUrl = entry.startsWith("ws://") || entry.startsWith("wss://") 
-        ? new URL(entry) 
-        : new URL(`ws://${entry}`);
-      if (entryUrl.origin === origin) return true;
+      if (new URL(entry).origin === origin) return true;
     } catch {
       /* skip malformed entry */
     }
@@ -262,9 +258,14 @@ function checkActionRejection(line) {
 }
 
 function ingest(chunk) {
-  if (typeof chunk !== "string") return; // Only accept strings
+  // Validate chunk is a string and not absurdly large
+  if (typeof chunk !== "string" || chunk.length > 65536) {
+    return;
+  }
   
   for (const line of chunk.split(/\r?\n/)) {
+    if (line.length > 10000) continue; // Skip oversized lines
+    
     const m = line.match(/^@event (\S+) (.*)$/);
     if (m) {
       let data;
@@ -273,14 +274,16 @@ function ingest(chunk) {
       } catch {
         continue;
       }
-      // Validate data is an object before passing to applyEvent
+      // Only accept objects; reject primitives
       if (typeof data !== "object" || data === null) continue;
+      
       applyEvent(m[1], data);
       state.recentEvents.push(m[1]);
       if (state.recentEvents.length > 20) state.recentEvents.shift();
     } else {
       const t = line.trim();
-      if (t && t !== ">" && t !== "> ") {
+      // Skip the bare prompt and blanks; keep real prose for context.
+      if (t && t !== ">" && t !== "> " && t.length <= 500) {
         checkActionRejection(t);
         state.prose.push(t);
         if (state.prose.length > 40) state.prose.shift();
@@ -315,26 +318,31 @@ function applyEvent(name, data) {
         }
       }
       break;
-    case "grid.travel":
-      // The server hands us off to another world and closes the socket; point
-      // the reconnect there so we arrive as the same character (name/level/
-      // standing -- and now race -- travel with us across the Grid).
-      if (data.url) {
-        const next = trustedWsUrl(data.url);
-        if (next) {
-          log(`TRAVELING -> ${data.to ?? "?"} (${next})`);
-          state.url = next;
-          state.room = null;
-          state.actions = null;
-          state.recentCommands = [];
-          state.roomStreak = 0;
-          state.lastDecisionRoom = null;
-          sinceTravel = 0;
-        } else {
-          log(`refusing untrusted travel URL: ${data.url}`);
-        }
-      }
+case "grid.travel":
+  // The server hands us off to another world and closes the socket; point
+  // the reconnect there so we arrive as the same character (name/level/
+  // standing -- and now race -- travel with us across the Grid).
+  if (data && typeof data === "object" && typeof data.url === "string") {
+    // Only accept ws/wss URLs, max reasonable length
+    if (data.url.length > 2048) {
+      log(`refusing oversized travel URL`);
       break;
+    }
+    const next = trustedWsUrl(data.url);
+    if (next) {
+      log(`TRAVELING -> ${data.to ?? "?"} (${next})`);
+      state.url = next;
+      state.room = null;
+      state.actions = null;
+      state.recentCommands = [];
+      state.roomStreak = 0;
+      state.lastDecisionRoom = null;
+      sinceTravel = 0;
+    } else {
+      log(`refusing untrusted travel URL: ${data.url}`);
+    }
+  }
+  break;
     default:
       break; // combat.*, world.*, grid.*, comm.* flow into recentEvents/prose
   }
@@ -588,7 +596,7 @@ function connect() {
       return;
     }
     log(`connecting to ${dialUrl} as ${CFG.name}`);
-    let settled = false; // resolve/reject exactly once for this attempt
+    let settled = false;
     ws = new WebSocket(dialUrl);
     ws.addEventListener("message", (e) => {
       lastMessageAt = Date.now();
