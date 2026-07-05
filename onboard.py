@@ -347,7 +347,6 @@ def main() -> None:
         out = Path(args.out or f"{args.username}.json")
         write_creds_json(out, {
             "username": args.username,
-            "password": args.password,
             "character_name": name,
         })
         LOG.info(

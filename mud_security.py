@@ -46,8 +46,13 @@ def log_username_login(logger: logging.Logger, username: str) -> None:
 
 
 def write_creds_json(path: Path | str, payload: dict) -> None:
-    """Write a credentials JSON file without the password (mode 0600)."""
+    """Write a credentials JSON file without password-like fields (mode 0600)."""
     path = Path(path)
-    out = {k: v for k, v in payload.items() if k != "password"}
+    sensitive_keys = {"password", "passwd", "pass"}
+    out = {
+        k: v
+        for k, v in payload.items()
+        if not (isinstance(k, str) and k.strip().lower() in sensitive_keys)
+    }
     path.write_text(json.dumps(out, indent=2) + "\n")
     path.chmod(0o600)

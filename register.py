@@ -167,7 +167,7 @@ class Registrar:
             ok = await self.drive()
             if ok:
                 ident = {
-                    "username": self.username, "password": self.password,
+                    "username": self.username,
                     "character_name": self.charname, "race": self.race, "class": self.cls,
                     "backstory": "Fresh v1.5 test character.",
                 }
