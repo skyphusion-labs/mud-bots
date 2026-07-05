@@ -65,7 +65,7 @@ def log_outbound_tagged(
 
 
 def log_login_reply(logger: logging.Logger, reply: str, *, password: str = "") -> None:
-    shown = _REDACTED if password and reply == password else reply
+    shown = _REDACTED
     logger.info("login: answering prompt -> %r", shown)
 
 
