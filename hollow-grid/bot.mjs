@@ -98,8 +98,48 @@ function gatewayEndpoint() {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+const HOME_WS = new URL(CFG.url);
+const TRAVEL_ALLOW = (process.env.MUD_TRAVEL_ALLOW ?? "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+function trustedWsOrigin(origin) {
+  if (origin === HOME_WS.origin) return true;
+  for (const entry of TRAVEL_ALLOW) {
+    try {
+      if (new URL(entry).origin === origin) return true;
+    } catch {
+      /* skip malformed entry */
+    }
+  }
+  return false;
+}
+
+function trustedWsUrl(raw) {
+  let parsed;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    return null;
+  }
+  if (parsed.protocol !== "ws:" && parsed.protocol !== "wss:") return null;
+  if (!trustedWsOrigin(parsed.origin)) return null;
+  return parsed.toString();
+}
+
+function redactForLog(text) {
+  let out = String(text);
+  for (const secret of [CFG.gatewayToken, CFG.anthropicKey, CFG.ollamaKey]) {
+    if (secret && secret.length >= 4) {
+      out = out.split(secret).join("[redacted]");
+    }
+  }
+  return out;
+}
+
 function log(...args) {
-  const line = `[${new Date().toISOString()}] ${args.join(" ")}`;
+  const line = redactForLog(`[${new Date().toISOString()}] ${args.join(" ")}`);
   console.log(line);
   if (CFG.logFile) {
     try {
@@ -272,14 +312,19 @@ function applyEvent(name, data) {
       // the reconnect there so we arrive as the same character (name/level/
       // standing -- and now race -- travel with us across the Grid).
       if (data.url) {
-        log(`TRAVELING -> ${data.to ?? "?"} (${data.url})`);
-        state.url = data.url;
-        state.room = null;
-        state.actions = null;
-        state.recentCommands = [];
-        state.roomStreak = 0;
-        state.lastDecisionRoom = null;
-        sinceTravel = 0;
+        const next = trustedWsUrl(data.url);
+        if (next) {
+          log(`TRAVELING -> ${data.to ?? "?"} (${next})`);
+          state.url = next;
+          state.room = null;
+          state.actions = null;
+          state.recentCommands = [];
+          state.roomStreak = 0;
+          state.lastDecisionRoom = null;
+          sinceTravel = 0;
+        } else {
+          log(`refusing untrusted travel URL: ${data.url}`);
+        }
       }
       break;
     default:
@@ -529,9 +574,14 @@ let msgCount = 0; // total messages received; lets us tell a live world from a d
 
 function connect() {
   return new Promise((resolve, reject) => {
-    log(`connecting to ${state.url} as ${CFG.name}`);
+    const dialUrl = trustedWsUrl(state.url);
+    if (!dialUrl) {
+      reject(new Error(`refusing untrusted WebSocket URL: ${state.url}`));
+      return;
+    }
+    log(`connecting to ${dialUrl} as ${CFG.name}`);
     let settled = false; // resolve/reject exactly once for this attempt
-    ws = new WebSocket(state.url);
+    ws = new WebSocket(dialUrl);
     ws.addEventListener("message", (e) => {
       lastMessageAt = Date.now();
       msgCount++;

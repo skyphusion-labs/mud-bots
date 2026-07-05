@@ -11,6 +11,9 @@
   "dependencies": {
     "discord.js": "^14"
   },
+  "overrides": {
+    "undici": "^6.27.0"
+  },
   "engines": {
     "node": ">=24"
   }

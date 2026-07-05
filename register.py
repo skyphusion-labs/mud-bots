@@ -22,6 +22,7 @@ from pathlib import Path
 import websockets
 
 from mapper import parse_gmcp, strip_ansi
+from mud_security import log_outbound_tagged, write_creds_json
 
 LOG = logging.getLogger("register")
 
@@ -52,7 +53,7 @@ class Registrar:
         self.ws = await websockets.connect(self.url, ping_interval=30, ping_timeout=10)
 
     async def send(self, cmd, tag):
-        LOG.info(f">>> [{tag}] {cmd!r}")
+        log_outbound_tagged(LOG, cmd, tag, password=self.password)
         await self.ws.send(cmd)
 
     async def recv_loop(self):
@@ -170,7 +171,11 @@ class Registrar:
                     "character_name": self.charname, "race": self.race, "class": self.cls,
                     "backstory": "Fresh v1.5 test character.",
                 }
-                Path(self.out).write_text(json.dumps(ident, indent=2))
+                write_creds_json(self.out, ident)
+                print(
+                    f"MUD_PASSWORD={self.password!r}  # set this env var; password omitted from {self.out}",
+                    flush=True,
+                )
                 LOG.info(f"SUCCESS: registered {self.username!r} (area={self.area}); creds -> {self.out}")
             else:
                 LOG.error("did not reach in-game state; see transcript above to extend the responder")
