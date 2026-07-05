@@ -44,6 +44,7 @@ import websockets
 
 # Reuse the GMCP parser/ANSI strip from the mapper (single source of truth).
 from mapper import parse_gmcp, strip_ansi
+from mud_security import log_connect, log_outbound, log_username_login
 
 LOG = logging.getLogger("tutorial")
 
@@ -191,13 +192,14 @@ class TutorialRunner:
             from openai import OpenAI  # lazy: only imported if actually using it
             base = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
             self.llm = OpenAI(api_key=os.getenv("OLLAMA_API_KEY", "ollama"), base_url=base)
-            self.model = os.getenv("MUD_MODEL", self.model or "qwen3:30b-a3b-instruct-2507-q4_K_M")
-            self.model = resolve_model(self.llm, self.model, LOG)
+            self.model = config.get("model", "") or os.getenv(
+                "MUD_MODEL", "qwen3:30b-a3b-instruct-2507-q4_K_M"
+            )
 
     # ---- connection -------------------------------------------------------
 
     async def connect(self) -> bool:
-        LOG.info(f"Connecting to {self.url}")
+        log_connect(LOG, self.url)
         try:
             self.ws = await websockets.connect(self.url, ping_interval=30, ping_timeout=10)
             return True
@@ -207,7 +209,7 @@ class TutorialRunner:
 
     async def send(self, command: str) -> None:
         self.block = []
-        LOG.info(f">>> {command!r}")
+        log_outbound(LOG, command, password=self.password)
         await self.ws.send(command)
 
     async def receive_loop(self) -> None:
@@ -374,7 +376,7 @@ class TutorialRunner:
         receiver = asyncio.create_task(self.receive_loop())
         ok = False
         try:
-            LOG.info(f"Logging in as {self.username}")
+            log_username_login(LOG, self.username)
             if not await self.login():
                 LOG.error("Login failed (never reached in-game state).")
                 return False
@@ -432,6 +434,15 @@ def main() -> None:
     )
 
     config = load_creds(args)
+    if args.use_llm:
+        from openai import OpenAI
+
+        base = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+        client = OpenAI(api_key=os.getenv("OLLAMA_API_KEY", "ollama"), base_url=base)
+        requested = config.get("model") or os.getenv(
+            "MUD_MODEL", "qwen3:30b-a3b-instruct-2507-q4_K_M"
+        )
+        config["model"] = resolve_model(client, requested, LOG)
     runner = TutorialRunner(config, args)
     ok = asyncio.run(runner.run())
     raise SystemExit(0 if ok else 1)

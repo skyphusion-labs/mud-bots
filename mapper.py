@@ -43,6 +43,8 @@ from typing import Optional
 
 import websockets
 
+from mud_security import log_connect, log_login_reply, log_username_login
+
 LOG = logging.getLogger("mapper")
 
 # =============================================================================
@@ -298,7 +300,7 @@ class GMCPMapper:
     # ---- connection -------------------------------------------------------
 
     async def connect(self) -> bool:
-        LOG.info(f"Connecting to {self.url}")
+        log_connect(LOG, self.url)
         try:
             self.ws = await websockets.connect(self.url, ping_interval=30, ping_timeout=10)
             return True
@@ -471,7 +473,7 @@ class GMCPMapper:
             recent = "\n".join(self.block[-10:])
             reply = self._login_reply(recent)
             if reply is not None and (reply, recent) != last:
-                LOG.info(f"login: answering prompt -> {reply!r}")
+                log_login_reply(LOG, reply, password=self.password)
                 await self.send(reply)
                 last = (reply, recent)
                 await asyncio.sleep(0.7)
@@ -606,7 +608,7 @@ class GMCPMapper:
             return
         receiver = asyncio.create_task(self.receive_loop())
         try:
-            LOG.info(f"Logging in as {self.username}")
+            log_username_login(LOG, self.username)
             if not await self.login():
                 LOG.error("Login failed (never reached in-game state).")
                 return

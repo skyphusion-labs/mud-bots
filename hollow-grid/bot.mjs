@@ -37,6 +37,10 @@
 //   BOT_QUIET_MS      settle window         (default 700)
 //   BOT_ROOM_LIMIT    decisions in one room before a forced move (default 8)
 //   BOT_LOG           tee output to a file  (optional)
+//   MUD_WORLD_URLS    JSON map of world slug -> ws URL for grid.travel handoffs
+//                     (default: home grid only; server URLs are never dialed raw)
+//   MUD_WORLD_ALIASES JSON map of server world name -> slug in MUD_WORLD_URLS
+//   MUD_TRAVEL_ALLOW  legacy comma-separated ws URLs; registered by hostname slug
 //
 // Note: the bot acts every few seconds, so the anthropic/gateway brains bill
 // continuously while running. Pick the model and BOT_THINK_MS with that in mind.
@@ -98,8 +102,104 @@ function gatewayEndpoint() {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Grid travel never dials a server-supplied URL string. The server names a world
+// (data.to); we map that slug to a ws URL configured at startup (MUD_WORLD_URLS).
+// CodeQL js/request-forgery requires the dial target to come from fixed strings.
+const HOME_WS_PATH = new URL(CFG.url).pathname;
+
+function parseConfiguredWsUrl(raw) {
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "ws:" && parsed.protocol !== "wss:") return null;
+    if (parsed.pathname !== HOME_WS_PATH) return null;
+    return `${parsed.protocol}//${parsed.host}${parsed.pathname}`;
+  } catch {
+    return null;
+  }
+}
+
+function buildWorldRegistry() {
+  const urls = Object.create(null);
+  urls.home = CFG.url;
+
+  const extra = process.env.MUD_WORLD_URLS ?? "";
+  if (extra) {
+    try {
+      for (const [key, val] of Object.entries(JSON.parse(extra))) {
+        if (typeof key !== "string" || typeof val !== "string") continue;
+        const canon = parseConfiguredWsUrl(val);
+        if (canon) urls[key] = canon;
+      }
+    } catch {
+      /* ignore malformed JSON */
+    }
+  }
+
+  for (const entry of (process.env.MUD_TRAVEL_ALLOW ?? "").split(",").map((s) => s.trim()).filter(Boolean)) {
+    const canon = parseConfiguredWsUrl(entry);
+    if (!canon) continue;
+    try {
+      urls[new URL(canon).hostname] = canon;
+    } catch {
+      /* skip malformed entry */
+    }
+  }
+
+  return Object.freeze(urls);
+}
+
+function buildWorldAliases(urls) {
+  const aliases = Object.create(null);
+  const raw = process.env.MUD_WORLD_ALIASES ?? "";
+  if (raw) {
+    try {
+      for (const [alias, key] of Object.entries(JSON.parse(raw))) {
+        if (typeof alias === "string" && typeof key === "string" && urls[key]) {
+          aliases[alias] = key;
+        }
+      }
+    } catch {
+      /* ignore malformed JSON */
+    }
+  }
+  for (const key of Object.keys(urls)) {
+    if (!(key in aliases)) aliases[key] = key;
+  }
+  return Object.freeze(aliases);
+}
+
+const WORLD_WS = buildWorldRegistry();
+const WORLD_ALIASES = buildWorldAliases(WORLD_WS);
+const WORLD_KEYS = Object.freeze(Object.keys(WORLD_WS));
+
+function resolveWorldKey(serverName) {
+  if (typeof serverName !== "string" || !serverName) return null;
+  const key = WORLD_ALIASES[serverName];
+  if (typeof key !== "string" || !WORLD_WS[key]) return null;
+  return key;
+}
+
+function worldWsUrl(key) {
+  if (key === "home") return WORLD_WS.home;
+  for (let i = 0; i < WORLD_KEYS.length; i++) {
+    const k = WORLD_KEYS[i];
+    if (key === k) return WORLD_WS[k];
+  }
+  return WORLD_WS.home;
+}
+
+function redactForLog(text) {
+  let out = String(text);
+  for (const secret of [CFG.gatewayToken, CFG.anthropicKey, CFG.ollamaKey]) {
+    if (secret && secret.length >= 4) {
+      out = out.split(secret).join("[redacted]");
+    }
+  }
+  return out;
+}
+
 function log(...args) {
-  const line = `[${new Date().toISOString()}] ${args.join(" ")}`;
+  const line = redactForLog(`[${new Date().toISOString()}] ${args.join(" ")}`);
   console.log(line);
   if (CFG.logFile) {
     try {
@@ -116,7 +216,7 @@ function log(...args) {
 
 const state = {
   loggedIn: false,
-  url: CFG.url, // where to (re)connect; a grid.travel handoff repoints this to another world
+  worldKey: "home", // slug into WORLD_WS; grid.travel selects a configured world
   room: null, // { id, name, exits[], mobs[], items[], players[] }
   actions: null, // room.actions: the enumerated valid verbs here {verb,label,kind,valence?}
   vitals: null, // { hp, maxHp, level, xp, gold, room, inCombat, poisoned, position }
@@ -150,7 +250,8 @@ function reportBug(kind, detail, extra = {}) {
   const entry = {
     ts: new Date().toISOString(),
     bot: CFG.name,
-    world: state.url,
+    world: state.worldKey,
+    worldUrl: worldWsUrl(state.worldKey),
     kind, // "noticed" (model) | "action-rejected" (deterministic)
     detail,
     room: state.room ? { id: state.room.id, name: state.room.name } : null,
@@ -215,7 +316,14 @@ function checkActionRejection(line) {
 }
 
 function ingest(chunk) {
-  for (const line of String(chunk).split(/\r?\n/)) {
+  // Validate chunk is a string and not absurdly large
+  if (typeof chunk !== "string" || chunk.length > 65536) {
+    return;
+  }
+  
+  for (const line of chunk.split(/\r?\n/)) {
+    if (line.length > 10000) continue; // Skip oversized lines
+    
     const m = line.match(/^@event (\S+) (.*)$/);
     if (m) {
       let data;
@@ -224,14 +332,17 @@ function ingest(chunk) {
       } catch {
         continue;
       }
+      // Only accept objects; reject primitives
+      if (typeof data !== "object" || data === null) continue;
+      
       applyEvent(m[1], data);
       state.recentEvents.push(m[1]);
       if (state.recentEvents.length > 20) state.recentEvents.shift();
     } else {
       const t = line.trim();
       // Skip the bare prompt and blanks; keep real prose for context.
-      if (t && t !== ">" && t !== "> ") {
-        checkActionRejection(t); // did our last enumerated action just get refused?
+      if (t && t !== ">" && t !== "> " && t.length <= 500) {
+        checkActionRejection(t);
         state.prose.push(t);
         if (state.prose.length > 40) state.prose.shift();
       }
@@ -240,46 +351,41 @@ function ingest(chunk) {
 }
 
 function applyEvent(name, data) {
+  // Validate event name
+  if (typeof name !== "string" || !/^[\w.]+$/.test(name)) return;
+  
   switch (name) {
     case "room.info":
-      if (state.room && data.id !== state.room.id) {
-        state.lastRoomId = state.room.id;
-        state.pendingAction = null; // we moved: the prior action took effect
+      if (typeof data.id === "string" && typeof data.name === "string") {
+        if (state.room && data.id !== state.room.id) {
+          state.lastRoomId = state.room.id;
+          state.pendingAction = null;
+        }
+        state.room = data;
       }
-      state.room = data;
-      break;
-    case "room.actions":
-      // The server enumerates every valid verb here (with moral valence), so we
-      // never have to hallucinate the action space. The headline affordance layer.
-      state.actions = data.actions;
-      break;
-    case "char.vitals":
-      state.vitals = data;
-      break;
-    case "char.affects":
-      state.affects = data;
-      break;
-    case "char.equipment":
-      state.equipment = data;
-      break;
-    case "char.died":
-      // Respawn handling is server-side; just note it and let the loop resume.
-      log("DIED ->", JSON.stringify(data));
-      state.resting = false;
       break;
     case "grid.travel":
-      // The server hands us off to another world and closes the socket; point
-      // the reconnect there so we arrive as the same character (name/level/
-      // standing -- and now race -- travel with us across the Grid).
-      if (data.url) {
-        log(`TRAVELING -> ${data.to ?? "?"} (${data.url})`);
-        state.url = data.url;
-        state.room = null;
-        state.actions = null;
-        state.recentCommands = [];
-        state.roomStreak = 0;
-        state.lastDecisionRoom = null;
-        sinceTravel = 0;
+      // The server hands us off to another world and closes the socket. It names
+      // the destination world (data.to); we reconnect using a URL from WORLD_WS,
+      // never the server-supplied data.url string (SSRF / request-forgery guard).
+      if (data && typeof data === "object") {
+        const worldName = typeof data.to === "string" ? data.to : "";
+        const worldKey = resolveWorldKey(worldName);
+        if (worldKey) {
+          log(`TRAVELING -> ${worldName} (${worldWsUrl(worldKey)})`);
+          state.worldKey = worldKey;
+          state.room = null;
+          state.actions = null;
+          state.recentCommands = [];
+          state.roomStreak = 0;
+          state.lastDecisionRoom = null;
+          sinceTravel = 0;
+        } else {
+          log(
+            `unknown travel world ${worldName || "?"}; configure MUD_WORLD_URLS ` +
+              `(server url hint: ${typeof data.url === "string" ? data.url : "?"})`,
+          );
+        }
       }
       break;
     default:
@@ -529,9 +635,10 @@ let msgCount = 0; // total messages received; lets us tell a live world from a d
 
 function connect() {
   return new Promise((resolve, reject) => {
-    log(`connecting to ${state.url} as ${CFG.name}`);
-    let settled = false; // resolve/reject exactly once for this attempt
-    ws = new WebSocket(state.url);
+    const dialUrl = worldWsUrl(state.worldKey);
+    log(`connecting to ${dialUrl} as ${CFG.name}`);
+    let settled = false;
+    ws = new WebSocket(dialUrl);
     ws.addEventListener("message", (e) => {
       lastMessageAt = Date.now();
       msgCount++;
@@ -584,10 +691,11 @@ async function decideAndAct() {
   state.lastDecisionRoom = curRoom;
 
   let cmd;
-  if (state.roomStreak >= CFG.roomStreakLimit) {
-    cmd = escapeMove();
-    state.roomStreak = 0;
-    log(`stuck in ${curRoom} for ${CFG.roomStreakLimit} decisions -> escape move (${cmd})`);
+if (state.roomStreak >= CFG.roomStreakLimit) {
+  cmd = escapeMove();
+  state.roomStreak = 0;
+  const roomDisplay = typeof curRoom === "string" ? curRoom.slice(0, 50) : "?";
+  log(`stuck in ${roomDisplay} for ${CFG.roomStreakLimit} decisions -> escape move (${cmd})`); 
   } else if (isLooping()) {
     cmd = escapeMove();
     log("loop detected -> escape move");
@@ -632,15 +740,15 @@ async function run() {
       log("run error:", e.message);
     }
 
-    // A grid.travel handoff repoints state.url at another world. If that world
+    // A grid.travel handoff repoints state.worldKey at another world. If that world
     // never sends us a single byte (dead host, or a placeholder URL the Grid
     // advertised, e.g. wss://*.example/ws), don't hammer it forever -- after a
     // few dud dials, fall back to the home grid so the bot recovers itself.
     if (msgCount > msgsBefore) {
       deadDials = 0;
-    } else if (state.url !== CFG.url && ++deadDials >= 3) {
-      log(`travel target ${state.url} is silent/unreachable; falling back home -> ${CFG.url}`);
-      state.url = CFG.url;
+    } else if (state.worldKey !== "home" && ++deadDials >= 3) {
+      log(`travel target ${state.worldKey} is silent/unreachable; falling back home -> ${WORLD_WS.home}`);
+      state.worldKey = "home";
       state.room = null;
       state.recentCommands = [];
       sinceTravel = 0;

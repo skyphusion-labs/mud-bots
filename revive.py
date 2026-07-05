@@ -19,6 +19,7 @@ import sys
 import websockets
 
 from mapper import parse_gmcp, strip_ansi
+from mud_security import redact_command
 
 # HP is reported in the prompt line, e.g. "[... HP:-10/30 MP:0/50]", not GMCP.
 _HP_RE = re.compile(r"HP:(-?\d+)/(\d+)")
@@ -40,7 +41,7 @@ class Reviver:
 
     async def send(self, cmd):
         self.block = []
-        print(f">>> {cmd}", flush=True)
+        print(f">>> {redact_command(cmd, self.password)}", flush=True)
         await self.ws.send(cmd)
 
     def _note(self, message):

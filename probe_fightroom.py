@@ -25,6 +25,7 @@ from pathlib import Path
 import websockets
 
 from mapper import parse_gmcp, strip_ansi
+from mud_security import log_outbound
 from tutorial import extract_command
 
 LOG = logging.getLogger("probe")
@@ -68,7 +69,7 @@ class Probe:
 
     async def send(self, cmd):
         self.wrongdir_for = None
-        LOG.info(f">>> {cmd}")
+        log_outbound(LOG, cmd, password=self.pw)
         await self.ws.send(cmd)
 
     def _reset_capture(self):

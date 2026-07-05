@@ -1,0 +1,6 @@
+name: mud-bots CodeQL config
+
+# Local model pack under .github/codeql/mud-bots-models/ (see codeql-analysis workflow).
+packs:
+  javascript-typescript:
+    - skyphusion-labs/mud-bots-models
