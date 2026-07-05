@@ -51,7 +51,7 @@ def redact_command(command: str, password: str = "") -> str:
 
 
 def log_connect(logger: logging.Logger, url: str) -> None:
-    logger.info("Connecting to %s", _safe_url_for_log(url))
+    logger.info("Connecting to server")
 
 
 def log_outbound(logger: logging.Logger, command: str, *, password: str = "") -> None:
