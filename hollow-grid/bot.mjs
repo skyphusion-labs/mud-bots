@@ -109,7 +109,11 @@ function trustedWsOrigin(origin) {
   if (origin === HOME_WS.origin) return true;
   for (const entry of TRAVEL_ALLOW) {
     try {
-      if (new URL(entry).origin === origin) return true;
+      // Entry should be in format: scheme://host:port or just host:port
+      const entryUrl = entry.startsWith("ws://") || entry.startsWith("wss://") 
+        ? new URL(entry) 
+        : new URL(`ws://${entry}`);
+      if (entryUrl.origin === origin) return true;
     } catch {
       /* skip malformed entry */
     }
