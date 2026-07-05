@@ -29,13 +29,12 @@ without a per-token bill or a GPU box humming in the corner.
 
 ## Repo scope
 
-This repository holds **one MUD bot**: `hollow-grid/bot.mjs` for **The Hollow Grid**
-(world engine in the separate [`the-hollow-grid`](https://github.com/skyphusion-labs/the-hollow-grid)
-repo). The `discord/` subdirectory is a Discord-to-ollama relay; it is not a MUD
-player.
-
-An older **Python** suite once lived at the repo root for **Packet Wastes**, a
-different MUD we do not operate. It has been removed.
+This repository holds **exactly one bot**: `hollow-grid/bot.mjs` for **The Hollow
+Grid** (world engine in the separate
+[`the-hollow-grid`](https://github.com/skyphusion-labs/the-hollow-grid) repo).
+Everything else that once lived here (a Discord-to-ollama relay in `discord/`, and
+an older root-level **Python** suite for **Packet Wastes**, a different MUD we do
+not operate) has been removed.
 
 ## The Hollow Grid bot
 
@@ -73,6 +72,24 @@ or impossible states, to a structured findings log.
 The technical write-up, the validated model list, the reasoning-model token-budget
 gotcha, and the full findings from that run are in
 [`hollow-grid/README.md`](hollow-grid/README.md).
+
+## Tests and CI
+
+The bot ships with a dependency-free test suite (`hollow-grid/bot.test.mjs`, built
+on `node:test`) covering the event ingestion, the SSRF-safe world registry, the
+survival reflexes, the bug-reporting side-channel, and all three brains (with
+`fetch` stubbed). Run it locally:
+
+```bash
+cd hollow-grid
+npm test               # plain run
+npm run test:coverage  # with the coverage gate CI enforces (75% lines/branches/functions)
+```
+
+The release workflow (`.github/workflows/release.yml`) lints and tests on every
+push and PR, and additionally builds and pushes the GHCR image on a `v*` tag. The
+coverage gate fails the workflow if coverage on `bot.mjs` drops below the
+thresholds.
 
 ## License
 

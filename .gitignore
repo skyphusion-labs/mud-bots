@@ -9,11 +9,6 @@
 # Local agent / tooling config
 .claude/
 
-# The Hollow Grid and Discord bots' manifests are real (non-secret) package files,
-# not identity files; keep them tracked despite the blanket *.json ignore above.
+# The Hollow Grid bot's manifest is a real (non-secret) package file, not an
+# identity file; keep it tracked despite the blanket *.json ignore above.
 !hollow-grid/package.json
-!discord/package.json
-!discord/package-lock.json
-
-# discord.js dependencies -- never commit
-discord/node_modules/

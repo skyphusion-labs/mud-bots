@@ -1,9 +1,9 @@
 # Hollow Grid bot
 
-The **only MUD bot in this repository**. An AI player for **The Hollow Grid**
+The **only bot in this repository**. An AI player for **The Hollow Grid**
 (Conrad's MUD on Cloudflare Workers; world engine in the separate `the-hollow-grid`
-repo). Packet Wastes tooling (a different MUD we do not operate) was removed
-from this repository.
+repo). Everything else that once lived alongside it (the Discord-to-ollama relay
+and the Packet Wastes Python tooling) was removed from this repository.
 
 It connects like any other client (WebSocket to `/ws`, first line = character name), reads the structured
 `@event` channel for exact game state (the same lines `smoke.mjs` asserts on),
@@ -48,6 +48,24 @@ BOT_BRAIN=gateway CF_AIG_TOKEN=... CF_ACCOUNT_ID=... CF_AIG_GATEWAY=skyphusion-l
 Full env config (`MUD_NAME`, `MUD_MODEL`, `BOT_THINK_MS`, the gateway/anthropic
 knobs, `BOT_LOG`, `MUD_WORLD_URLS`, `MUD_WORLD_ALIASES`, ...) is documented in the
 header comment of `bot.mjs`.
+
+## Tests
+
+`bot.test.mjs` is a dependency-free suite on Node's built-in `node:test` runner.
+It exercises the pure core of the bot: `@event` ingestion and state rebuild, the
+SSRF-safe world registry and `grid.travel` handling, command sanitizing, the
+survival reflexes (rest, stuck-combat watchdog), loop breaking, the QA
+bug-reporting side-channel, and all three brains against a stubbed `fetch` (no
+network). `bot.mjs` only starts playing when executed directly, so the suite can
+import it without side effects.
+
+```bash
+npm test               # plain run
+npm run test:coverage  # the CI gate: fails under 75% line/branch/function coverage on bot.mjs
+```
+
+The release workflow runs both the lint (`node --check`) and the coverage gate on
+every push and PR; the GHCR image build on a `v*` tag depends on them passing.
 
 ### Grid travel (SSRF-safe)
 

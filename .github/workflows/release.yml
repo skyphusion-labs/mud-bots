@@ -1,12 +1,14 @@
 name: release
 
-# Image build + GHCR push for mud-bots, ported from the decommissioned Jenkins
-# pipeline. Behaviour matches the Jenkinsfile:
-#   - lint: syntax-check every bot on push/PR (no test suite by design).
-#   - build + push: ONLY on a version tag (v*), build all images and push
+# CI + image release for the Hollow Grid bot (the only bot in this repo).
+#   - lint: syntax-check the bot on every push/PR.
+#   - test: run the node:test suite with coverage; the job fails if line,
+#     branch, or function coverage on bot.mjs drops below the thresholds
+#     wired into `npm run test:coverage`.
+#   - build + push: ONLY on a version tag (v*), build the image and push
 #     to GHCR as :latest + :<tag>.
 #
-# The bots run as containerized Docker stacks on their host; (re)deploy is done
+# The bot runs as a containerized Docker stack on its host; (re)deploy is done
 # by updating the stack compose file and redeploying -- a separate deliberate
 # step, not owned by CI.
 #
@@ -36,15 +38,27 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Lint bots (node --check)
+          node-version: 24
+      - name: Lint bot (node --check)
         run: |
           node --check hollow-grid/bot.mjs
-          node --check discord/bot.mjs
+          node --check hollow-grid/bot.test.mjs
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Test with coverage gate
+        working-directory: hollow-grid
+        run: npm run test:coverage
 
   build:
-    # Build + push images only on a version tag, matching the Jenkins IS_TAG gate.
-    needs: lint
+    # Build + push the image only on a version tag.
+    needs: [lint, test]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -54,7 +68,6 @@ jobs:
     env:
       TAG: ${{ github.ref_name }}
       REG_HG: ghcr.io/skyphusion-labs/mud-bots-hg
-      REG_DISCORD: ghcr.io/skyphusion-labs/mud-bots-discord
     steps:
       - uses: actions/checkout@v4
 
@@ -63,20 +76,16 @@ jobs:
           docker image prune -f || true
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      - name: Build images
-        run: |
-          docker build -t "$REG_HG:$TAG"      -t "$REG_HG:latest"      -f hollow-grid/Dockerfile hollow-grid/
-          docker build -t "$REG_DISCORD:$TAG" -t "$REG_DISCORD:latest" -f discord/Dockerfile   discord/
+      - name: Build image
+        run: docker build -t "$REG_HG:$TAG" -t "$REG_HG:latest" -f hollow-grid/Dockerfile hollow-grid/
 
-      - name: Push images
+      - name: Push image
         run: |
-          for img in "$REG_HG" "$REG_DISCORD"; do
-            docker push "$img:$TAG"
-            docker push "$img:latest"
-          done
+          docker push "$REG_HG:$TAG"
+          docker push "$REG_HG:latest"
 
       - name: Clean up
         if: always()
         run: |
-          docker image rm "$REG_HG:$TAG" "$REG_HG:latest" "$REG_DISCORD:$TAG" "$REG_DISCORD:latest" || true
+          docker image rm "$REG_HG:$TAG" "$REG_HG:latest" || true
           docker logout ghcr.io || true
