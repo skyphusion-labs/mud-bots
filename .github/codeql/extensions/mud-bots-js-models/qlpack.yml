@@ -1,5 +1,5 @@
 name: skyphusion-labs/mud-bots-js-models
-version: 0.0.2
+version: 0.0.3
 library: true
 extensionTargets:
   codeql/javascript-all: "*"
