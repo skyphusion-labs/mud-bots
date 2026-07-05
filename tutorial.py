@@ -44,7 +44,7 @@ import websockets
 
 # Reuse the GMCP parser/ANSI strip from the mapper (single source of truth).
 from mapper import parse_gmcp, strip_ansi
-from mud_security import log_connect, log_outbound, log_username_login, write_creds_json
+from mud_security import log_connect, log_outbound, log_username_login
 
 LOG = logging.getLogger("tutorial")
 
