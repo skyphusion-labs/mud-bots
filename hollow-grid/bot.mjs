@@ -642,7 +642,7 @@ if (state.roomStreak >= CFG.roomStreakLimit) {
   cmd = escapeMove();
   state.roomStreak = 0;
   const roomDisplay = typeof curRoom === "string" ? curRoom.slice(0, 50) : "?";
-  log(`stuck in ${roomDisplay} for ${CFG.roomStreakLimit} decisions -> escape move (${cmd})`); {
+  log(`stuck in ${roomDisplay} for ${CFG.roomStreakLimit} decisions -> escape move (${cmd})`); 
   } else if (isLooping()) {
     cmd = escapeMove();
     log("loop detected -> escape move");
