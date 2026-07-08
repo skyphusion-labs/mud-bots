@@ -89,3 +89,14 @@ jobs:
         run: |
           docker image rm "$REG_HG:$TAG" "$REG_HG:latest" || true
           docker logout ghcr.io || true
+
+  ci:
+    name: ci
+    needs: [lint, test]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require lint and test
+        run: |
+          test "${{ needs.lint.result }}" = "success"
+          test "${{ needs.test.result }}" = "success"
