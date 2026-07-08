@@ -365,6 +365,20 @@ export function applyEvent(name, data) {
         state.room = data;
       }
       break;
+    case "room.actions":
+      state.actions = Array.isArray(data.actions) ? data.actions : null;
+      break;
+    case "char.vitals":
+      if (typeof data.hp === "number" && typeof data.maxHp === "number") {
+        state.vitals = data;
+      }
+      break;
+    case "char.affects":
+      state.affects = data;
+      break;
+    case "char.equipment":
+      state.equipment = data;
+      break;
     case "grid.travel":
       // The server hands us off to another world and closes the socket. It names
       // the destination world (data.to); we reconnect using a URL from WORLD_WS,
