@@ -250,6 +250,19 @@ describe("event ingestion", () => {
     applyEvent("combat.round", { damage: 3 });
     assert.equal(state.room, null);
   });
+
+  test("char.vitals, room.actions, char.affects, and char.equipment update state", () => {
+    applyEvent("char.vitals", { hp: 12, maxHp: 30, level: 2, inCombat: false });
+    assert.equal(state.vitals.hp, 12);
+    applyEvent("room.actions", { actions: [{ verb: "free", valence: "virtuous", label: "free captive" }] });
+    assert.equal(state.actions.length, 1);
+    applyEvent("char.affects", { morality: 5, faction: "ally" });
+    assert.equal(state.affects.faction, "ally");
+    applyEvent("char.equipment", { weapon: "rusted shiv" });
+    assert.equal(state.equipment.weapon, "rusted shiv");
+    applyEvent("char.vitals", { hp: "nope", maxHp: 30 });
+    assert.equal(state.vitals.hp, 12);
+  });
 });
 
 describe("context building and loop breaking", () => {
