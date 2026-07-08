@@ -1,0 +1,33 @@
+name: code-coverage
+
+# Coverage gate for the hollow-grid bot. Native node:test coverage enforces line/branch/function
+# thresholds via npm run test:coverage (no cobertura file; console report is the artifact).
+# Public repo -> GitHub-hosted ubuntu-latest (fork-safe).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage-mud-bots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hollow-grid
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm run test:coverage
