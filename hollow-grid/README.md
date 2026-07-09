@@ -98,8 +98,9 @@ budget *thinking* and emits no command -- the call comes back empty and the bot
 falls back to `look`. Raise `BOT_MAX_TOKENS` (~2000) for reasoning models so the
 chain-of-thought plus the final command both fit. Through Workers AI the reasoning
 is returned in a **separate** `message.reasoning` field (not inline in
-`message.content`), so the one-command parser still gets a clean command and the
-deliberation is logged for you to watch -- no `<think>` leakage to sanitize.
+`message.content`). Since v1.0.3, when `content` is empty the bot extracts a
+one-line command from `reasoning` (backticks, labeled picks, race names) before
+falling back to `look`.
 
 Browse the catalog with the Cloudflare API
 (`GET /accounts/{id}/ai/models/search?task=Text%20Generation`) or the dashboard;
@@ -120,14 +121,40 @@ docker compose -f compose.laptop.yaml up
 
 Override cred path: `MUD_BOTS_GATEWAY_ENV=/path/to/env docker compose -f compose.laptop.yaml up`
 
+## Container image (GHCR)
+
+CI builds and pushes on every `v*` git tag (see root `CHANGELOG.md`):
+
+```text
+ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+ghcr.io/skyphusion-labs/mud-bots-hg:latest
+```
+
+Minimal runtime: Node 24 slim, single file `bot.mjs`, no deps. Example one-shot:
+
+```bash
+docker run --rm \
+  -e BOT_BRAIN=gateway \
+  -e MUD_URL=wss://hollow.skyphusion.org/ws \
+  -e MUD_NAME=MyBot \
+  -e CF_ACCOUNT_ID=... \
+  -e CF_AIG_GATEWAY=skyphusion-llm \
+  -e CF_AIG_TOKEN=... \
+  -e MUD_MODEL=workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast \
+  ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+```
+
+Federation travel: set `MUD_WORLD_URLS` and `MUD_WORLD_ALIASES` (see `bot.mjs`
+header). Fleet reference compose:
+`fleet-chezmoi/system/stacks/biafra/mud-bots/compose.yaml`.
+
 ## Deployment
 
-Both bots run as outbound-only Node containers on the operator's container host, driven by
-open-source models on Cloudflare Workers AI through the `skyphusion-llm` AI Gateway
-(Unified Billing): no GPU box, no ollama sidecar. This is the GPU-free replacement
-for the retired self-hosted ollama stacks, which died with those decommissioned GPU boxes. Each bot holds its own AI-Gateway-Run-scoped token (per-function keys,
-independently revocable); the `bot.mjs` gateway brain needed zero code change.
-Sessions are bounded (start, watch, stop), keeping cost near-zero.
+Outbound-only Node containers on the operator host, driven by open-source models on
+Cloudflare Workers AI through the `skyphusion-llm` AI Gateway (Unified Billing): no
+GPU box, no ollama sidecar. Each bot holds its own AI-Gateway-Run-scoped token
+(per-function keys, independently revocable). Pin `v1.0.3` (or latest) in compose;
+redeploy with `docker compose pull && docker compose up -d`.
 
 ## Provenance
 

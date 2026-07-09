@@ -75,6 +75,14 @@ or legacy `MUD_TRAVEL_ALLOW`.
 
 **Bug findings:** optional JSONL via `BOT_BUG` (defaults beside `BOT_LOG`).
 
+## Deploy artifacts
+
+- **GHCR image:** `ghcr.io/skyphusion-labs/mud-bots-hg` (tagged on `v*`; current
+  release `v1.0.3`). See root `CHANGELOG.md` and `hollow-grid/README.md`.
+- **Fleet compose:** `fleet-chezmoi/system/stacks/biafra/mud-bots/compose.yaml`
+  (Vagrant + Filth on hollow/dustfall; Scrape + Ash on Rust Choir VLAN QA).
+- **Laptop QA:** `hollow-grid/compose.laptop.yaml` (public `rustchoir.skyphusion.org`).
+
 ## Conventions (SkyPhusion house style)
 
 - Default handle/username for any service is `skyphusion`.

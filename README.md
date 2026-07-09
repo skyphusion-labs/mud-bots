@@ -54,24 +54,51 @@ Cloudflare Workers AI**: set `BOT_BRAIN=gateway` and
 the AI Gateway with no code change and only a gateway token (no provider key in the
 container). It is the GPU-free replacement for the old local-ollama setup.
 
-Two of them run side by side, same prompt, different model and temperament:
+Two models validated for **steady-state fleet load** (instruct @ 40 tokens):
 
-| Bot | Model | Home world | Temperament |
+| Bot (fleet) | Model | Home world | Role |
 | --- | --- | --- | --- |
-| **Vagrant** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | hollow | the operator: terse and decisive, one command and move on |
-| **Static** | `@cf/qwen/qwen3-30b-a3b-fp8` | dustfall | the deliberator: reasons every choice out loud (logged), morality included |
+| **Vagrant** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | hollow | prod load / QA |
+| **Filth** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | dustfall | prod load / QA |
+| **Scrape** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | Rust Choir (Go) | Go-port QA |
+| **Ash** | `@cf/qwen/qwen3-30b-a3b-fp8` | Rust Choir (Go) | Go-port QA (reasoning) |
 
-In a live bounded run, given the real choice, both chose well from opposite
-directions: the operator freed captives in terse single commands with no narration
-at all; the deliberator talked itself through the ethics first ("defending is
-virtuous and joining is corrupt") and arrived at the same place. That is the thesis
-in practice. They also keep the world populated and federation-aware, and quietly
-run as live QA: the bot flags any verb the game offered but then refused, plus stuck
-or impossible states, to a structured findings log.
+Fleet compose and deploy path: `fleet-chezmoi/system/stacks/biafra/mud-bots/`.
+Laptop external QA: `hollow-grid/compose.laptop.yaml` (see
+[`hollow-grid/README.md`](hollow-grid/README.md)).
 
-The technical write-up, the validated model list, the reasoning-model token-budget
-gotcha, and the full findings from that run are in
-[`hollow-grid/README.md`](hollow-grid/README.md).
+Earlier A/B runs compared instruct vs reasoning on hollow/dustfall; instruct @ 40 tok
+won for always-on load. Reasoning models remain supported (`BOT_MAX_TOKENS` ~2000);
+v1.0.3+ also extracts commands from `message.reasoning` when the gateway leaves
+`content` empty.
+
+In bounded live runs, given real moral choices, instruct bots freed captives in terse
+single commands; reasoning bots deliberated in logs and often reached the same
+choices. Bots flag verbs the game offered then refused (`action-rejected`), stuck
+combat (`combat-stuck`), and model-noticed defects to structured JSONL beside
+`BOT_LOG`.
+
+The technical write-up, container pull instructions, model notes, and deployment
+details are in [`hollow-grid/README.md`](hollow-grid/README.md). Release history:
+[`CHANGELOG.md`](CHANGELOG.md).
+
+## Container image (GHCR)
+
+Published on every `v*` git tag by CI (`.github/workflows/release.yml`):
+
+```text
+ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3   # pinned release
+ghcr.io/skyphusion-labs/mud-bots-hg:latest    # tracks latest tag build
+```
+
+Pull (after `docker login ghcr.io`):
+
+```bash
+docker pull ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+```
+
+GitHub **Releases** tab lists semver tags with notes; the image is built from the
+same tag commit.
 
 ## Tests and CI
 
