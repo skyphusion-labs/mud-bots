@@ -3,6 +3,14 @@
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
 image (`ghcr.io/skyphusion-labs/mud-bots-hg`).
 
+## [1.0.8] - 2026-07-09
+
+### Fixed
+- Char-create fallback matches Go/Python race-menu wording (`Answer with a number or a
+  name`) as well as TS (`Type a number or a name`), and overrides `look`/`worlds` when
+  the model (or escapeMove) replies before vitals exist -- unblocks Verdigris Spool soak
+  bots stuck at the race prompt.
+
 ## [1.0.6] - 2026-07-09
 
 ### Fixed

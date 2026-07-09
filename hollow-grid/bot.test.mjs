@@ -658,6 +658,33 @@ describe("decision loop", () => {
     assert.deepEqual(state.recentCommands, []);
     assert.equal(state.resting, true);
   });
+
+  test("char-create fallback picks a race when Go/Python prompt wording is used", async () => {
+    // No vitals yet: still at the race menu. Model returns look (common); escapeMove
+    // would also return look with no room.exits. Override to a race name.
+    state.prose = [
+      "Before the Grid will hold your name, choose what you are:",
+      "  1) Human -- the Registered",
+      "Answer with a number or a name.",
+    ];
+    await withFetch(
+      async () => okJson({ choices: [{ message: { content: "look" } }] }),
+      () => decideAndAct(),
+    );
+    const races = new Set(["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"]);
+    assert.equal(state.recentCommands.length, 1);
+    assert.ok(races.has(state.recentCommands[0]), `got ${state.recentCommands[0]}`);
+  });
+
+  test("char-create fallback also matches the TS Type-a-number prompt", async () => {
+    state.prose = ["Type a number or a name."];
+    await withFetch(
+      async () => okJson({ choices: [{ message: { content: "worlds" } }] }),
+      () => decideAndAct(),
+    );
+    const races = new Set(["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"]);
+    assert.ok(races.has(state.recentCommands[0]));
+  });
 });
 
 describe("scheduled federation travel", () => {
