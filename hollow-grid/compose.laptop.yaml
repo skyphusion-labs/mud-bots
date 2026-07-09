@@ -1,0 +1,25 @@
+name: mud-bot-laptop
+
+# Laptop external QA: same GHCR image as biafra, public Rust Choir URL.
+# Gateway creds: ~/mud-bots-gateway.env (source from ~/.zshrc).
+# Logs + bug JSONL: ./local/logs/ (agents tail local-scrape*.log / *-bugs.jsonl).
+#
+#   docker compose -f compose.laptop.yaml up
+#   docker compose -f compose.laptop.yaml logs -f
+
+services:
+  local-scrape:
+    image: ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+    restart: "no"
+    env_file:
+      - ${MUD_BOTS_GATEWAY_ENV:-${HOME}/mud-bots-gateway.env}
+    environment:
+      BOT_BRAIN: gateway
+      MUD_URL: wss://rustchoir.skyphusion.org/ws
+      MUD_NAME: LocalScrape
+      MUD_MODEL: workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast
+      BOT_MAX_TOKENS: "40"
+      BOT_THINK_MS: "4000"
+      BOT_LOG: /var/log/mudbot/local-scrape.log
+    volumes:
+      - ./local/logs:/var/log/mudbot

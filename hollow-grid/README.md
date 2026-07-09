@@ -105,6 +105,21 @@ Browse the catalog with the Cloudflare API
 (`GET /accounts/{id}/ai/models/search?task=Text%20Generation`) or the dashboard;
 prefer instruction-tuned models, since the bot needs a single short command per turn.
 
+## Laptop external QA (Docker Desktop)
+
+Same image as fleet (`mud-bots-hg:v1.0.3`), against the **public** Rust Choir URL
+(`wss://rustchoir.skyphusion.org/ws`). Gateway creds live in `~/mud-bots-gateway.env`
+(source from `~/.zshrc`).
+
+```bash
+cd hollow-grid
+docker compose -f compose.laptop.yaml up
+# logs:      local/logs/local-scrape.log
+# bug JSONL: local/logs/local-scrape-bugs.jsonl
+```
+
+Override cred path: `MUD_BOTS_GATEWAY_ENV=/path/to/env docker compose -f compose.laptop.yaml up`
+
 ## Deployment
 
 Both bots run as outbound-only Node containers on the operator's container host, driven by
