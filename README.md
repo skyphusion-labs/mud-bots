@@ -61,18 +61,18 @@ Two models validated for **steady-state fleet load** (instruct @ 40 tokens, 4000
 | **Vagrant** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | hollow | steady-state prod / QA |
 | **Filth** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | dustfall | steady-state prod / QA |
 
-**Federation load test (2026-07-09, biafra):** 8 bots @ `BOT_THINK_MS=2000` against
-prod Workers worlds. Full bot → world matrix:
+**Federation load test (2026-07-09, biafra):** phased plan in
 `fleet-chezmoi/system/stacks/biafra/mud-bots/README.md`.
 
-| Bot | World | Notes |
-| --- | --- | --- |
-| Vagrant, Chrome, Scrape, Ash | hollow | pile-on / combat stress |
-| Wire | hollow (+ travel) | `BOT_TRAVEL_INTERVAL_MS=300000`, targets `Dustfall,The Hollow Grid` |
-| Filth, Spit, Static | dustfall | Static = qwen3 reasoning @ load cadence |
+| Step | Layout |
+| --- | --- |
+| **1 (now)** | 4 hollow + 4 dustfall @ 2000ms soak (24–48h) |
+| **2** | +2–4 on Rust Choir (`rustchoir.skyphusion.org`) |
+| **3** | 6 + 6 Workers (12 total) |
+| **4** | ~10 per world (~30 federation-wide) |
 
-Rust Choir Go QA (Scrape/Ash on `rustchoir.skyphusion.org`) is **paused** while Workers
-load test runs. Laptop external QA: `hollow-grid/compose.laptop.yaml`.
+Step 1 bots: Vagrant, Chrome, Scrape, Wire (hollow); Filth, Spit, Static, Ash (dustfall).
+Wire federation-travels every 5m. Scrape/Ash reserved for Rust Choir in step 2.
 
 Fleet compose and deploy path: `fleet-chezmoi/system/stacks/biafra/mud-bots/`.
 See [`hollow-grid/README.md`](hollow-grid/README.md) for env vars and `BOT_TRAVEL_*`.
