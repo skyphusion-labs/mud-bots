@@ -36,6 +36,8 @@
 //   BOT_THINK_MS      min ms between moves   (default 4000; raise it to spend less)
 //   BOT_QUIET_MS      settle window         (default 700)
 //   BOT_ROOM_LIMIT    decisions in one room before a forced move (default 8)
+//   BOT_TRAVEL_INTERVAL_MS  if set, cross-world travel on this timer (default 0 = off)
+//   BOT_TRAVEL_TARGETS  comma-separated world names for scheduled travel (e.g. Dustfall,The Hollow Grid)
 //   BOT_LOG           tee output to a file  (optional)
 //   MUD_WORLD_URLS    JSON map of world slug -> ws URL for grid.travel handoffs
 //                     (default: home grid only; server URLs are never dialed raw)
@@ -87,6 +89,12 @@ export const CFG = {
   // has been WAITing silently (it wedges, and its heartbeat goes stale -> false page).
   // Flag it via the bug reporter and disengage instead of riding a stuck combat forever.
   combatMaxMs: Number(process.env.BOT_COMBAT_MAX_MS ?? 120000),
+  // Optional federation load: ping-pong travel on a timer (hub RPC + handoff stress).
+  travelIntervalMs: Number(process.env.BOT_TRAVEL_INTERVAL_MS ?? 0),
+  travelTargets: (process.env.BOT_TRAVEL_TARGETS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
   // Survival tuning (fractions of maxHp).
   restBelow: 0.35,
   restUntil: 0.85,
@@ -762,6 +770,30 @@ let ws = null;
 let lastMessageAt = 0;
 let lastDecisionAt = 0;
 let sinceTravel = 0; // model decisions since we last crossed worlds (wanderlust)
+let travelTargetIdx = 0;
+let lastScheduledTravelAt = 0;
+
+// Federation load helper: when BOT_TRAVEL_INTERVAL_MS is set, issue travel <world>
+// on a timer instead of waiting for the model to wander. Skips mid-combat.
+export function maybeScheduledTravel() {
+  if (CFG.travelIntervalMs <= 0 || CFG.travelTargets.length === 0) return null;
+  if (state.vitals?.inCombat) return null;
+  if (Date.now() - lastScheduledTravelAt < CFG.travelIntervalMs) return null;
+  const target = CFG.travelTargets[travelTargetIdx % CFG.travelTargets.length];
+  travelTargetIdx++;
+  lastScheduledTravelAt = Date.now();
+  sinceTravel = 0;
+  return `travel ${target}`;
+}
+
+export function resetTravelSchedule() {
+  travelTargetIdx = 0;
+  lastScheduledTravelAt = 0;
+}
+
+export function backdateScheduledTravel(ms) {
+  lastScheduledTravelAt = Date.now() - ms;
+}
 let msgCount = 0; // total messages received; lets us tell a live world from a dead URL
 
 function connect() {
@@ -806,6 +838,15 @@ export async function decideAndAct() {
   }
   if (needInventoryRefresh()) {
     send("inventory");
+    return;
+  }
+  const scheduled = maybeScheduledTravel();
+  if (scheduled) {
+    log("scheduled federation travel ->", scheduled);
+    send(scheduled);
+    recordPendingAction(scheduled);
+    state.recentCommands.push(scheduled);
+    if (state.recentCommands.length > 6) state.recentCommands.shift();
     return;
   }
   // Wanderlust: every so often (and not mid-fight) resurface the list of worlds

@@ -54,18 +54,28 @@ Cloudflare Workers AI**: set `BOT_BRAIN=gateway` and
 the AI Gateway with no code change and only a gateway token (no provider key in the
 container). It is the GPU-free replacement for the old local-ollama setup.
 
-Two models validated for **steady-state fleet load** (instruct @ 40 tokens):
+Two models validated for **steady-state fleet load** (instruct @ 40 tokens, 4000ms think):
 
-| Bot (fleet) | Model | Home world | Role |
+| Bot | Model | Home world | Role |
 | --- | --- | --- | --- |
-| **Vagrant** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | hollow | prod load / QA |
-| **Filth** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | dustfall | prod load / QA |
-| **Scrape** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | Rust Choir (Go) | Go-port QA |
-| **Ash** | `@cf/qwen/qwen3-30b-a3b-fp8` | Rust Choir (Go) | Go-port QA (reasoning) |
+| **Vagrant** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | hollow | steady-state prod / QA |
+| **Filth** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | dustfall | steady-state prod / QA |
+
+**Federation load test (2026-07-09, biafra):** phased plan in
+`fleet-chezmoi/system/stacks/biafra/mud-bots/README.md`.
+
+| Step | Layout |
+| --- | --- |
+| **1 (now)** | 4 hollow + 4 dustfall @ 2000ms soak (24–48h) |
+| **2** | +2–4 on Rust Choir (`rustchoir.skyphusion.org`) |
+| **3** | 6 + 6 Workers (12 total) |
+| **4** | ~10 per world (~30 federation-wide) |
+
+Step 1 bots: Vagrant, Chrome, Scrape, Wire (hollow); Filth, Spit, Static, Ash (dustfall).
+Wire federation-travels every 5m. Scrape/Ash reserved for Rust Choir in step 2.
 
 Fleet compose and deploy path: `fleet-chezmoi/system/stacks/biafra/mud-bots/`.
-Laptop external QA: `hollow-grid/compose.laptop.yaml` (see
-[`hollow-grid/README.md`](hollow-grid/README.md)).
+See [`hollow-grid/README.md`](hollow-grid/README.md) for env vars and `BOT_TRAVEL_*`.
 
 Earlier A/B runs compared instruct vs reasoning on hollow/dustfall; instruct @ 40 tok
 won for always-on load. Reasoning models remain supported (`BOT_MAX_TOKENS` ~2000);
@@ -87,6 +97,7 @@ details are in [`hollow-grid/README.md`](hollow-grid/README.md). Release history
 Published on every `v*` git tag by CI (`.github/workflows/release.yml`):
 
 ```text
+ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.4   # scheduled federation travel (when tagged)
 ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3   # pinned release
 ghcr.io/skyphusion-labs/mud-bots-hg:latest    # tracks latest tag build
 ```

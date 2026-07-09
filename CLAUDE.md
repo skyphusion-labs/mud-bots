@@ -71,16 +71,18 @@ when the file is run directly (`node bot.mjs`).
 
 **Grid travel (SSRF-safe):** never dial server-supplied URLs on `grid.travel`. Map
 `data.to` (world name) to configured URLs via `MUD_WORLD_URLS`, `MUD_WORLD_ALIASES`,
-or legacy `MUD_TRAVEL_ALLOW`.
+or legacy `MUD_TRAVEL_ALLOW`. Optional load-test timer: `BOT_TRAVEL_INTERVAL_MS` +
+`BOT_TRAVEL_TARGETS` (see `bot.mjs` header; v1.0.4+).
 
 **Bug findings:** optional JSONL via `BOT_BUG` (defaults beside `BOT_LOG`).
 
 ## Deploy artifacts
 
 - **GHCR image:** `ghcr.io/skyphusion-labs/mud-bots-hg` (tagged on `v*`; current
-  release `v1.0.3`). See root `CHANGELOG.md` and `hollow-grid/README.md`.
-- **Fleet compose:** `fleet-chezmoi/system/stacks/biafra/mud-bots/compose.yaml`
-  (Vagrant + Filth on hollow/dustfall; Scrape + Ash on Rust Choir VLAN QA).
+  release `v1.0.3`, `v1.0.4` adds scheduled travel). See root `CHANGELOG.md`.
+- **Fleet compose + matrix:** `fleet-chezmoi/system/stacks/biafra/mud-bots/`
+  (`README.md` lists every bot name → world → token → model).
+- **Secrets escrow:** `crew-secrets/swarm-secrets/mud-bots-env/`.
 - **Laptop QA:** `hollow-grid/compose.laptop.yaml` (public `rustchoir.skyphusion.org`).
 
 ## Conventions (SkyPhusion house style)

@@ -35,7 +35,7 @@ const {
   redactForLog, gatewayEndpoint, sanitizeCommand, extractCommandFromReasoning, validateConfig,
   ingest, applyEvent, buildContext, isLooping, escapeMove, reflex,
   recordPendingAction, checkActionRejection, reportBug, needInventoryRefresh,
-  think, thinkAnthropic, decideAndAct,
+  think, thinkAnthropic, decideAndAct, maybeScheduledTravel, resetTravelSchedule, backdateScheduledTravel,
 } = bot;
 
 function resetState() {
@@ -631,5 +631,41 @@ describe("decision loop", () => {
     // rest is a reflex, deliberately not counted toward loop detection
     assert.deepEqual(state.recentCommands, []);
     assert.equal(state.resting, true);
+  });
+});
+
+describe("scheduled federation travel", () => {
+  beforeEach(() => {
+    resetState();
+    resetTravelSchedule();
+    CFG.travelIntervalMs = 60_000;
+    CFG.travelTargets = ["Dustfall", "The Hollow Grid"];
+  });
+
+  test("maybeScheduledTravel returns null when disabled", () => {
+    CFG.travelIntervalMs = 0;
+    assert.equal(maybeScheduledTravel(), null);
+  });
+
+  test("maybeScheduledTravel skips mid-combat", () => {
+    state.vitals = { hp: 10, maxHp: 20, inCombat: true };
+    assert.equal(maybeScheduledTravel(), null);
+  });
+
+  test("maybeScheduledTravel cycles targets after the interval", () => {
+    backdateScheduledTravel(61_000);
+    assert.equal(maybeScheduledTravel(), "travel Dustfall");
+    backdateScheduledTravel(61_000);
+    assert.equal(maybeScheduledTravel(), "travel The Hollow Grid");
+  });
+
+  test("decideAndAct issues scheduled travel before the model", async () => {
+    state.vitals = { hp: 20, maxHp: 20, inCombat: false };
+    backdateScheduledTravel(61_000);
+    await withFetch(
+      async () => { throw new Error("model must not be consulted"); },
+      () => decideAndAct(),
+    );
+    assert.equal(state.recentCommands.at(-1), "travel Dustfall");
   });
 });
