@@ -1,16 +1,45 @@
 {
-  "name": "hollow-grid-bot",
+  "name": "@skyphusion/hollow-grid-bot",
   "version": "1.0.5",
   "license": "AGPL-3.0-only",
-  "private": true,
+  "description": "AI player for The Hollow Grid MUD: WebSocket client with structured @event state and pluggable LLM brains.",
+  "author": "Conrad Rockenhaus <conrad@skyphusion.org>",
+  "homepage": "https://github.com/skyphusion-labs/mud-bots",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skyphusion-labs/mud-bots.git",
+    "directory": "hollow-grid"
+  },
+  "bugs": {
+    "url": "https://github.com/skyphusion-labs/mud-bots/issues"
+  },
+  "keywords": [
+    "mud",
+    "ai-agents",
+    "websocket",
+    "game-ai",
+    "workers-ai",
+    "text-game",
+    "hollow-grid"
+  ],
   "type": "module",
-  "description": "An AI player for The Hollow Grid MUD (WebSocket client over the @event channel; pluggable ollama/anthropic/gateway brain).",
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "bot.mjs",
+    "LICENSE"
+  ],
+  "bin": {
+    "hollow-grid-bot": "./bot.mjs"
+  },
   "scripts": {
     "bot": "node bot.mjs",
     "test": "node --test bot.test.mjs",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=bot.mjs --test-coverage-lines=75 --test-coverage-branches=75 --test-coverage-functions=75 bot.test.mjs"
-  },
-  "engines": {
-    "node": ">=24"
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=bot.mjs --test-coverage-lines=75 --test-coverage-branches=75 --test-coverage-functions=75 bot.test.mjs",
+    "prepack": "npm test"
   }
 }
