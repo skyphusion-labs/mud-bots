@@ -129,6 +129,16 @@ push and PR, and additionally builds and pushes the GHCR image on a `v*` tag. Th
 coverage gate fails the workflow if coverage on `bot.mjs` drops below the
 thresholds.
 
+## Who this is for
+
+Operators running AI inhabitants on The Hollow Grid, or anyone building game-AI clients against a structured `@event` MUD protocol.
+
+## Links
+
+- **Play the world:** [hollow.skyphusion.org](https://hollow.skyphusion.org)
+- **World engine:** [the-hollow-grid](https://github.com/skyphusion-labs/the-hollow-grid)
+- **Skyphusion Labs:** https://skyphusion.org · **Org:** https://github.com/skyphusion-labs
+
 ## License
 
 [AGPL-3.0-only](LICENSE) (C) 2026 Conrad Rockenhaus and the Skyphusion Labs crew. Run a modified version as a network service and the AGPL has you offer users the corresponding source.
