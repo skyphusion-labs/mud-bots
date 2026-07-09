@@ -557,7 +557,73 @@ async function thinkOpenAICompat(label, endpoint, authHeaders, prompt) {
   // half the fun of a slow brain is watching it agonize over `south` vs `look`.
   const reasoning = msg.reasoning ?? msg.reasoning_content;
   if (reasoning) log("thinking:", String(reasoning).replace(/\s+/g, " ").trim().slice(0, 600));
-  return msg.content ?? "";
+  const content = msg.content?.trim() ?? "";
+  if (content) return content;
+  // Some gateway models (e.g. glm-4.7-flash) emit an empty content field and put
+  // the whole reply in message.reasoning instead. Salvage a one-line command from it.
+  return reasoning ? extractCommandFromReasoning(reasoning) : "";
+}
+
+// Reasoning-only replies: pull a plausible MUD command out of deliberation text.
+export function extractCommandFromReasoning(reasoning) {
+  const text = String(reasoning).trim();
+  if (!text) return "";
+
+  const tick = [...text.matchAll(/`([^`\n]{1,120})`/g)];
+  if (tick.length) return tick[tick.length - 1][1].trim();
+
+  const labeled = [...text.matchAll(
+    /(?:^|[\n.]\s*|\*\s*)(?:command|action|answer|reply|response|move|choice|pick|select|type|choose|will (?:type|pick|choose|use|go with))\s*[:\-]?\s*["'`]?([^\n"'`.]{1,120})/gim,
+  )];
+  if (labeled.length) {
+    for (let i = labeled.length - 1; i >= 0; i--) {
+      const candidate = labeled[i][1].trim();
+      if (looksLikeCommand(candidate)) return candidate;
+    }
+  }
+
+  const quoted = [...text.matchAll(/["']([^"'\n]{1,80})["']/g)];
+  for (let i = quoted.length - 1; i >= 0; i--) {
+    const candidate = quoted[i][1].trim();
+    if (looksLikeCommand(candidate)) return candidate;
+  }
+
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const cleaned = lines[i]
+      .replace(/^[\d.]+\s*\*\*[^*]+\*\*:?\s*/i, "")
+      .replace(/^[\-*\s]+/, "")
+      .trim();
+    if (looksLikeCommand(cleaned)) return cleaned;
+  }
+
+  // Char-creation menus often list races by number; grab the last explicit pick.
+  const racePick = [...text.matchAll(/\b(?:pick|choose|select|type|play(?:ing)?)\s+(?:a\s+)?(human|elf|revenant|ghoul|chromed|dustkin|vatborn|[3-7])\b/gi)];
+  if (racePick.length) return racePick[racePick.length - 1][1];
+
+  return "";
+}
+
+function looksLikeCommand(raw) {
+  let cmd = String(raw).replace(/^[`*">\-.\d]+\s*/, "").replace(/[`*"]+$/, "").trim();
+  cmd = cmd.replace(/^(command|action|move|answer|reply|response|choice|pick|select|type|choose)\s*[:\-]\s*/i, "").trim();
+  if (!cmd || cmd.length > 120) return false;
+  if (/[*#]/.test(cmd)) return false;
+  if (/:\s*$/.test(cmd)) return false;
+  if (cmd.split(/\s+/).length > 6) return false;
+  if (/\b(I|we|the user|should|would|could|because|however|therefore|maybe|might|need to|want to|let's|analyze)\b/i.test(cmd)) {
+    return false;
+  }
+  if (/^(bug|wait)\b/i.test(cmd)) return true;
+  if (/^(north|south|east|west|up|down|look|exits|rest|recall|talk|free|rescue|worlds|inventory|affects|who|join|defend|sell|steal|resist|carouse|ping)(?:\s|$)/i.test(cmd)) {
+    return true;
+  }
+  if (/^(?:look|attack|consider|wield|remove|get|drop|buy|sell|give|say|yell|tell|emote|travel|title|list)(?:\s+\S+){0,3}$/i.test(cmd)) {
+    return true;
+  }
+  if (/^(?:human|elf|revenant|ghoul|chromed|dustkin|vatborn|[3-7])$/i.test(cmd)) return true;
+  if (/^[a-z0-9][\w-]{0,30}$/i.test(cmd) && cmd.split(/\s+/).length === 1) return true;
+  return false;
 }
 
 // Free local brain: ollama's OpenAI-compatible chat endpoint.
@@ -720,6 +786,14 @@ if (state.roomStreak >= CFG.roomStreakLimit) {
     } catch (e) {
       log("brain error:", e.message, "-> fallback 'look'");
       cmd = "look";
+    }
+  }
+  if (!cmd && !state.vitals) {
+    const recent = state.prose.slice(-10).join("\n");
+    if (/\btype a number or a name\b/i.test(recent)) {
+      const races = ["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"];
+      cmd = races[Math.floor(Math.random() * races.length)];
+      log("char-create fallback ->", cmd);
     }
   }
   if (!cmd) return;
