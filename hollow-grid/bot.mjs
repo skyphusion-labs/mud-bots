@@ -940,12 +940,17 @@ if (state.roomStreak >= CFG.roomStreakLimit) {
       cmd = "look";
     }
   }
-  if (!cmd && !state.vitals) {
+  // Race menu: TS says "Type a number or a name."; Go/Python say "Answer with...".
+  // The model often returns look/worlds here; escapeMove also collapses to look when
+  // room.info has not arrived yet. Override any non-race reply so char-create completes.
+  if (!state.vitals) {
     const recent = state.prose.slice(-10).join("\n");
-    if (/\btype a number or a name\b/i.test(recent)) {
-      const races = ["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"];
-      cmd = races[Math.floor(Math.random() * races.length)];
-      log("char-create fallback ->", cmd);
+    if (/\b(?:type|answer with) a number or a name\b/i.test(recent)) {
+      if (!cmd || /^(look|worlds|inventory|sense|actions)$/i.test(String(cmd).trim())) {
+        const races = ["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"];
+        cmd = races[Math.floor(Math.random() * races.length)];
+        log("char-create fallback ->", cmd);
+      }
     }
   }
   if (!cmd) return;
