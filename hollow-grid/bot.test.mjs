@@ -35,6 +35,8 @@ const {
   redactForLog, gatewayEndpoint, sanitizeCommand, extractCommandFromReasoning, validateConfig,
   ingest, applyEvent, buildContext, isLooping, escapeMove, reflex,
   recordPendingAction, checkActionRejection, reportBug, needInventoryRefresh,
+  resetInventoryParser,
+  recordInventoryRefreshAttempt,
   think, thinkAnthropic, decideAndAct, maybeScheduledTravel, resetTravelSchedule, backdateScheduledTravel,
 } = bot;
 
@@ -57,6 +59,7 @@ function resetState() {
   state.pendingAction = null;
   state.combatSince = 0;
   reportedBugs.clear();
+  resetInventoryParser();
 }
 
 // Swap globalThis.fetch for the duration of one call.
@@ -305,6 +308,29 @@ describe("context building and loop breaking", () => {
     ingest("You carry: rusted shiv, charm.");
     assert.deepEqual(state.inventory, ["rusted shiv", "charm"]);
     ingest("You carry nothing.");
+    assert.deepEqual(state.inventory, []);
+  });
+
+  test("ingest parses Workers multi-line inventory", () => {
+    ingest("You are carrying:");
+    ingest("  rusted shiv");
+    ingest("  antidote vial (x2)");
+    assert.deepEqual(state.inventory, ["rusted shiv", "antidote vial"]);
+  });
+
+  test("ingest parses Workers empty inventory", () => {
+    ingest("You are carrying nothing.");
+    assert.deepEqual(state.inventory, []);
+  });
+
+  test("needInventoryRefresh fails open after repeated parse misses", () => {
+    state.actions = [{ verb: "sell", label: "sell salvage" }];
+    state.inventory = null;
+    for (let i = 0; i < 3; i++) {
+      assert.equal(needInventoryRefresh(), true);
+      recordInventoryRefreshAttempt();
+    }
+    assert.equal(needInventoryRefresh(), false);
     assert.deepEqual(state.inventory, []);
   });
 

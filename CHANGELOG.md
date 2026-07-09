@@ -3,6 +3,13 @@
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
 image (`ghcr.io/skyphusion-labs/mud-bots-hg`).
 
+## [1.0.6] - 2026-07-09
+
+### Fixed
+- Parse Workers inventory prose (`You are carrying:` multi-line and `You are carrying
+  nothing.`) so hollow/dustfall bots do not loop on `inventory` when `sell` is offered.
+- Fail open to empty inventory after three unparseable refresh attempts (circuit breaker).
+
 ## [1.0.5] - 2026-07-09
 
 ### Added

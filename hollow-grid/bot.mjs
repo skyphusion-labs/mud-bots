@@ -232,7 +232,7 @@ export const state = {
   vitals: null, // { hp, maxHp, level, xp, gold, room, inCombat, poisoned, position }
   affects: null, // { morality, addiction, faction, resisted }
   equipment: null, // { weapon, head, body, hands, feet }
-  inventory: null, // string[] | null: null = unknown; [] = empty; parsed from "You carry:" prose
+  inventory: null, // string[] | null: null = unknown; [] = empty; parsed from inventory prose
   prose: [], // recent human-readable lines (no @event), capped
   recentEvents: [], // recent event names, for context
   resting: false, // we issued rest and are waiting to heal up
@@ -372,7 +372,7 @@ export function ingest(chunk) {
       const t = line.trim();
       // Skip the bare prompt and blanks; keep real prose for context.
       if (t && t !== ">" && t !== "> " && t.length <= 500) {
-        parseInventoryProse(t);
+        parseInventoryProse(line);
         checkActionRejection(t);
         state.prose.push(t);
         if (state.prose.length > 40) state.prose.shift();
@@ -392,6 +392,7 @@ export function applyEvent(name, data) {
           state.lastRoomId = state.room.id;
           state.pendingAction = null;
           state.inventory = null;
+          inventoryCollect = false;
         }
         state.room = data;
       }
@@ -532,16 +533,57 @@ export function buildContext() {
   return lines.join("\n");
 }
 
-// Parse "You carry: ..." prose from the inventory command (no @event channel).
+// Workers (the-hollow-grid) emit multi-line "You are carrying:" blocks; Go uses
+// single-line "You carry: a, b." -- parse both so needInventoryRefresh can clear.
+let inventoryCollect = false;
+let inventoryRefreshAttempts = 0;
+
+export function resetInventoryParser() {
+  inventoryCollect = false;
+  inventoryRefreshAttempts = 0;
+}
+
+export function recordInventoryRefreshAttempt() {
+  inventoryRefreshAttempts++;
+}
+
+function parseInventoryItemLine(line) {
+  const m = line.match(/^\s+(.+?)(?:\s+\(x\d+\))?\s*\.?\s*$/);
+  return m ? m[1].trim() : null;
+}
+
+// Parse inventory prose from the inventory command (no @event channel).
 function parseInventoryProse(line) {
   const t = line.trim();
+
+  if (/^You are carrying nothing\.?$/i.test(t)) {
+    state.inventory = [];
+    inventoryCollect = false;
+    return true;
+  }
+  if (/^You are carrying:\s*$/i.test(t)) {
+    state.inventory = [];
+    inventoryCollect = true;
+    return true;
+  }
+  if (inventoryCollect) {
+    const item = parseInventoryItemLine(line);
+    if (item) {
+      state.inventory.push(item);
+      return true;
+    }
+    inventoryCollect = false;
+  }
+
   if (/^You carry nothing\.?$/i.test(t)) {
     state.inventory = [];
+    inventoryCollect = false;
     return true;
   }
   const m = t.match(/^You carry:\s*(.+?)\.?$/i);
   if (m) {
     state.inventory = m[1].split(/,\s*/).map((s) => s.trim()).filter(Boolean);
+    inventoryCollect = false;
     return true;
   }
   return false;
@@ -550,8 +592,21 @@ function parseInventoryProse(line) {
 // Before selling at the market, refresh inventory once so the model can pick an item.
 export function needInventoryRefresh() {
   const verbs = (state.actions ?? []).map((a) => (a.verb ?? "").toLowerCase());
-  if (!verbs.some((v) => v === "sell" || v === "trade")) return false;
-  return state.inventory === null;
+  if (!verbs.some((v) => v === "sell" || v === "trade")) {
+    inventoryRefreshAttempts = 0;
+    return false;
+  }
+  if (state.inventory !== null) {
+    inventoryRefreshAttempts = 0;
+    return false;
+  }
+  if (inventoryRefreshAttempts >= 3) {
+    log("inventory parse failed after 3 tries; assuming empty");
+    state.inventory = [];
+    inventoryRefreshAttempts = 0;
+    return false;
+  }
+  return true;
 }
 
 // True when the last few commands are the same thing over and over: the model
@@ -838,6 +893,7 @@ export async function decideAndAct() {
     return;
   }
   if (needInventoryRefresh()) {
+    recordInventoryRefreshAttempt();
     send("inventory");
     return;
   }
