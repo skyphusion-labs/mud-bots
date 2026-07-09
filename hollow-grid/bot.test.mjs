@@ -34,7 +34,7 @@ const {
   resolveWorldKey, worldWsUrl, WORLD_WS,
   redactForLog, gatewayEndpoint, sanitizeCommand, extractCommandFromReasoning, validateConfig,
   ingest, applyEvent, buildContext, isLooping, escapeMove, reflex,
-  recordPendingAction, checkActionRejection, reportBug,
+  recordPendingAction, checkActionRejection, reportBug, needInventoryRefresh,
   think, thinkAnthropic, decideAndAct,
 } = bot;
 
@@ -46,6 +46,7 @@ function resetState() {
   state.vitals = null;
   state.affects = null;
   state.equipment = null;
+  state.inventory = null;
   state.prose = [];
   state.recentEvents = [];
   state.resting = false;
@@ -188,12 +189,14 @@ describe("command sanitizing", () => {
   test("drops a leading command label and caps length", () => {
     assert.equal(sanitizeCommand("Command: south"), "south");
     assert.equal(sanitizeCommand("action - west"), "west");
-    assert.equal(sanitizeCommand("x".repeat(300)).length, 120);
+    assert.equal(sanitizeCommand("attack " + "x".repeat(200)).length, 120);
   });
 
-  test("empty input yields an empty command", () => {
-    assert.equal(sanitizeCommand(""), "");
-    assert.equal(sanitizeCommand("   \n  "), "");
+  test("empty or non-command input falls back to look", () => {
+    assert.equal(sanitizeCommand(""), "look");
+    assert.equal(sanitizeCommand("   \n  "), "look");
+    assert.equal(sanitizeCommand("I should probably go south because it is safer."), "look");
+    assert.equal(sanitizeCommand(".printStackTrace()"), "look");
   });
 });
 
@@ -292,6 +295,26 @@ describe("context building and loop breaking", () => {
     assert.match(ctx, /The guard sneers\./);
   });
 
+  test("buildContext includes parsed inventory", () => {
+    state.inventory = ["charm", "scrap"];
+    const ctx = buildContext();
+    assert.match(ctx, /Carrying: charm, scrap/);
+  });
+
+  test("ingest parses inventory prose", () => {
+    ingest("You carry: rusted shiv, charm.");
+    assert.deepEqual(state.inventory, ["rusted shiv", "charm"]);
+    ingest("You carry nothing.");
+    assert.deepEqual(state.inventory, []);
+  });
+
+  test("needInventoryRefresh when sell is offered and inventory unknown", () => {
+    state.actions = [{ verb: "sell", label: "sell salvage" }];
+    assert.equal(needInventoryRefresh(), true);
+    state.inventory = ["scrap"];
+    assert.equal(needInventoryRefresh(), false);
+  });
+
   test("buildContext with no state yields no room lines", () => {
     assert.equal(buildContext().includes("Room:"), false);
   });
@@ -375,6 +398,12 @@ describe("bug reporting (QA side-channel)", () => {
     assert.equal(state.pendingAction, null);
   });
 
+  test("bare sell does not arm the refusal watch", () => {
+    state.actions = [{ verb: "sell", label: "sell salvage" }];
+    recordPendingAction("sell");
+    assert.equal(state.pendingAction, null);
+  });
+
   test("a direct refusal of an offered verb is a reported affordance bug", () => {
     state.room = { id: "r1", name: "Pit" };
     state.pendingAction = { verb: "free", roomId: "r1", sentAt: Date.now() };
@@ -390,6 +419,14 @@ describe("bug reporting (QA side-channel)", () => {
       "the hum starts thinking about you instead, or so the drifters claim.");
     assert.equal(reportedBugs.size, 0);
     assert.notEqual(state.pendingAction, null);
+  });
+
+  test("missing-arg prompts clear the watch without filing action-rejected", () => {
+    state.room = { id: "market", name: "Market" };
+    state.pendingAction = { verb: "sell", roomId: "market", sentAt: Date.now() };
+    checkActionRejection("Sell what?");
+    assert.equal(reportedBugs.size, 0);
+    assert.equal(state.pendingAction, null);
   });
 
   test("the refusal watch expires after a few seconds", () => {

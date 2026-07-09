@@ -3,6 +3,16 @@
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
 image (`ghcr.io/skyphusion-labs/mud-bots-hg`).
 
+## [1.0.4] - 2026-07-09
+
+### Fixed
+- `sanitizeCommand()` rejects gateway garbage (truncated replies, `.printStackTrace`,
+  prose) via `looksLikeCommand()` and falls back to `look`.
+- Parse `You carry: ...` inventory prose into context; auto-run `inventory` when
+  `sell`/`trade` is offered and carrying is unknown.
+- Do not arm `action-rejected` on bare `sell`/`buy`/etc or on missing-arg replies
+  like `Sell what?`.
+
 ## [1.0.3] - 2026-07-09
 
 ### Fixed

@@ -223,6 +223,7 @@ export const state = {
   vitals: null, // { hp, maxHp, level, xp, gold, room, inCombat, poisoned, position }
   affects: null, // { morality, addiction, faction, resisted }
   equipment: null, // { weapon, head, body, hands, feet }
+  inventory: null, // string[] | null: null = unknown; [] = empty; parsed from "You carry:" prose
   prose: [], // recent human-readable lines (no @event), capped
   recentEvents: [], // recent event names, for context
   resting: false, // we issued rest and are waiting to heal up
@@ -279,6 +280,16 @@ const GENERIC_VERBS = new Set([
   "yell", "tell", "emote", "ping", "title",
 ]);
 
+// Verbs the server lists in room.actions that still need a target; bare "sell" is
+// a missing-arg prompt ("Sell what?"), not an affordance bug.
+const VERBS_NEEDING_ARGS = new Set([
+  "sell", "buy", "get", "drop", "attack", "give", "wield", "remove", "consider",
+  "tell", "say", "yell", "emote", "title", "travel", "look",
+]);
+
+// Server asks for a missing argument; clear the refusal watch without filing.
+const MISSING_ARG_RESPONSE = /^(?:Sell what\?|Buy what\?|Give what\?|Drop what\?|Get what\?|Attack (?:what|whom)\?|Wield what\?|Remove what\?|Tell (?:whom|who)\?|Consider what\?|To whom\?)$/i;
+
 // Direct command refusals. Tightened after a soak false-positive: bare "you don't"
 // / "there's no" matched ambient flavor prose ("if you don't think about why"), so
 // perception verbs are now required and the match is further gated by length + a
@@ -288,8 +299,13 @@ const REJECTION = /\b(you can'?t\b|you cannot\b|you don'?t (see|have|hear|find|k
 // We just sent a command: if it was an enumerated, non-generic verb, arm a watch
 // for a refusal over the next few seconds of prose.
 export function recordPendingAction(cmd) {
-  const verb = cmd.trim().split(/\s+/)[0]?.toLowerCase();
+  const parts = cmd.trim().split(/\s+/);
+  const verb = parts[0]?.toLowerCase();
   if (!verb || GENERIC_VERBS.has(verb)) {
+    state.pendingAction = null;
+    return;
+  }
+  if (parts.length === 1 && VERBS_NEEDING_ARGS.has(verb)) {
     state.pendingAction = null;
     return;
   }
@@ -310,6 +326,10 @@ export function checkActionRejection(line) {
   // narrative prose: real command refusals are short and direct, flavor is not.
   const clean = line.replace(/\x1b\[[0-9;]*m/g, "").trim();
   if (clean.length > 80 || /^>>/.test(clean) || /<<\s*$/.test(clean)) return;
+  if (MISSING_ARG_RESPONSE.test(clean)) {
+    state.pendingAction = null;
+    return;
+  }
   if (REJECTION.test(clean)) {
     reportBug("action-rejected", `server offered "${pa.verb}" here but refused it: "${clean.slice(0, 160)}"`, { verb: pa.verb });
     state.pendingAction = null;
@@ -343,6 +363,7 @@ export function ingest(chunk) {
       const t = line.trim();
       // Skip the bare prompt and blanks; keep real prose for context.
       if (t && t !== ">" && t !== "> " && t.length <= 500) {
+        parseInventoryProse(t);
         checkActionRejection(t);
         state.prose.push(t);
         if (state.prose.length > 40) state.prose.shift();
@@ -361,6 +382,7 @@ export function applyEvent(name, data) {
         if (state.room && data.id !== state.room.id) {
           state.lastRoomId = state.room.id;
           state.pendingAction = null;
+          state.inventory = null;
         }
         state.room = data;
       }
@@ -430,8 +452,9 @@ When the context lists "Available actions here", those are the enumerated valid
 moves for this exact spot, with their moral weight shown in brackets ([virtuous],
 [corrupt], [grave]). Prefer choosing one of those exact verbs over guessing. The
 universal commands above (look, inventory, rest, worlds, travel, ...) still work
-any time. The moral choices are real and they stick: who you become is the sum of
-them.
+any time. When "Carrying" lists items and sell is available, use sell <item> with
+a specific item name, not bare "sell". The moral choices are real and they stick:
+who you become is the sum of them.
 
 The wastes are full of people the strong have caged or hunted. When you find
 someone held captive, chained, or begging for help, FREEING them is the point of
@@ -478,6 +501,9 @@ export function buildContext() {
   }
   if (a) lines.push(`Faction: ${a.faction ?? "none"}  Addiction: ${a.addiction ?? 0}`);
   if (state.equipment?.weapon) lines.push(`Wielding: ${state.equipment.weapon}`);
+  if (state.inventory !== null) {
+    lines.push(`Carrying: ${state.inventory.length ? state.inventory.join(", ") : "nothing"}`);
+  }
   // The enumerated action space for this spot (with moral weight). The model
   // should pick a verb from here rather than guessing -- no command hallucination.
   const acts = state.actions ?? [];
@@ -495,6 +521,28 @@ export function buildContext() {
     for (const p of state.prose.slice(-8)) lines.push("  " + p);
   }
   return lines.join("\n");
+}
+
+// Parse "You carry: ..." prose from the inventory command (no @event channel).
+function parseInventoryProse(line) {
+  const t = line.trim();
+  if (/^You carry nothing\.?$/i.test(t)) {
+    state.inventory = [];
+    return true;
+  }
+  const m = t.match(/^You carry:\s*(.+?)\.?$/i);
+  if (m) {
+    state.inventory = m[1].split(/,\s*/).map((s) => s.trim()).filter(Boolean);
+    return true;
+  }
+  return false;
+}
+
+// Before selling at the market, refresh inventory once so the model can pick an item.
+export function needInventoryRefresh() {
+  const verbs = (state.actions ?? []).map((a) => (a.verb ?? "").toLowerCase());
+  if (!verbs.some((v) => v === "sell" || v === "trade")) return false;
+  return state.inventory === null;
 }
 
 // True when the last few commands are the same thing over and over: the model
@@ -665,7 +713,9 @@ export function sanitizeCommand(raw) {
   cmd = cmd.replace(/^[`*">\-\s]+/, "").replace(/[`*"]+$/, "").trim();
   // Drop a leading "command:" / "action:" label if the model adds one.
   cmd = cmd.replace(/^(command|action|move)\s*[:\-]\s*/i, "").trim();
-  return cmd.slice(0, 120);
+  cmd = cmd.slice(0, 120).trim();
+  if (!cmd || !looksLikeCommand(cmd)) return "look";
+  return cmd;
 }
 
 // ---------------------------------------------------------------------------
@@ -752,6 +802,10 @@ export async function decideAndAct() {
   if (r === "WAIT") return;
   if (r) {
     send(r); // reflex (rest): deliberate, not counted toward loop detection
+    return;
+  }
+  if (needInventoryRefresh()) {
+    send("inventory");
     return;
   }
   // Wanderlust: every so often (and not mid-fight) resurface the list of worlds
