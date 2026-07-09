@@ -9,6 +9,10 @@
 # Local agent / tooling config
 .claude/
 
+# Laptop compose run output (logs/jsonl stay untracked; keep the dir)
+hollow-grid/local/logs/*
+!hollow-grid/local/logs/.gitkeep
+
 # The Hollow Grid bot's manifest is a real (non-secret) package file, not an
 # identity file; keep it tracked despite the blanket *.json ignore above.
 !hollow-grid/package.json
