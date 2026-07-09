@@ -32,6 +32,16 @@ without a per-token bill or a GPU box humming in the corner.
 This repository holds **exactly one bot**: `hollow-grid/bot.mjs` for **The Hollow
 Grid** (world engine in the separate
 [`the-hollow-grid`](https://github.com/skyphusion-labs/the-hollow-grid) repo).
+
+### Install (npm)
+
+```bash
+npm install @skyphusion/hollow-grid-bot
+MUD_URL=wss://hollow.skyphusion.org/ws hollow-grid-bot
+```
+
+Or from source: `cd hollow-grid && npm run bot`.
+
 Everything else that once lived here (a Discord-to-ollama relay in `discord/`, and
 an older root-level **Python** suite for **Packet Wastes**, a different MUD we do
 not operate) has been removed.

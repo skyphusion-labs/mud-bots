@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // An AI player for The Hollow Grid.
 //
 // It connects like any other client (WebSocket to /ws, first line = name),
