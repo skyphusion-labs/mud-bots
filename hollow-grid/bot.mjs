@@ -605,7 +605,7 @@ export function extractCommandFromReasoning(reasoning) {
 }
 
 function looksLikeCommand(raw) {
-  let cmd = String(raw).replace(/^[`*">\-\*\d.]+\s*/, "").replace(/[`*"]+$/, "").trim();
+  let cmd = String(raw).replace(/^[`*">\-.\d]+\s*/, "").replace(/[`*"]+$/, "").trim();
   cmd = cmd.replace(/^(command|action|move|answer|reply|response|choice|pick|select|type|choose)\s*[:\-]\s*/i, "").trim();
   if (!cmd || cmd.length > 120) return false;
   if (/[*#]/.test(cmd)) return false;
