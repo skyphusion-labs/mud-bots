@@ -1,6 +1,6 @@
 {
   "name": "@skyphusion/hollow-grid-bot",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "license": "AGPL-3.0-only",
   "description": "AI player for The Hollow Grid MUD: WebSocket client with structured @event state and pluggable LLM brains.",
   "author": "Conrad Rockenhaus <conrad@skyphusion.org>",
@@ -27,7 +27,8 @@
     "node": ">=24"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "files": [
     "bot.mjs",
