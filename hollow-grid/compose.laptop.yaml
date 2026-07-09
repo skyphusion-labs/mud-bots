@@ -18,7 +18,7 @@ services:
       MUD_URL: wss://rustchoir.skyphusion.org/ws
       MUD_NAME: LocalScrape
       MUD_MODEL: workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast
-      BOT_MAX_TOKENS: "40"
+      BOT_MAX_TOKENS: "200"
       BOT_THINK_MS: "4000"
       BOT_LOG: /var/log/mudbot/local-scrape.log
     volumes:
