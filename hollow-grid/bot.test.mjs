@@ -32,7 +32,7 @@ const {
   CFG, state, reportedBugs,
   parseConfiguredWsUrl, buildWorldRegistry, buildWorldAliases,
   resolveWorldKey, worldWsUrl, WORLD_WS,
-  redactForLog, gatewayEndpoint, sanitizeCommand, validateConfig,
+  redactForLog, gatewayEndpoint, sanitizeCommand, extractCommandFromReasoning, validateConfig,
   ingest, applyEvent, buildContext, isLooping, escapeMove, reflex,
   recordPendingAction, checkActionRejection, reportBug,
   think, thinkAnthropic, decideAndAct,
@@ -422,6 +422,53 @@ describe("brains", () => {
       () => think(),
     );
     assert.equal(cmd, "free");
+  });
+
+  test("reasoning-only models salvage a command from message.reasoning", async () => {
+    const cmd = await withFetch(
+      async () => okJson({
+        choices: [{
+          message: {
+            content: null,
+            reasoning: 'The user said "say north". I will type `north` to move.',
+          },
+        }],
+      }),
+      () => think(),
+    );
+    assert.equal(cmd, "north");
+  });
+
+  test("extractCommandFromReasoning prefers the last backtick-wrapped command", () => {
+    assert.equal(
+      extractCommandFromReasoning("Maybe `look` first, then `south`."),
+      "south",
+    );
+  });
+
+  test("extractCommandFromReasoning picks a labeled choice at the end", () => {
+    assert.equal(
+      extractCommandFromReasoning("Long analysis...\nChoice: Human"),
+      "Human",
+    );
+  });
+
+  test("extractCommandFromReasoning ignores prose lines", () => {
+    assert.equal(
+      extractCommandFromReasoning("I should probably go south because it is safer."),
+      "",
+    );
+  });
+
+  test("extractCommandFromReasoning rejects markdown fragments", () => {
+    assert.equal(extractCommandFromReasoning("**Pick a Race**:"), "");
+  });
+
+  test("extractCommandFromReasoning finds a race pick in deliberation", () => {
+    assert.equal(
+      extractCommandFromReasoning("Long analysis... I will choose Human for this run."),
+      "Human",
+    );
   });
 
   test("a 'bug:' reply files a finding and spends the turn on look", async () => {
