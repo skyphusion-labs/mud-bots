@@ -3,6 +3,12 @@
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
 image (`ghcr.io/skyphusion-labs/mud-bots-hg`).
 
+## [1.0.5] - 2026-07-09
+
+### Added
+- `BOT_TRAVEL_INTERVAL_MS` + `BOT_TRAVEL_TARGETS` for scheduled federation travel
+  (hub RPC + cross-world handoff load testing without waiting for the model).
+
 ## [1.0.4] - 2026-07-09
 
 ### Fixed
