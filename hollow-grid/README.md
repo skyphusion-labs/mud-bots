@@ -145,8 +145,15 @@ docker run --rm \
 ```
 
 Federation travel: set `MUD_WORLD_URLS` and `MUD_WORLD_ALIASES` (see `bot.mjs`
-header). Fleet reference compose:
-`fleet-chezmoi/system/stacks/biafra/mud-bots/compose.yaml`.
+header). Optional scheduled cross-world load (v1.0.4+):
+
+```bash
+BOT_TRAVEL_INTERVAL_MS=300000          # 5 minutes
+BOT_TRAVEL_TARGETS=Dustfall,The Hollow Grid
+```
+
+Fleet reference compose + **bot → world deployment matrix**:
+`fleet-chezmoi/system/stacks/biafra/mud-bots/README.md`.
 
 ## Deployment
 
