@@ -38,6 +38,9 @@ const {
   resetInventoryParser,
   recordInventoryRefreshAttempt,
   think, thinkAnthropic, decideAndAct, maybeScheduledTravel, resetTravelSchedule, backdateScheduledTravel,
+  buildProvider, buildProviderChain, chainChat, AllProvidersDownError, idleMove,
+  resetCircuits, recordFailure, recordSuccess, getCircuit, resetActiveProvider,
+  probeHealth, workersAiEndpoint, PROVIDERS,
 } = bot;
 
 function resetState() {
@@ -60,6 +63,8 @@ function resetState() {
   state.combatSince = 0;
   reportedBugs.clear();
   resetInventoryParser();
+  resetCircuits();
+  resetActiveProvider();
 }
 
 // Swap globalThis.fetch for the duration of one call.
@@ -543,51 +548,39 @@ describe("brains", () => {
     assert.equal([...reportedBugs].some((sig) => sig.startsWith("noticed|")), true);
   });
 
-  test("an HTTP error from the brain endpoint throws", async () => {
-    await assert.rejects(
-      withFetch(
-        async () => ({ ok: false, status: 500, text: async () => "boom" }),
-        () => think(),
-      ),
-      /ollama 500: boom/,
+  test("a provider error degrades to a canned idle move (single-provider chain)", async () => {
+    const cmd = await withFetch(
+      async () => ({ ok: false, status: 500, text: async () => "boom" }),
+      () => think(),
     );
+    assert.equal(cmd, "look");
   });
 
-  test("gateway brain authenticates with the gateway token only", async () => {
-    const savedBrain = CFG.brain;
-    CFG.brain = "gateway";
-    try {
-      const cmd = await withFetch(
-        async (url, init) => {
-          assert.match(String(url), /\/compat\/chat\/completions$/);
-          assert.match(init.headers["cf-aig-authorization"], /^Bearer /);
-          assert.equal("x-api-key" in init.headers, false);
-          return okJson({ choices: [{ message: { content: "look" } }] });
-        },
-        () => think(),
-      );
-      assert.equal(cmd, "look");
-    } finally {
-      CFG.brain = savedBrain;
-    }
+  test("the gateway provider authenticates with the gateway token only", async () => {
+    const provider = buildProvider("gateway");
+    const raw = await withFetch(
+      async (url, init) => {
+        assert.match(String(url), /\/compat\/chat\/completions$/);
+        assert.match(init.headers["cf-aig-authorization"], /^Bearer /);
+        assert.equal("x-api-key" in init.headers, false);
+        return okJson({ choices: [{ message: { content: "look" } }] });
+      },
+      () => provider.chat("prompt"),
+    );
+    assert.equal(sanitizeCommand(raw), "look");
   });
 
-  test("anthropic brain speaks the Messages API and extracts the text block", async () => {
-    const savedBrain = CFG.brain;
-    CFG.brain = "anthropic";
-    try {
-      const cmd = await withFetch(
-        async (url, init) => {
-          assert.match(String(url), /\/messages$/);
-          assert.equal(init.headers["anthropic-version"], "2023-06-01");
-          return okJson({ content: [{ type: "tool_use" }, { type: "text", text: "rest" }] });
-        },
-        () => think(),
-      );
-      assert.equal(cmd, "rest");
-    } finally {
-      CFG.brain = savedBrain;
-    }
+  test("the anthropic provider speaks the Messages API and extracts the text block", async () => {
+    const provider = buildProvider("anthropic");
+    const raw = await withFetch(
+      async (url, init) => {
+        assert.match(String(url), /\/messages$/);
+        assert.equal(init.headers["anthropic-version"], "2023-06-01");
+        return okJson({ content: [{ type: "tool_use" }, { type: "text", text: "rest" }] });
+      },
+      () => provider.chat("prompt"),
+    );
+    assert.equal(sanitizeCommand(raw), "rest");
   });
 
   test("anthropic HTTP errors throw with the response text", async () => {
@@ -720,5 +713,163 @@ describe("scheduled federation travel", () => {
       () => decideAndAct(),
     );
     assert.equal(state.recentCommands.at(-1), "travel Dustfall");
+  });
+});
+
+describe("provider chain + circuit breaker", () => {
+  beforeEach(resetState);
+
+  test("buildProviderChain uses BOT_PROVIDERS names when given", () => {
+    const chain = buildProviderChain(["ollama", "workersai"], "gateway");
+    assert.deepEqual(chain.map((p) => p.name), ["ollama", "workersai"]);
+  });
+
+  test("buildProviderChain falls back to the single brain when no names", () => {
+    const chain = buildProviderChain([], "gateway");
+    assert.deepEqual(chain.map((p) => p.name), ["gateway"]);
+  });
+
+  test("buildProviderChain skips unknown provider names", () => {
+    const chain = buildProviderChain(["ollama", "psychic", "workersai"], "ollama");
+    assert.deepEqual(chain.map((p) => p.name), ["ollama", "workersai"]);
+  });
+
+  test("PROVIDERS defaults to the single ollama brain under the test env", () => {
+    assert.deepEqual(PROVIDERS.map((p) => p.name), ["ollama"]);
+  });
+
+  test("workersAiEndpoint builds from the account id or an explicit base", () => {
+    const savedBase = CFG.workersAiBase;
+    const savedAcct = CFG.cfAccountId;
+    try {
+      CFG.workersAiBase = "";
+      CFG.cfAccountId = "acct123";
+      assert.equal(
+        workersAiEndpoint(),
+        "https://api.cloudflare.com/client/v4/accounts/acct123/ai/v1",
+      );
+      CFG.workersAiBase = "https://wai.example/ai/v1/";
+      assert.equal(workersAiEndpoint(), "https://wai.example/ai/v1");
+    } finally {
+      CFG.workersAiBase = savedBase;
+      CFG.cfAccountId = savedAcct;
+    }
+  });
+
+  test("the workersai provider posts to the OpenAI-compat endpoint with a bearer token", async () => {
+    const savedBase = CFG.workersAiBase;
+    const savedTok = CFG.workersAiToken;
+    try {
+      CFG.workersAiBase = "https://wai.example/ai/v1";
+      CFG.workersAiToken = "wai-secret";
+      const provider = buildProvider("workersai");
+      const raw = await withFetch(
+        async (url, init) => {
+          assert.equal(String(url), "https://wai.example/ai/v1/chat/completions");
+          assert.equal(init.headers.Authorization, "Bearer wai-secret");
+          return okJson({ choices: [{ message: { content: "south" } }] });
+        },
+        () => provider.chat("prompt"),
+      );
+      assert.equal(sanitizeCommand(raw), "south");
+    } finally {
+      CFG.workersAiBase = savedBase;
+      CFG.workersAiToken = savedTok;
+    }
+  });
+
+  test("validateConfig flags a workersai chain missing its token and account id", () => {
+    const errs = validateConfig({ providerNames: ["ollama", "workersai"], workersAiToken: "", cfAccountId: "", workersAiBase: "" });
+    assert.equal(errs.length, 2);
+    assert.match(errs.join(" "), /WORKERS_AI_TOKEN/);
+    assert.deepEqual(validateConfig({ providerNames: ["ollama", "workersai"], workersAiToken: "t", cfAccountId: "acct" }), []);
+  });
+
+  test("probeHealth returns true on a 2xx and false on a network error", async () => {
+    const ok = await withFetch(async () => ({ ok: true }), () => probeHealth("http://x/models", {}));
+    assert.equal(ok, true);
+    const bad = await withFetch(async () => { throw new Error("refused"); }, () => probeHealth("http://x/models", {}));
+    assert.equal(bad, false);
+  });
+
+  // Fake providers drive the chain deterministically, no network.
+  const okProvider = (name, reply) => ({ name, chat: async () => reply, health: null });
+  const failProvider = (name) => ({ name, chat: async () => { throw new Error(name + " down"); }, health: null });
+
+  test("chainChat returns the primary reply when it is healthy", async () => {
+    const chain = [okProvider("ollama", "north"), okProvider("workersai", "south")];
+    assert.equal(await chainChat("p", chain, 1000), "north");
+  });
+
+  test("chainChat flips to the fallback when the primary throws", async () => {
+    const chain = [failProvider("ollama"), okProvider("workersai", "south")];
+    assert.equal(await chainChat("p", chain, 1000), "south");
+    assert.equal(getCircuit("ollama").fails, 1);
+  });
+
+  test("an open primary circuit is skipped during its cooldown", async () => {
+    recordFailure("ollama", 1000);
+    recordFailure("ollama", 1000); // cbFails=2 -> openUntil = 1000 + cooldown
+    let called = false;
+    const primary = { name: "ollama", chat: async () => { called = true; return "north"; }, health: null };
+    const chain = [primary, okProvider("workersai", "south")];
+    assert.equal(await chainChat("p", chain, 1005), "south");
+    assert.equal(called, false);
+  });
+
+  test("a half-open primary re-probed healthy reclaims traffic (auto-return)", async () => {
+    recordFailure("ollama", 0);
+    recordFailure("ollama", 0); // openUntil = CFG.cbCooldownMs
+    let healthChecked = false;
+    const primary = {
+      name: "ollama",
+      chat: async () => "north",
+      health: async () => { healthChecked = true; return true; },
+    };
+    const chain = [primary, okProvider("workersai", "south")];
+    const past = CFG.cbCooldownMs + 1;
+    assert.equal(await chainChat("p", chain, past), "north");
+    assert.equal(healthChecked, true);
+    assert.equal(getCircuit("ollama").openUntil, 0);
+  });
+
+  test("a half-open primary still unhealthy stays on the fallback", async () => {
+    recordFailure("ollama", 0);
+    recordFailure("ollama", 0);
+    const primary = {
+      name: "ollama",
+      chat: async () => { throw new Error("must not be called"); },
+      health: async () => false,
+    };
+    const chain = [primary, okProvider("workersai", "south")];
+    const past = CFG.cbCooldownMs + 1;
+    assert.equal(await chainChat("p", chain, past), "south");
+    assert.ok(getCircuit("ollama").openUntil > past);
+  });
+
+  test("chainChat throws AllProvidersDownError when every provider fails", async () => {
+    const chain = [failProvider("ollama"), failProvider("workersai")];
+    await assert.rejects(() => chainChat("p", chain, 1000), AllProvidersDownError);
+  });
+
+  test("think idles on a canned move when the whole chain is down", async () => {
+    const cmd = await withFetch(
+      async () => { throw new Error("no route to host"); },
+      () => think(),
+    );
+    assert.equal(cmd, "look");
+  });
+
+  test("idleMove is a quiet, non-LLM keep-alive", () => {
+    assert.equal(idleMove(), "look");
+  });
+
+  test("recordSuccess closes an open circuit", () => {
+    recordFailure("ollama", 0);
+    recordFailure("ollama", 0);
+    assert.ok(getCircuit("ollama").openUntil > 0);
+    recordSuccess("ollama");
+    assert.equal(getCircuit("ollama").openUntil, 0);
+    assert.equal(getCircuit("ollama").fails, 0);
   });
 });

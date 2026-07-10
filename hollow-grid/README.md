@@ -24,6 +24,31 @@ Single file, **no build step and no dependencies** (uses Node's global
   `MUD_MODEL=workers-ai/@cf/<model>`; under Unified Billing the gateway token is
   the only credential the bot needs (no BYOK, no provider key). See below.
 
+## Provider fallback chain (always-on fleet)
+
+For the always-on fleet population (issue #35), set `BOT_PROVIDERS` to an ordered,
+comma-separated chain instead of a single `BOT_BRAIN`:
+
+```bash
+# local ollama primary, Cloudflare Workers AI REST fallback
+BOT_PROVIDERS=ollama,workersai \
+  OLLAMA_BASE_URL=http://10.1.1.7:11434/v1 OLLAMA_MODEL=qwen2.5:14b-instruct-q4_K_M \
+  WORKERS_AI_TOKEN=... CF_ACCOUNT_ID=... \
+  WORKERS_AI_MODEL=@cf/meta/llama-3.3-70b-instruct-fp8-fast \
+  MUD_URL=wss://hollow.skyphusion.org/ws node bot.mjs
+```
+
+ollama, Workers AI, and the AI Gateway all speak the same OpenAI-compatible
+chat/completions shape, so both the prompt and the response parse are identical across
+providers. A per-provider circuit breaker (`BOT_CB_FAILS`, default 2; `BOT_CB_COOLDOWN_MS`,
+default 30000) flips traffic automatically in BOTH directions: when the local primary is
+preempted (vivijure stops the GPU container at will, which is normal) it falls through to
+the fallback, and once a gentle health probe re-tests the primary and passes, it returns to
+local on its own. No human action either way. If every provider is unreachable, the bot
+idles quietly on a canned, non-LLM move. Provider flips are logged at info level with a
+timestamp (grep `PROVIDER FLIP`). `BOT_PROVIDERS` unset keeps the single-`BOT_BRAIN`
+behavior below unchanged.
+
 ## Run
 
 ```bash
