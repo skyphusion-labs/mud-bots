@@ -3,6 +3,27 @@
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
 image (`ghcr.io/skyphusion-labs/mud-bots-hg`).
 
+## [1.1.0] - 2026-07-10
+
+### Added
+- Provider fallback chain for the always-on fleet population (issue #35). `BOT_PROVIDERS`
+  (e.g. `ollama,workersai`) runs an ordered chain: a local ollama primary
+  (`http://10.1.1.7:11434`, `qwen2.5:14b-instruct-q4_K_M`) with a Cloudflare Workers AI
+  REST fallback (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`). ollama, Workers AI, and the
+  AI Gateway all speak the same OpenAI-compatible shape, so prompt and response parsing
+  are identical across providers.
+- Per-provider circuit breaker (`BOT_CB_FAILS`, `BOT_CB_COOLDOWN_MS`) that auto-flips
+  traffic in BOTH directions with no human action: when the local endpoint is preempted
+  it falls through to the fallback, and once a gentle health probe (>=30s) re-tests the
+  primary and passes, it returns to local on its own. Provider flips log at info level
+  with a timestamp (grep `PROVIDER FLIP`). Both providers down degrades to a quiet
+  canned idle move.
+
+### Unchanged
+- `BOT_BRAIN` single-brain mode (ollama/gateway/anthropic) is untouched when
+  `BOT_PROVIDERS` is unset; the published npm bot and the biafra gateway stack keep
+  working exactly as before.
+
 ## [1.0.8] - 2026-07-09
 
 ### Fixed

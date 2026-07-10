@@ -23,6 +23,13 @@ self-hosted ollama setup (`BOT_BRAIN=ollama` + `OLLAMA_BASE_URL`/`localhost` rem
 as a local-dev fallback). Full brain matrix: `hollow-grid/README.md` and the root
 `README.md`.
 
+**Always-on fleet population (issue #35):** the standing bots on a fleet box run a
+**provider fallback chain** via `BOT_PROVIDERS=ollama,workersai`: a fleet-local ollama
+primary (`http://10.1.1.7:11434`, `qwen2.5:14b-instruct-q4_K_M`) with a Cloudflare Workers
+AI REST fallback, auto-flipped in both directions by a health-checked circuit breaker (no
+human action). This is orthogonal to the single-`BOT_BRAIN` gateway path above, which is
+still the default when `BOT_PROVIDERS` is unset.
+
 ## Running the Hollow Grid bot
 
 ```bash

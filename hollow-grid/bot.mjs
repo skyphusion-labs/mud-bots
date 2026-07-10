@@ -19,6 +19,11 @@
 //     MUD_MODEL=openai/gpt-5 node bot.mjs                        # play via AI Gateway
 //   # ...or Claude through the same gateway (keys stay in Cloudflare, not in env):
 //   BOT_BRAIN=gateway CF_AIG_TOKEN=... CF_ACCOUNT_ID=... MUD_MODEL=anthropic/claude-sonnet-4-6 node bot.mjs
+//   # ...or a fallback CHAIN: local ollama primary, Workers AI REST fallback (issue #35).
+//   # Auto-flips both ways on a health-checked circuit breaker; no human action.
+//   BOT_PROVIDERS=ollama,workersai OLLAMA_BASE_URL=http://10.1.1.7:11434/v1 \
+//     OLLAMA_MODEL=qwen2.5:14b-instruct-q4_K_M \
+//     WORKERS_AI_TOKEN=... CF_ACCOUNT_ID=... node bot.mjs
 //
 // Config (all optional, via env):
 //   MUD_URL           ws endpoint           (default ws://localhost:8787/ws)
@@ -44,6 +49,16 @@
 //                     (default: home grid only; server URLs are never dialed raw)
 //   MUD_WORLD_ALIASES JSON map of server world name -> slug in MUD_WORLD_URLS
 //   MUD_TRAVEL_ALLOW  legacy comma-separated ws URLs; registered by hostname slug
+//
+//   Provider fallback chain (fleet always-on; issue #35):
+//   BOT_PROVIDERS     ordered chain, comma list e.g. "ollama,workersai"
+//                     (unset -> single BOT_BRAIN, unchanged legacy behavior)
+//   OLLAMA_MODEL      model for the ollama provider (default from DEFAULT_MODEL)
+//   WORKERS_AI_TOKEN  required for the workersai provider (Workers-AI-Run scoped)
+//   WORKERS_AI_MODEL  workersai model (default @cf/meta/llama-3.3-70b-instruct-fp8-fast)
+//   WORKERS_AI_BASE_URL  override the Workers AI OpenAI-compat base (testing)
+//   BOT_CB_FAILS      failures before a provider circuit opens (default 2)
+//   BOT_CB_COOLDOWN_MS  circuit cooldown / half-open probe gap ms (default 30000)
 //
 // Note: the bot acts every few seconds, so the anthropic/gateway brains bill
 // continuously while running. Pick the model and BOT_THINK_MS with that in mind.
@@ -76,6 +91,17 @@ export const CFG = {
   gatewayBase: process.env.CF_AIG_BASE_URL ?? "",
   cfAccountId: process.env.CF_ACCOUNT_ID ?? "",
   cfGateway: process.env.CF_AIG_GATEWAY ?? "skyphusion-llm",
+  // Provider chain (issue #35). Each provider carries its own model so a mixed
+  // chain (local ollama + Workers AI fallback) does not share one MUD_MODEL.
+  providerNames: (process.env.BOT_PROVIDERS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
+  ollamaModel: process.env.OLLAMA_MODEL ?? process.env.MUD_MODEL ?? DEFAULT_MODEL.ollama,
+  workersAiToken: process.env.WORKERS_AI_TOKEN ?? "",
+  workersAiModel: process.env.WORKERS_AI_MODEL ?? "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  workersAiBase: process.env.WORKERS_AI_BASE_URL ?? "",
+  // Circuit breaker: open a provider after cbFails, retry (half-open) after cooldown.
+  cbFails: Number(process.env.BOT_CB_FAILS ?? 2),
+  cbCooldownMs: Number(process.env.BOT_CB_COOLDOWN_MS ?? 30000),
+  healthTimeoutMs: Number(process.env.BOT_HEALTH_TIMEOUT_MS ?? 2500),
   thinkMs: Number(process.env.BOT_THINK_MS ?? 4000),
   quietMs: Number(process.env.BOT_QUIET_MS ?? 700),
   logFile: process.env.BOT_LOG ?? "",
@@ -108,6 +134,16 @@ export function gatewayEndpoint() {
     ? CFG.gatewayBase.replace(/\/+$/, "")
     : `https://gateway.ai.cloudflare.com/v1/${CFG.cfAccountId}/${CFG.cfGateway}/compat`;
   return `${base}/chat/completions`;
+}
+
+// Cloudflare Workers AI OpenAI-compatible base (ends in /v1, no trailing slash).
+// Workers AI speaks the same chat/completions shape as ollama and the gateway, so
+// the fallback reuses the exact same caller and response parse (issue #35).
+export function workersAiEndpoint() {
+  const base = CFG.workersAiBase
+    ? CFG.workersAiBase.replace(/\/+$/, "")
+    : `https://api.cloudflare.com/client/v4/accounts/${CFG.cfAccountId}/ai/v1`;
+  return base;
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -200,7 +236,11 @@ export function worldWsUrl(key) {
 
 export function redactForLog(text) {
   let out = String(text);
-  for (const secret of [CFG.gatewayToken, CFG.anthropicKey, CFG.ollamaKey]) {
+  // The default ollama key is the non-secret dummy "ollama" (ollama ignores it);
+  // redacting it would mask the provider name in logs, so only redact a custom key.
+  const secrets = [CFG.gatewayToken, CFG.anthropicKey, CFG.workersAiToken];
+  if (CFG.ollamaKey && CFG.ollamaKey !== "ollama") secrets.push(CFG.ollamaKey);
+  for (const secret of secrets) {
     if (secret && secret.length >= 4) {
       out = out.split(secret).join("[redacted]");
     }
@@ -632,9 +672,15 @@ export function escapeMove() {
 export async function think() {
   const prompt = `${buildContext()}\n\nWhat is your next command?`;
   let raw;
-  if (CFG.brain === "anthropic") raw = await thinkAnthropic(prompt);
-  else if (CFG.brain === "gateway") raw = await thinkGateway(prompt);
-  else raw = await thinkOllama(prompt);
+  try {
+    raw = await chainChat(prompt);
+  } catch (e) {
+    if (e instanceof AllProvidersDownError) {
+      log("all providers down; idling on a canned move");
+      return idleMove();
+    }
+    throw e;
+  }
   // Bug side-channel: the model can flag a suspected defect instead of acting.
   const first = String(raw).split(/\r?\n/).find((l) => l.trim()) ?? "";
   const bug = first.match(/^\s*bug:\s*(.+)/i);
@@ -647,12 +693,12 @@ export async function think() {
 
 // Shared caller for any OpenAI-compatible chat/completions endpoint (ollama and
 // the AI Gateway compat path are both this shape; only URL/auth/model differ).
-async function thinkOpenAICompat(label, endpoint, authHeaders, prompt) {
+async function thinkOpenAICompat(label, endpoint, authHeaders, model, prompt) {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders },
     body: JSON.stringify({
-      model: CFG.model,
+      model,
       max_tokens: CFG.maxTokens,
       temperature: 0.8,
       messages: [
@@ -738,17 +784,166 @@ function looksLikeCommand(raw) {
   return false;
 }
 
-// Free local brain: ollama's OpenAI-compatible chat endpoint.
-const thinkOllama = (prompt) =>
-  thinkOpenAICompat("ollama", `${CFG.ollamaBase}/chat/completions`,
-    { Authorization: `Bearer ${CFG.ollamaKey}` }, prompt);
+// ---------------------------------------------------------------------------
+// Provider abstraction + circuit breaker (issue #35).
+//
+// The brain is an ordered chain of providers (BOT_PROVIDERS, e.g. "ollama,workersai").
+// ollama, Workers AI REST, and the AI Gateway all speak the same OpenAI-compatible
+// chat/completions shape, so both the prompt AND the response parse are identical
+// across providers by construction (anthropic keeps its native caller). A per-provider
+// circuit breaker flips traffic automatically in BOTH directions: when the local
+// ollama primary is preempted it opens after a couple of failures and traffic falls
+// through to the fallback; once the cooldown elapses a gentle health probe re-tests the
+// primary and, on success, closes the circuit so the bot returns to local on its own.
+// No human action either way. When every provider is open/unreachable, think() idles.
+// ---------------------------------------------------------------------------
 
-// Cloudflare AI Gateway brain: OpenAI-compatible, any provider via provider/model.
-// Authenticates to the gateway with a gateway token; provider keys live in the
-// gateway (BYOK), not here.
-const thinkGateway = (prompt) =>
-  thinkOpenAICompat("gateway", gatewayEndpoint(),
-    { "cf-aig-authorization": `Bearer ${CFG.gatewayToken}` }, prompt);
+export class AllProvidersDownError extends Error {
+  constructor() {
+    super("all providers unavailable");
+    this.name = "AllProvidersDownError";
+  }
+}
+
+// Canned, non-LLM behavior when every provider is unreachable: idle quietly.
+// "look" is the cheapest keep-alive; it never advances the world or picks a fight.
+export function idleMove() {
+  return "look";
+}
+
+// A short, abortable GET used only to re-probe a half-open provider, so a still-down
+// primary does not stall a decision on a slow chat timeout. True on any 2xx.
+export async function probeHealth(url, headers) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), CFG.healthTimeoutMs);
+  try {
+    const res = await fetch(url, { method: "GET", headers, signal: ctl.signal });
+    return !!res.ok;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Build one provider descriptor: { name, chat(prompt)->text, health()|null }. health
+// gates only the half-open retry; providers without a cheap health endpoint just retry.
+export function buildProvider(name) {
+  switch (name) {
+    case "ollama": {
+      const endpoint = `${CFG.ollamaBase}/chat/completions`;
+      const headers = { Authorization: `Bearer ${CFG.ollamaKey}` };
+      return {
+        name,
+        chat: (prompt) => thinkOpenAICompat("ollama", endpoint, headers, CFG.ollamaModel, prompt),
+        health: () => probeHealth(`${CFG.ollamaBase}/models`, headers),
+      };
+    }
+    case "workersai": {
+      const headers = { Authorization: `Bearer ${CFG.workersAiToken}` };
+      return {
+        name,
+        chat: (prompt) => thinkOpenAICompat("workersai", `${workersAiEndpoint()}/chat/completions`, headers, CFG.workersAiModel, prompt),
+        health: null,
+      };
+    }
+    case "gateway": {
+      const headers = { "cf-aig-authorization": `Bearer ${CFG.gatewayToken}` };
+      return {
+        name,
+        chat: (prompt) => thinkOpenAICompat("gateway", gatewayEndpoint(), headers, CFG.model, prompt),
+        health: null,
+      };
+    }
+    case "anthropic":
+      return { name, chat: (prompt) => thinkAnthropic(prompt), health: null };
+    default:
+      return null;
+  }
+}
+
+// The runtime provider chain: BOT_PROVIDERS if set, else the single BOT_BRAIN.
+export function buildProviderChain(names = CFG.providerNames, brain = CFG.brain) {
+  const list = names && names.length ? names : [brain];
+  const providers = [];
+  for (const n of list) {
+    const provider = buildProvider(n);
+    if (provider) providers.push(provider);
+  }
+  return providers;
+}
+
+export const PROVIDERS = buildProviderChain();
+
+// Circuit-breaker state, keyed by provider name.
+const circuits = new Map();
+export function getCircuit(name) {
+  let c = circuits.get(name);
+  if (!c) {
+    c = { fails: 0, openUntil: 0 };
+    circuits.set(name, c);
+  }
+  return c;
+}
+export function resetCircuits() {
+  circuits.clear();
+}
+export function recordSuccess(name) {
+  const c = getCircuit(name);
+  c.fails = 0;
+  c.openUntil = 0;
+}
+export function recordFailure(name, now = Date.now()) {
+  const c = getCircuit(name);
+  c.fails += 1;
+  if (c.fails >= CFG.cbFails) c.openUntil = now + CFG.cbCooldownMs;
+  return c;
+}
+
+// Info-level, timestamped, greppable ("PROVIDER FLIP") record of the active provider
+// changing, so preemption history is easy to reconstruct from logs.
+let activeProvider = null;
+export function resetActiveProvider() {
+  activeProvider = null;
+}
+function noteActiveProvider(name) {
+  if (activeProvider !== name) {
+    log(`PROVIDER FLIP ${activeProvider ?? "(none)"} -> ${name}`);
+    activeProvider = name;
+  }
+}
+
+// Walk the chain in priority order, honoring circuit state, and return the first usable
+// provider reply. Throws AllProvidersDownError when none are usable this turn.
+export async function chainChat(prompt, chain = PROVIDERS, now = Date.now()) {
+  for (const provider of chain) {
+    const c = getCircuit(provider.name);
+    const halfOpen = c.openUntil > 0 && now >= c.openUntil;
+    if (c.openUntil > 0 && !halfOpen) continue; // cooling down: skip
+    if (halfOpen && provider.health) {
+      let healthy = false;
+      try {
+        healthy = await provider.health();
+      } catch {
+        healthy = false;
+      }
+      if (!healthy) {
+        c.openUntil = now + CFG.cbCooldownMs; // still down: re-arm the cooldown
+        continue;
+      }
+    }
+    try {
+      const text = await provider.chat(prompt);
+      recordSuccess(provider.name);
+      noteActiveProvider(provider.name);
+      return text;
+    } catch (e) {
+      recordFailure(provider.name, now);
+      log(`provider ${provider.name} failed: ${e.message}`);
+    }
+  }
+  throw new AllProvidersDownError();
+}
 
 // Paid frontier brain: the Anthropic Messages API (native, no SDK/deps).
 export async function thinkAnthropic(prompt) {
@@ -1010,19 +1205,35 @@ async function run() {
 // human-readable errors; empty means the config is runnable.
 export function validateConfig(cfg = CFG) {
   const errors = [];
-  if (!["ollama", "anthropic", "gateway"].includes(cfg.brain)) {
-    errors.push(`unknown BOT_BRAIN "${cfg.brain}" (use "ollama", "anthropic", or "gateway")`);
-    return errors;
-  }
-  if (cfg.brain === "anthropic" && !cfg.anthropicKey) {
-    errors.push("BOT_BRAIN=anthropic requires ANTHROPIC_API_KEY (it is never hard-coded)");
-  }
-  if (cfg.brain === "gateway") {
-    if (!cfg.gatewayToken) {
-      errors.push("BOT_BRAIN=gateway requires CF_AIG_TOKEN (the gateway token; provider keys stay in the gateway)");
-    }
-    if (!cfg.gatewayBase && !cfg.cfAccountId) {
-      errors.push("BOT_BRAIN=gateway needs CF_AIG_BASE_URL, or CF_ACCOUNT_ID (+ optional CF_AIG_GATEWAY)");
+  const chain = cfg.providerNames && cfg.providerNames.length ? cfg.providerNames : [cfg.brain];
+  for (const name of chain) {
+    switch (name) {
+      case "ollama":
+        break; // local, no credential
+      case "anthropic":
+        if (!cfg.anthropicKey) {
+          errors.push("the anthropic provider requires ANTHROPIC_API_KEY (it is never hard-coded)");
+        }
+        break;
+      case "gateway":
+        if (!cfg.gatewayToken) {
+          errors.push("the gateway provider requires CF_AIG_TOKEN (the gateway token; provider keys stay in the gateway)");
+        }
+        if (!cfg.gatewayBase && !cfg.cfAccountId) {
+          errors.push("the gateway provider needs CF_AIG_BASE_URL, or CF_ACCOUNT_ID (+ optional CF_AIG_GATEWAY)");
+        }
+        break;
+      case "workersai":
+        if (!cfg.workersAiToken) {
+          errors.push("the workersai provider requires WORKERS_AI_TOKEN (a Workers-AI-Run scoped token)");
+        }
+        if (!cfg.cfAccountId && !cfg.workersAiBase) {
+          errors.push("the workersai provider requires CF_ACCOUNT_ID (or WORKERS_AI_BASE_URL)");
+        }
+        break;
+      default:
+        errors.push(`unknown BOT_BRAIN/provider "${name}" (use "ollama", "workersai", "gateway", or "anthropic")`);
+        return errors;
     }
   }
   return errors;
@@ -1048,8 +1259,7 @@ if (isMain) {
     for (const err of configErrors) console.error(err);
     process.exit(1);
   }
-  if (CFG.brain === "gateway") log("gateway brain configured");
-  log(`brain: ${CFG.brain} (model ${CFG.model})`);
+  log(`provider chain: ${PROVIDERS.map((p) => p.name).join(" -> ") || CFG.brain}`);
 
   run();
 }
