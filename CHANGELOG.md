@@ -3,6 +3,33 @@
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
 image (`ghcr.io/skyphusion-labs/mud-bots-hg`).
 
+## [1.2.0] - 2026-07-11
+
+### Added
+- Consume `@event char.create` (issue #41; the-hollow-grid#63/v0.30.0): the creation
+  race menu's offered options now arrive structured, so the bot no longer depends on
+  any world's menu WORDING to know it is at the menu or what it may choose. Prose
+  parsing (`menuRaces` + the known prompt phrasings) stays as the legacy fallback for
+  worlds that have not shipped the event. Model-owned-choice semantics from #39 are
+  unchanged (honor a named race, dedicated ask on generic replies, random only after
+  3 misses and only from the offered list).
+
+## [1.1.2] - 2026-07-11
+
+### Fixed
+- The race pick is the model's own choice, never a silent die roll (issue #39): the
+  race-menu override that replaced generic replies with a random race is gone. A race
+  named via the normal think path is honored; otherwise a dedicated ask retries until
+  the model names one of the world's own menu options (parsed, so port-only races are
+  choosable); random only after 3 misses, logged as random.
+
+## [1.1.1] - 2026-07-11
+
+### Added
+- `BOT_TEMPERATURE` (issue #37): default `0.8`; `none` omits the field entirely
+  (Claude 5 models reject `temperature` on the gateway compat endpoint; without this
+  the bot silently degraded to the no-brain fallback).
+
 ## [1.1.0] - 2026-07-10
 
 ### Added
