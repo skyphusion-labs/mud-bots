@@ -672,6 +672,57 @@ export function escapeMove() {
   return pick;
 }
 
+// Character creation (issue #39): the race pick is the point -- the operator
+// watches which race each model chooses unprompted -- so it must be the MODEL's
+// answer, never a silent die roll. The menu's own option lines are parsed so
+// port-specific races are choosable (and a random fallback can never roll a race
+// this world does not offer); the static list is only the last-resort universe.
+export const RACES = ["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"];
+
+// Pull the offered race names out of the menu prose (numbered or bulleted lines).
+export function menuRaces(prose) {
+  const out = [];
+  for (const line of String(prose ?? "").split(/\r?\n/)) {
+    const m = line.match(/^\s*(?:\d+[.)]|[-*])\s+([A-Z][A-Za-z-]{2,})\b/);
+    if (m && !out.includes(m[1])) out.push(m[1]);
+  }
+  return out;
+}
+
+// Find a race name inside the model's reply (word-boundary, case-insensitive).
+export function matchRace(text, options = RACES) {
+  const t = String(text ?? "").toLowerCase();
+  return options.find((r) => new RegExp(`\\b${r.toLowerCase()}\\b`).test(t)) ?? null;
+}
+
+let charCreateMisses = 0;
+export function resetCharCreate() { charCreateMisses = 0; }
+async function chooseRace(menuProse) {
+  const offered = menuRaces(menuProse);
+  const options = offered.length ? offered : RACES;
+  let choice = null;
+  try {
+    const raw = await chainChat(
+      `You are creating your character in The Hollow Grid. The game asks:\n${menuProse}\n\nChoose who you will be in this world. Reply with ONLY the race name.`,
+    );
+    choice = matchRace(raw, options);
+  } catch (e) {
+    log("char-create brain error:", e.message);
+  }
+  if (choice) {
+    charCreateMisses = 0;
+    log("char-create choice ->", choice);
+    return choice;
+  }
+  if (++charCreateMisses >= 3) {
+    const roll = options[Math.floor(Math.random() * options.length)];
+    log("char-create fallback (3 misses, random) ->", roll);
+    return roll;
+  }
+  log(`char-create miss ${charCreateMisses}/3 -- asking again next tick`);
+  return null;
+}
+
 export async function think() {
   const prompt = `${buildContext()}\n\nWhat is your next command?`;
   let raw;
@@ -1140,15 +1191,20 @@ if (state.roomStreak >= CFG.roomStreakLimit) {
     }
   }
   // Race menu: TS says "Type a number or a name."; Go/Python say "Answer with...".
-  // The model often returns look/worlds here; escapeMove also collapses to look when
-  // room.info has not arrived yet. Override any non-race reply so char-create completes.
+  // The pick must be the model's own (issue #39): a race name arriving via the
+  // normal think path is honored (normalized), anything else triggers a dedicated
+  // ask that keeps the turn until the model names one of the world's offered races.
   if (!state.vitals) {
     const recent = state.prose.slice(-10).join("\n");
     if (/\b(?:type|answer with) a number or a name\b/i.test(recent)) {
-      if (!cmd || /^(look|worlds|inventory|sense|actions)$/i.test(String(cmd).trim())) {
-        const races = ["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"];
-        cmd = races[Math.floor(Math.random() * races.length)];
-        log("char-create fallback ->", cmd);
+      const offered = menuRaces(recent);
+      const normalized = matchRace(cmd, offered.length ? offered : RACES);
+      if (normalized) {
+        log("char-create choice ->", normalized);
+        cmd = normalized;
+      } else {
+        cmd = await chooseRace(recent);
+        if (!cmd) return; // miss -- keep the turn, ask again next tick
       }
     }
   }
