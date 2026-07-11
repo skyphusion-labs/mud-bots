@@ -556,6 +556,34 @@ describe("brains", () => {
     assert.equal(cmd, "look");
   });
 
+  test("the compat payload carries the default temperature", async () => {
+    const provider = buildProvider("gateway");
+    await withFetch(
+      async (url, init) => {
+        assert.equal(JSON.parse(init.body).temperature, 0.8);
+        return okJson({ choices: [{ message: { content: "look" } }] });
+      },
+      () => provider.chat("prompt"),
+    );
+  });
+
+  test("BOT_TEMPERATURE=none omits the temperature field (Claude 5 rejects it)", async () => {
+    const prev = CFG.temperature;
+    CFG.temperature = "none";
+    try {
+      const provider = buildProvider("gateway");
+      await withFetch(
+        async (url, init) => {
+          assert.equal("temperature" in JSON.parse(init.body), false);
+          return okJson({ choices: [{ message: { content: "look" } }] });
+        },
+        () => provider.chat("prompt"),
+      );
+    } finally {
+      CFG.temperature = prev;
+    }
+  });
+
   test("the gateway provider authenticates with the gateway token only", async () => {
     const provider = buildProvider("gateway");
     const raw = await withFetch(
