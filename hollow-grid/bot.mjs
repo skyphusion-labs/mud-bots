@@ -59,6 +59,8 @@
 //   WORKERS_AI_BASE_URL  override the Workers AI OpenAI-compat base (testing)
 //   BOT_CB_FAILS      failures before a provider circuit opens (default 2)
 //   BOT_CB_COOLDOWN_MS  circuit cooldown / half-open probe gap ms (default 30000)
+//   BOT_TEMPERATURE   sampling temperature for OpenAI-compat brains (default 0.8);
+//                     "none" omits the field entirely (Claude 5 models reject it)
 //
 // Note: the bot acts every few seconds, so the anthropic/gateway brains bill
 // continuously while running. Pick the model and BOT_THINK_MS with that in mind.
@@ -83,6 +85,7 @@ export const CFG = {
   brain: BRAIN,
   model: process.env.MUD_MODEL ?? DEFAULT_MODEL,
   maxTokens: Number(process.env.BOT_MAX_TOKENS ?? 40),
+  temperature: process.env.BOT_TEMPERATURE ?? "0.8",
   ollamaBase: process.env.OLLAMA_BASE_URL ?? "http://localhost:11434/v1",
   ollamaKey: process.env.OLLAMA_API_KEY ?? "ollama",
   anthropicBase: process.env.ANTHROPIC_BASE_URL ?? "https://api.anthropic.com/v1",
@@ -700,7 +703,8 @@ async function thinkOpenAICompat(label, endpoint, authHeaders, model, prompt) {
     body: JSON.stringify({
       model,
       max_tokens: CFG.maxTokens,
-      temperature: 0.8,
+      // Claude 5 models reject the deprecated temperature param; "none" omits it.
+      ...(CFG.temperature === "none" ? {} : { temperature: Number(CFG.temperature) }),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: prompt },
