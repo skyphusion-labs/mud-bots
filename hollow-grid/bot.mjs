@@ -276,6 +276,7 @@ export const state = {
   affects: null, // { morality, addiction, faction, resisted }
   equipment: null, // { weapon, head, body, hands, feet }
   inventory: null, // string[] | null: null = unknown; [] = empty; parsed from inventory prose
+  charCreate: null, // char.create: { races[] } while the creation menu is open (#41); null once chosen
   prose: [], // recent human-readable lines (no @event), capped
   recentEvents: [], // recent event names, for context
   resting: false, // we issued rest and are waiting to heal up
@@ -446,6 +447,14 @@ export function applyEvent(name, data) {
     case "char.vitals":
       if (typeof data.hp === "number" && typeof data.maxHp === "number") {
         state.vitals = data;
+        state.charCreate = null; // vitals means we are in the world; creation is over
+      }
+      break;
+    case "char.create":
+      // The creation menu, structured (the-hollow-grid#63): the offered races
+      // arrive as data, so no menu-wording parse is needed on worlds that emit it.
+      if (Array.isArray(data.races) && data.races.length && data.races.every((r) => typeof r === "string")) {
+        state.charCreate = { races: data.races };
       }
       break;
     case "char.affects":
@@ -697,8 +706,8 @@ export function matchRace(text, options = RACES) {
 
 let charCreateMisses = 0;
 export function resetCharCreate() { charCreateMisses = 0; }
-async function chooseRace(menuProse) {
-  const offered = menuRaces(menuProse);
+async function chooseRace(menuProse, offered = null) {
+  if (!offered || !offered.length) offered = menuRaces(menuProse); // no event: scrape the prose
   const options = offered.length ? offered : RACES;
   let choice = null;
   try {
@@ -1190,22 +1199,27 @@ if (state.roomStreak >= CFG.roomStreakLimit) {
       cmd = "look";
     }
   }
-  // Race menu: TS says "Type a number or a name."; Go/Python say "Answer with...".
-  // The pick must be the model's own (issue #39): a race name arriving via the
-  // normal think path is honored (normalized), anything else triggers a dedicated
-  // ask that keeps the turn until the model names one of the world's offered races.
+  // Race menu. Preferred: the structured char.create event (#41, worlds on
+  // the-hollow-grid v0.30.0+ emit it) names the offered races outright, so the
+  // menu's prose wording never matters. Legacy fallback for older worlds: match
+  // the known prompt phrasings and scrape the menu lines. Either way the pick
+  // must be the model's own (issue #39): a race name arriving via the normal
+  // think path is honored (normalized), anything else triggers a dedicated ask
+  // that keeps the turn until the model names one of the world's offered races.
   if (!state.vitals) {
     const recent = state.prose.slice(-10).join("\n");
-    if (/\b(?:type|answer with) a number or a name\b/i.test(recent)) {
-      const offered = menuRaces(recent);
+    const ev = state.charCreate;
+    if (ev || /\b(?:type|answer with) a number or a name\b/i.test(recent)) {
+      const offered = ev ? ev.races : menuRaces(recent);
       const normalized = matchRace(cmd, offered.length ? offered : RACES);
       if (normalized) {
         log("char-create choice ->", normalized);
         cmd = normalized;
       } else {
-        cmd = await chooseRace(recent);
-        if (!cmd) return; // miss -- keep the turn, ask again next tick
+        cmd = await chooseRace(recent, offered);
+        if (!cmd) return; // miss -- keep the turn (and the pending event), ask again next tick
       }
+      state.charCreate = null; // choice sent; a re-shown menu re-emits the event
     }
   }
   if (!cmd) return;

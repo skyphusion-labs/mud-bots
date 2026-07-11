@@ -52,6 +52,7 @@ function resetState() {
   state.affects = null;
   state.equipment = null;
   state.inventory = null;
+  state.charCreate = null;
   state.prose = [];
   state.recentEvents = [];
   state.resting = false;
@@ -210,6 +211,22 @@ describe("command sanitizing", () => {
 
 describe("event ingestion", () => {
   beforeEach(resetState);
+
+  test("char.create stores the offered races; malformed payloads are rejected (#41)", () => {
+    ingest('@event char.create {"races":["Human","Elf"],"prompt":"race"}');
+    assert.deepEqual(state.charCreate, { races: ["Human", "Elf"] });
+    state.charCreate = null;
+    ingest('@event char.create {"races":[],"prompt":"race"}');
+    assert.equal(state.charCreate, null); // empty list is not a menu
+    ingest('@event char.create {"races":[1,2],"prompt":"race"}');
+    assert.equal(state.charCreate, null); // non-string races rejected
+  });
+
+  test("char.vitals ends creation: a stale char.create is cleared (#41)", () => {
+    ingest('@event char.create {"races":["Human"],"prompt":"race"}');
+    ingest('@event char.vitals {"hp":20,"maxHp":20}');
+    assert.equal(state.charCreate, null);
+  });
 
   test("room.info replaces the room and tracks the previous one", () => {
     ingest('@event room.info {"id":"r1","name":"The Pit","exits":["north"]}');
@@ -727,6 +744,31 @@ describe("decision loop", () => {
     await withFetch(mock, () => decideAndAct());
     // third miss: random fallback, but only from what this world offers
     assert.deepEqual(state.recentCommands, ["Human"]);
+  });
+
+  test("a char.create event triggers the creation flow with NO recognizable prompt wording (#41)", async () => {
+    bot.resetCharCreate();
+    // A free-voice port: nothing matches the legacy prompt regexes, only the event.
+    state.prose = ["The rust remembers every shape. Which one walks in yours?"];
+    ingest('@event char.create {"races":["Human","Rustwight"],"prompt":"race"}');
+    await withFetch(
+      async () => okJson({ choices: [{ message: { content: "rustwight, always" } }] }),
+      () => decideAndAct(),
+    );
+    assert.deepEqual(state.recentCommands, ["Rustwight"]);
+    assert.equal(state.charCreate, null); // consumed with the choice
+  });
+
+  test("event-named races bound the choice; an unoffered race is a miss (#41)", async () => {
+    bot.resetCharCreate();
+    state.prose = ["Which one walks in yours?"];
+    ingest('@event char.create {"races":["Human"],"prompt":"race"}');
+    await withFetch(
+      async () => okJson({ choices: [{ message: { content: "Elf" } }] }),
+      () => decideAndAct(),
+    );
+    assert.equal(state.recentCommands.length, 0); // miss: Elf is not offered here
+    assert.notEqual(state.charCreate, null); // the pending menu survives the miss
   });
 
   test("the TS Type-a-number prompt with no parsable menu falls back to the static universe (#39)", async () => {
