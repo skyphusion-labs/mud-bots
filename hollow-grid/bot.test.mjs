@@ -556,6 +556,24 @@ describe("brains", () => {
     assert.equal(cmd, "look");
   });
 
+  test("matchRace finds a race inside a sentence, case-insensitive", () => {
+    assert.equal(bot.matchRace("I choose ELF, the hunted one."), "Elf");
+    assert.equal(bot.matchRace("dustkin"), "Dustkin");
+    assert.equal(bot.matchRace("2"), null);
+    assert.equal(bot.matchRace("a shelf full of books"), null); // word boundary, no substring hit
+  });
+
+  test("menuRaces parses numbered and bulleted menu lines", () => {
+    const prose = "Choose your people:\n  1. Human -- the accepted\n  2) Vatborn -- grown\n  - Rustwight -- port-only\nType a number or a name.";
+    assert.deepEqual(bot.menuRaces(prose), ["Human", "Vatborn", "Rustwight"]);
+  });
+
+  test("matchRace honors the offered-options list over the static universe", () => {
+    assert.equal(bot.matchRace("rustwight please", ["Rustwight"]), "Rustwight");
+    assert.equal(bot.matchRace("elf", ["Rustwight"]), null); // this world does not offer it
+    assert.equal(bot.RACES.includes("Human"), true);
+  });
+
   test("the compat payload carries the default temperature", async () => {
     const provider = buildProvider("gateway");
     await withFetch(
@@ -680,31 +698,47 @@ describe("decision loop", () => {
     assert.equal(state.resting, true);
   });
 
-  test("char-create fallback picks a race when Go/Python prompt wording is used", async () => {
-    // No vitals yet: still at the race menu. Model returns look (common); escapeMove
-    // would also return look with no room.exits. Override to a race name.
+  test("a race named by the model at the menu is honored as the choice (#39)", async () => {
+    bot.resetCharCreate();
+    state.prose = [
+      "Before the Grid will hold your name, choose what you are:",
+      "  1) Human -- the Registered",
+      "  2) Elf -- the Hunted",
+      "Answer with a number or a name.",
+    ];
+    await withFetch(
+      async () => okJson({ choices: [{ message: { content: "I will be an elf." } }] }),
+      () => decideAndAct(),
+    );
+    assert.deepEqual(state.recentCommands, ["Elf"]);
+  });
+
+  test("generic replies at the menu retry; three misses roll ONLY the offered races (#39)", async () => {
+    bot.resetCharCreate();
     state.prose = [
       "Before the Grid will hold your name, choose what you are:",
       "  1) Human -- the Registered",
       "Answer with a number or a name.",
     ];
-    await withFetch(
-      async () => okJson({ choices: [{ message: { content: "look" } }] }),
-      () => decideAndAct(),
-    );
+    const mock = async () => okJson({ choices: [{ message: { content: "look" } }] });
+    await withFetch(mock, () => decideAndAct());
+    await withFetch(mock, () => decideAndAct());
+    assert.equal(state.recentCommands.length, 0); // two misses: turn kept, nothing sent
+    await withFetch(mock, () => decideAndAct());
+    // third miss: random fallback, but only from what this world offers
+    assert.deepEqual(state.recentCommands, ["Human"]);
+  });
+
+  test("the TS Type-a-number prompt with no parsable menu falls back to the static universe (#39)", async () => {
+    bot.resetCharCreate();
+    state.prose = ["Type a number or a name."];
+    const mock = async () => okJson({ choices: [{ message: { content: "worlds" } }] });
+    await withFetch(mock, () => decideAndAct());
+    await withFetch(mock, () => decideAndAct());
+    await withFetch(mock, () => decideAndAct());
     const races = new Set(["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"]);
     assert.equal(state.recentCommands.length, 1);
     assert.ok(races.has(state.recentCommands[0]), `got ${state.recentCommands[0]}`);
-  });
-
-  test("char-create fallback also matches the TS Type-a-number prompt", async () => {
-    state.prose = ["Type a number or a name."];
-    await withFetch(
-      async () => okJson({ choices: [{ message: { content: "worlds" } }] }),
-      () => decideAndAct(),
-    );
-    const races = new Set(["Human", "Elf", "Revenant", "Ghoul", "Chromed", "Dustkin", "Vatborn"]);
-    assert.ok(races.has(state.recentCommands[0]));
   });
 });
 
