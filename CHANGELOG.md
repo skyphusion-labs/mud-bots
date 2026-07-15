@@ -3,6 +3,13 @@
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
 image (`ghcr.io/skyphusion-labs/mud-bots-hg`).
 
+## [1.2.1] - 2026-07-15
+
+### Changed
+- CI maintenance only: `actions/checkout` v4 -> v7 (#44). **No change to `bot.mjs`
+  or the container image logic** -- the `:1.2.1` image is functionally identical to
+  `:1.2.0`. Cut so the published image tag matches current `main`.
+
 ## [1.2.0] - 2026-07-11
 
 ### Added
