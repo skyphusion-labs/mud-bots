@@ -1,3 +1,8 @@
+## [1.2.2] - 2026-07-21
+
+### Changed
+- Release sync bump (2026-07-21). No functional changes in this tag.
+
 # Changelog
 
 All notable changes to the Hollow Grid bot (`hollow-grid/bot.mjs`) and its container
