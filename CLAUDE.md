@@ -1,5 +1,12 @@
 # CLAUDE.md
 
+> ## PARKED fleet-wide (2026-07-15) -- read first
+>
+> **mud-bots is offline on the fleet.** Manual start only. **Do NOT restart, redeploy, unpark,
+> or flip compose/`restart:` policies without Conrad's explicit word this turn.** This is the
+> standing exception to fleet `restart: always`. Code, docs, and CI work in this repo are fine;
+> ops that bring bots back online are not.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 **Repo scope (`mud-bots`, formerly `packet-wastes-bots`):** this repo holds
@@ -23,12 +30,11 @@ self-hosted ollama setup (`BOT_BRAIN=ollama` + `OLLAMA_BASE_URL`/`localhost` rem
 as a local-dev fallback). Full brain matrix: `hollow-grid/README.md` and the root
 `README.md`.
 
-**Always-on fleet population (issue #35):** the standing bots on a fleet box run a
-**provider fallback chain** via `BOT_PROVIDERS=ollama,workersai`: a fleet-local ollama
-primary (`http://10.1.1.7:11434`, `qwen2.5:14b-instruct-q4_K_M`) with a Cloudflare Workers
-AI REST fallback, auto-flipped in both directions by a health-checked circuit breaker (no
-human action). This is orthogonal to the single-`BOT_BRAIN` gateway path above, which is
-still the default when `BOT_PROVIDERS` is unset.
+**Fleet population path (issue #35, currently PARKED):** when unparked by Conrad, standing
+bots can use a **provider fallback chain** via `BOT_PROVIDERS=ollama,workersai` (fleet-local
+ollama primary with Cloudflare Workers AI REST fallback + circuit breaker). That path is
+orthogonal to the single-`BOT_BRAIN` gateway path above. **Do not treat "always-on population"
+as live policy while PARKED.**
 
 ## Running the Hollow Grid bot
 
