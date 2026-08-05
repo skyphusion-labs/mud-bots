@@ -1,5 +1,8 @@
 # mud-bots
 
+> **FLEET PARKED (2026-07-15).** Do not restart soak bots without Conrad. See `CLAUDE.md`.
+
+
 AI players for **The Hollow Grid**, Conrad's text MUD: programs that log in like
 any human player, read the game's structured state, and decide their own moves
 with a language model.
@@ -76,8 +79,8 @@ Two models validated for **steady-state fleet load** (instruct @ 40 tokens, 4000
 
 | Step | Layout |
 | --- | --- |
-| **1 (now)** | 4 hollow + 4 dustfall @ 2000ms soak (24–48h) |
-| **2** | +2–4 on Rust Choir (`rustchoir.skyphusion.org`) |
+| **1 (now)** | 4 hollow + 4 dustfall @ 2000ms soak (24-48h) |
+| **2** | +2-4 on Rust Choir (`rustchoir.skyphusion.org`) |
 | **3** | 6 + 6 Workers (12 total) |
 | **4** | ~10 per world (~30 federation-wide) |
 
