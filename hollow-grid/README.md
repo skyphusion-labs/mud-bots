@@ -133,7 +133,7 @@ prefer instruction-tuned models, since the bot needs a single short command per 
 
 ## Laptop external QA (Docker Desktop)
 
-Same image as fleet (`mud-bots-hg:v1.0.3`), against the **public** Rust Choir URL
+Same image as fleet (`mud-bots-hg:v1.2.2`), against the **public** Rust Choir URL
 (`wss://rustchoir.skyphusion.org/ws`). Gateway creds live in `~/mud-bots-gateway.env`
 (source from `~/.zshrc`).
 
@@ -151,7 +151,7 @@ Override cred path: `MUD_BOTS_GATEWAY_ENV=/path/to/env docker compose -f compose
 CI builds and pushes on every `v*` git tag (see root `CHANGELOG.md`):
 
 ```text
-ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+ghcr.io/skyphusion-labs/mud-bots-hg:v1.2.2
 ghcr.io/skyphusion-labs/mud-bots-hg:latest
 ```
 
@@ -166,7 +166,7 @@ docker run --rm \
   -e CF_AIG_GATEWAY=skyphusion-llm \
   -e CF_AIG_TOKEN=... \
   -e MUD_MODEL=workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast \
-  ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+  ghcr.io/skyphusion-labs/mud-bots-hg:v1.2.2
 ```
 
 Federation travel: set `MUD_WORLD_URLS` and `MUD_WORLD_ALIASES` (see `bot.mjs`
@@ -185,7 +185,7 @@ Fleet reference compose + **bot → world deployment matrix**:
 Outbound-only Node containers on the operator host, driven by open-source models on
 Cloudflare Workers AI through the `skyphusion-llm` AI Gateway (Unified Billing): no
 GPU box, no ollama sidecar. Each bot holds its own AI-Gateway-Run-scoped token
-(per-function keys, independently revocable). Pin `v1.0.3` (or latest) in compose;
+(per-function keys, independently revocable). Pin `v1.2.2` (or latest) in compose;
 redeploy with `docker compose pull && docker compose up -d`.
 
 ## Provenance

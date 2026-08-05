@@ -86,7 +86,7 @@ or legacy `MUD_TRAVEL_ALLOW`. Optional load-test timer: `BOT_TRAVEL_INTERVAL_MS`
 ## Deploy artifacts
 
 - **GHCR image:** `ghcr.io/skyphusion-labs/mud-bots-hg` (tagged on `v*`; current
-  release `v1.0.3`, `v1.0.4` adds scheduled travel). See root `CHANGELOG.md`.
+  release `v1.2.2`). See root `CHANGELOG.md`.
 - **Fleet compose + matrix:** `fleet-chezmoi/system/stacks/biafra/mud-bots/`
   (`README.md` lists every bot name → world → token → model).
 - **Secrets escrow:** `crew-secrets/swarm-secrets/mud-bots-env/`.

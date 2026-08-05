@@ -9,7 +9,7 @@ name: mud-bot-laptop
 
 services:
   local-scrape:
-    image: ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+    image: ghcr.io/skyphusion-labs/mud-bots-hg:v1.2.2
     restart: "no"
     env_file:
       - ${MUD_BOTS_GATEWAY_ENV:-${HOME}/mud-bots-gateway.env}

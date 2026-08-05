@@ -107,15 +107,14 @@ details are in [`hollow-grid/README.md`](hollow-grid/README.md). Release history
 Published on every `v*` git tag by CI (`.github/workflows/release.yml`):
 
 ```text
-ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.4   # scheduled federation travel (when tagged)
-ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3   # pinned release
+ghcr.io/skyphusion-labs/mud-bots-hg:v1.2.2   # current release pin
 ghcr.io/skyphusion-labs/mud-bots-hg:latest    # tracks latest tag build
 ```
 
 Pull (after `docker login ghcr.io`):
 
 ```bash
-docker pull ghcr.io/skyphusion-labs/mud-bots-hg:v1.0.3
+docker pull ghcr.io/skyphusion-labs/mud-bots-hg:v1.2.2
 ```
 
 GitHub **Releases** tab lists semver tags with notes; the image is built from the
