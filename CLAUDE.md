@@ -93,8 +93,9 @@ or legacy `MUD_TRAVEL_ALLOW`. Optional load-test timer: `BOT_TRAVEL_INTERVAL_MS`
 
 - **GHCR image:** `ghcr.io/skyphusion-labs/mud-bots-hg` (tagged on `v*`; current
   release `v1.2.2`). See root `CHANGELOG.md`.
-- **Fleet compose + matrix:** `fleet-chezmoi/system/stacks/biafra/mud-bots/`
-  (`README.md` lists every bot name → world → token → model).
+- **Fleet deploy stack retired.** The Hetzner fleet (biafra included) was decommissioned
+  2026-09-24; the Swarm compose stack this used to run under is gone with it. No current
+  always-on deploy target; the GHCR image above is the durable artifact.
 - **Secrets escrow:** `crew-secrets/swarm-secrets/mud-bots-env/`.
 - **Laptop QA:** `hollow-grid/compose.laptop.yaml` (public `rustchoir.skyphusion.org`).
 
