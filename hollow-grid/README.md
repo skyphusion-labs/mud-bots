@@ -134,7 +134,8 @@ prefer instruction-tuned models, since the bot needs a single short command per 
 ## Laptop external QA (Docker Desktop)
 
 Same image as fleet (`mud-bots-hg:v1.2.2`), against the **public** Rust Choir URL
-(`wss://rustchoir.skyphusion.org/ws`). Gateway creds live in `~/mud-bots-gateway.env`
+(`wss://hollow.skyphusion.org/ws`; this was `rustchoir.skyphusion.org`, whose host went
+with the 2026-09-24 fleet teardown and no longer resolves). Gateway creds live in `~/mud-bots-gateway.env`
 (source from `~/.zshrc`).
 
 ```bash
