@@ -1,11 +1,11 @@
 # CLAUDE.md
 
-> ## PARKED fleet-wide (2026-07-15) -- read first
+> ## PARKED (2026-07-15; deploy target retired 2026-09-24) -- read first
 >
-> **mud-bots is offline on the fleet.** Manual start only. **Do NOT restart, redeploy, unpark,
-> or flip compose/`restart:` policies without Conrad's explicit word this turn.** This is the
-> standing exception to fleet `restart: always`. Code, docs, and CI work in this repo are fine;
-> ops that bring bots back online are not.
+> **mud-bots has no live deploy target.** It was parked on the fleet 2026-07-15; the fleet
+> compose stack it ran under was then decommissioned entirely 2026-09-24 (see Deploy artifacts
+> below). **Do NOT stand up a new always-on deploy without Conrad's explicit word this turn.**
+> Code, docs, and CI work in this repo are fine; ops that bring bots back online are not.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -97,7 +97,9 @@ or legacy `MUD_TRAVEL_ALLOW`. Optional load-test timer: `BOT_TRAVEL_INTERVAL_MS`
   2026-09-24; the Swarm compose stack this used to run under is gone with it. No current
   always-on deploy target; the GHCR image above is the durable artifact.
 - **Secrets escrow:** `crew-secrets/swarm-secrets/mud-bots-env/`.
-- **Laptop QA:** `hollow-grid/compose.laptop.yaml` (public `rustchoir.skyphusion.org`).
+- **Laptop QA:** `hollow-grid/compose.laptop.yaml` targets the public Rust Choir Go port
+  at `rustchoir.skyphusion.org`, which is unreachable since the same 2026-09-24 fleet
+  retirement; the compose file needs a live `MUD_URL` before it is usable again.
 
 ## Conventions (SkyPhusion house style)
 
