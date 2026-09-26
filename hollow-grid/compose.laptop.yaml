@@ -1,6 +1,14 @@
 name: mud-bot-laptop
 
-# Laptop external QA: same GHCR image as biafra, public Rust Choir URL.
+# Laptop external QA: the GHCR image, pointed at a world that is actually up.
+#
+# MUD_URL was wss://rustchoir.skyphusion.org/ws, the hollow-grid-go (Rust Choir) world on
+# biafra. The Hetzner fleet was decommissioned 2026-09-24 and that hostname now has NO DNS
+# record of any type, so the only outcome left was a connection timeout with nothing naming
+# the cause. It points at hollow.skyphusion.org instead, which is what every other example
+# in hollow-grid/README.md already uses; measured 2026-09-25, an HTTP/2 upgrade request to
+# /ws answers 426 Upgrade Required (a live WebSocket handler) while rustchoir answers
+# nothing at all. Re-point this if the Go port is ever deployed again.
 # Gateway creds: ~/mud-bots-gateway.env (source from ~/.zshrc).
 # Logs + bug JSONL: ./local/logs/ (agents tail local-scrape*.log / *-bugs.jsonl).
 #
@@ -15,7 +23,7 @@ services:
       - ${MUD_BOTS_GATEWAY_ENV:-${HOME}/mud-bots-gateway.env}
     environment:
       BOT_BRAIN: gateway
-      MUD_URL: wss://rustchoir.skyphusion.org/ws
+      MUD_URL: wss://hollow.skyphusion.org/ws
       MUD_NAME: LocalScrape
       MUD_MODEL: workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast
       BOT_MAX_TOKENS: "200"
