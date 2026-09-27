@@ -67,8 +67,11 @@ Full env config is in the header comment of `hollow-grid/bot.mjs` and in
   functions so the gate stays green.
 - **CI (`.github/workflows/release.yml`):** lint + test jobs run on every push
   and PR; the GHCR image build/push job runs only on a `v*` tag and depends on
-  both. This is the only workflow; do not add others (CodeQL runs via GitHub
-  default setup, see `.github/codeql/README.md`).
+  both. This is the only lint/test/build workflow; do not add others. The rest
+  are single-purpose: `coverage.yml` (the org-required `coverage` status
+  context), `corpus-notify.yml` (search-mcp corpus refresh dispatch on push to
+  `main`) and `publish-npm.yml` (npm publish on a published release). CodeQL runs
+  via GitHub default setup, see `.github/codeql/README.md`.
 
 ## Architecture (`hollow-grid/bot.mjs`)
 
