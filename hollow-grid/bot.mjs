@@ -73,11 +73,12 @@ import { appendFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const BRAIN = (process.env.BOT_BRAIN ?? "ollama").toLowerCase();
+const OLLAMA_DEFAULT_MODEL = "qwen3:30b-a3b-instruct-2507-q4_K_M";
 const DEFAULT_MODEL = {
   anthropic: "claude-sonnet-4-6",
   gateway: "openai/gpt-5",
-  ollama: "qwen3:30b-a3b-instruct-2507-q4_K_M",
-}[BRAIN] ?? "qwen3:30b-a3b-instruct-2507-q4_K_M";
+  ollama: OLLAMA_DEFAULT_MODEL,
+}[BRAIN] ?? OLLAMA_DEFAULT_MODEL;
 
 export const CFG = {
   url: process.env.MUD_URL ?? "ws://localhost:8787/ws",
@@ -97,7 +98,7 @@ export const CFG = {
   // Provider chain (issue #35). Each provider carries its own model so a mixed
   // chain (local ollama + Workers AI fallback) does not share one MUD_MODEL.
   providerNames: (process.env.BOT_PROVIDERS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
-  ollamaModel: process.env.OLLAMA_MODEL ?? process.env.MUD_MODEL ?? DEFAULT_MODEL.ollama,
+  ollamaModel: process.env.OLLAMA_MODEL ?? process.env.MUD_MODEL ?? OLLAMA_DEFAULT_MODEL,
   workersAiToken: process.env.WORKERS_AI_TOKEN ?? "",
   workersAiModel: process.env.WORKERS_AI_MODEL ?? "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   workersAiBase: process.env.WORKERS_AI_BASE_URL ?? "",
