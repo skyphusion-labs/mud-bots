@@ -980,10 +980,13 @@ function noteActiveProvider(name) {
 
 // Walk the chain in priority order, honoring circuit state, and return the first usable
 // provider reply. Throws AllProvidersDownError when none are usable this turn.
-export async function chainChat(prompt, chain = PROVIDERS, now = Date.now()) {
+export async function chainChat(prompt, chain = PROVIDERS, now) {
+  // An explicit `now` pins the clock (tests); otherwise read it where it is used, so a
+  // slow failed call still gets a cooldown measured from the failure, not call entry.
+  const clock = () => now ?? Date.now();
   for (const provider of chain) {
     const c = getCircuit(provider.name);
-    const halfOpen = c.openUntil > 0 && now >= c.openUntil;
+    const halfOpen = c.openUntil > 0 && clock() >= c.openUntil;
     if (c.openUntil > 0 && !halfOpen) continue; // cooling down: skip
     if (halfOpen && provider.health) {
       let healthy = false;
@@ -993,7 +996,7 @@ export async function chainChat(prompt, chain = PROVIDERS, now = Date.now()) {
         healthy = false;
       }
       if (!healthy) {
-        c.openUntil = now + CFG.cbCooldownMs; // still down: re-arm the cooldown
+        c.openUntil = clock() + CFG.cbCooldownMs; // still down: re-arm the cooldown
         continue;
       }
     }
@@ -1003,7 +1006,7 @@ export async function chainChat(prompt, chain = PROVIDERS, now = Date.now()) {
       noteActiveProvider(provider.name);
       return text;
     } catch (e) {
-      recordFailure(provider.name, now);
+      recordFailure(provider.name, clock());
       log(`provider ${provider.name} failed: ${e.message}`);
     }
   }
