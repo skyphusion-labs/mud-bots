@@ -977,3 +977,50 @@ describe("provider chain + circuit breaker", () => {
     assert.equal(getCircuit("ollama").fails, 0);
   });
 });
+
+describe("world config diagnostics", () => {
+  function captureLog(fn) {
+    const savedLog = console.log;
+    const lines = [];
+    console.log = (...a) => lines.push(a.join(" "));
+    try {
+      fn();
+    } finally {
+      console.log = savedLog;
+    }
+    return lines.join("\n");
+  }
+  function withEnv(name, value, fn) {
+    const saved = process.env[name];
+    process.env[name] = value;
+    try {
+      return fn();
+    } finally {
+      if (saved === undefined) delete process.env[name];
+      else process.env[name] = saved;
+    }
+  }
+
+  test("malformed MUD_WORLD_URLS JSON is logged", () => {
+    const out = withEnv("MUD_WORLD_URLS", "{not json", () => captureLog(() => buildWorldRegistry()));
+    assert.match(out, /MUD_WORLD_URLS/);
+  });
+
+  test("a dropped MUD_WORLD_URLS entry is logged by name and stays out of the registry", () => {
+    const urls = JSON.stringify({ badproto: "http://evil.example/ws" });
+    let registry;
+    const out = withEnv("MUD_WORLD_URLS", urls, () => captureLog(() => { registry = buildWorldRegistry(); }));
+    assert.match(out, /badproto/);
+    assert.equal(registry.badproto, undefined);
+  });
+
+  test("malformed MUD_WORLD_ALIASES JSON is logged", () => {
+    const out = withEnv("MUD_WORLD_ALIASES", "{not json", () => captureLog(() => buildWorldAliases(WORLD_WS)));
+    assert.match(out, /MUD_WORLD_ALIASES/);
+  });
+
+  test("an MUD_WORLD_ALIASES entry pointing at an unregistered world is logged", () => {
+    const out = withEnv("MUD_WORLD_ALIASES", JSON.stringify({ lost: "nowhere" }), () => captureLog(() => buildWorldAliases(WORLD_WS)));
+    assert.match(out, /lost/);
+  });
+});
