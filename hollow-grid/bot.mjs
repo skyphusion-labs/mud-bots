@@ -179,9 +179,10 @@ export function buildWorldRegistry() {
         if (typeof key !== "string" || typeof val !== "string") continue;
         const canon = parseConfiguredWsUrl(val);
         if (canon) urls[key] = canon;
+        else log(`MUD_WORLD_URLS: dropped "${key}" (needs a ws:/wss: URL with path ${HOME_WS_PATH})`);
       }
     } catch {
-      /* ignore malformed JSON */
+      log("MUD_WORLD_URLS is not valid JSON; ignoring it");
     }
   }
 
@@ -206,10 +207,12 @@ export function buildWorldAliases(urls) {
       for (const [alias, key] of Object.entries(JSON.parse(raw))) {
         if (typeof alias === "string" && typeof key === "string" && urls[key]) {
           aliases[alias] = key;
+        } else {
+          log(`MUD_WORLD_ALIASES: dropped "${alias}" (not a string pair naming a registered world)`);
         }
       }
     } catch {
-      /* ignore malformed JSON */
+      log("MUD_WORLD_ALIASES is not valid JSON; ignoring it");
     }
   }
   for (const key of Object.keys(urls)) {
