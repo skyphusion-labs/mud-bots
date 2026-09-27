@@ -977,3 +977,34 @@ describe("provider chain + circuit breaker", () => {
     assert.equal(getCircuit("ollama").fails, 0);
   });
 });
+
+describe("chainChat clock", () => {
+  beforeEach(() => {
+    resetState();
+    resetCircuits();
+  });
+
+  test("the cooldown is measured from the failure, not from call entry", async () => {
+    const savedFails = CFG.cbFails;
+    const savedCooldown = CFG.cbCooldownMs;
+    CFG.cbFails = 1;
+    CFG.cbCooldownMs = 30;
+    try {
+      let failedAt = 0;
+      const slow = {
+        name: "ollama",
+        health: null,
+        chat: async () => {
+          await new Promise((r) => setTimeout(r, 60)); // longer than the cooldown
+          failedAt = Date.now();
+          throw new Error("slow failure");
+        },
+      };
+      await assert.rejects(() => chainChat("p", [slow]), AllProvidersDownError);
+      assert.ok(getCircuit("ollama").openUntil >= failedAt + CFG.cbCooldownMs);
+    } finally {
+      CFG.cbFails = savedFails;
+      CFG.cbCooldownMs = savedCooldown;
+    }
+  });
+});
