@@ -320,8 +320,8 @@ export function reportBug(kind, detail, extra = {}) {
   if (CFG.bugFile) {
     try {
       appendFileSync(CFG.bugFile, JSON.stringify(entry) + "\n");
-    } catch {
-      /* best effort */
+    } catch (e) {
+      log("bug file write failed:", e.message); // best effort, but not silent
     }
   }
 }

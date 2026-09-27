@@ -1074,3 +1074,23 @@ describe("scheduled travel before the character exists", () => {
     }
   });
 });
+
+describe("bug file write failure", () => {
+  beforeEach(resetState);
+
+  test("reportBug logs, and does not throw, when BOT_BUG is unwritable", () => {
+    const savedBugFile = CFG.bugFile;
+    const savedLog = console.log;
+    const lines = [];
+    CFG.bugFile = "/nonexistent-hgbot-dir/bugs.jsonl";
+    console.log = (...a) => lines.push(a.join(" "));
+    try {
+      state.room = { id: "r-unwritable", name: "Pit" };
+      reportBug("noticed", "finding that cannot be written");
+    } finally {
+      console.log = savedLog;
+      CFG.bugFile = savedBugFile;
+    }
+    assert.ok(lines.some((l) => /bug file write failed/.test(l)), `logged: ${lines.join(" | ")}`);
+  });
+});
