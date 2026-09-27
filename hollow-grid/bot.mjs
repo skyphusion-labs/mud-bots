@@ -69,7 +69,7 @@
 //
 // Requires Node 24+ (global WebSocket + fetch). No build step, no deps.
 
-import { appendFileSync } from "node:fs";
+import { appendFileSync, realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const BRAIN = (process.env.BOT_BRAIN ?? "ollama").toLowerCase();
@@ -1319,7 +1319,17 @@ export function validateConfig(cfg = CFG) {
 
 // Only start playing when executed directly (node bot.mjs); importing the
 // module (the test suite does) must stay side-effect free.
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// argv[1] is resolved first: npm installs `bin` entries as symlinks, and import.meta.url
+// is always the real path.
+function invokedDirectly() {
+  if (!process.argv[1]) return false;
+  try {
+    return fileURLToPath(import.meta.url) === realpathSync(process.argv[1]);
+  } catch {
+    return false;
+  }
+}
+const isMain = invokedDirectly();
 
 if (isMain) {
   process.on("SIGINT", () => {
