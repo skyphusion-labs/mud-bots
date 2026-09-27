@@ -977,3 +977,23 @@ describe("provider chain + circuit breaker", () => {
     assert.equal(getCircuit("ollama").fails, 0);
   });
 });
+
+describe("ollama provider default model", () => {
+  beforeEach(resetState);
+
+  test("CFG.ollamaModel has a default when BOT_BRAIN=ollama and no model env is set", () => {
+    assert.equal(typeof CFG.ollamaModel, "string");
+    assert.ok(CFG.ollamaModel.length > 0);
+  });
+
+  test("the ollama provider sends a model in the request body", async () => {
+    let sent = null;
+    const mock = async (_url, init) => {
+      sent = JSON.parse(init.body);
+      return okJson({ choices: [{ message: { content: "look" } }] });
+    };
+    await withFetch(mock, () => buildProvider("ollama").chat("p"));
+    assert.equal(typeof sent.model, "string");
+    assert.ok(sent.model.length > 0);
+  });
+});
