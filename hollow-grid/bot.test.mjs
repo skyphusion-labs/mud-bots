@@ -977,3 +977,28 @@ describe("provider chain + circuit breaker", () => {
     assert.equal(getCircuit("ollama").fails, 0);
   });
 });
+
+describe("running through a symlink (npm bin)", () => {
+  test("a symlinked bot.mjs still starts as the main module", async () => {
+    const { mkdtempSync, symlinkSync, rmSync } = await import("node:fs");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+    const { spawnSync } = await import("node:child_process");
+    const { fileURLToPath } = await import("node:url");
+    const dir = mkdtempSync(join(tmpdir(), "hgbot-"));
+    try {
+      const link = join(dir, "hollow-grid-bot");
+      symlinkSync(fileURLToPath(new URL("./bot.mjs", import.meta.url)), link);
+      // An unknown provider makes validateConfig() fail loudly, which only happens
+      // when the file believes it is the main module.
+      const res = spawnSync(process.execPath, [link], {
+        env: { ...process.env, BOT_PROVIDERS: "bogus" },
+        encoding: "utf8",
+      });
+      assert.equal(res.status, 1);
+      assert.match(res.stderr, /unknown BOT_BRAIN\/provider "bogus"/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
