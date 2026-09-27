@@ -977,3 +977,167 @@ describe("provider chain + circuit breaker", () => {
     assert.equal(getCircuit("ollama").fails, 0);
   });
 });
+
+describe("ollama provider default model", () => {
+  beforeEach(resetState);
+
+  test("CFG.ollamaModel has a default when BOT_BRAIN=ollama and no model env is set", () => {
+    assert.equal(typeof CFG.ollamaModel, "string");
+    assert.ok(CFG.ollamaModel.length > 0);
+  });
+
+  test("the ollama provider sends a model in the request body", async () => {
+    let sent = null;
+    const mock = async (_url, init) => {
+      sent = JSON.parse(init.body);
+      return okJson({ choices: [{ message: { content: "look" } }] });
+    };
+    await withFetch(mock, () => buildProvider("ollama").chat("p"));
+    assert.equal(typeof sent.model, "string");
+    assert.ok(sent.model.length > 0);
+  });
+});
+
+describe("chainChat clock", () => {
+  beforeEach(() => {
+    resetState();
+    resetCircuits();
+  });
+
+  test("the cooldown is measured from the failure, not from call entry", async () => {
+    const savedFails = CFG.cbFails;
+    const savedCooldown = CFG.cbCooldownMs;
+    CFG.cbFails = 1;
+    CFG.cbCooldownMs = 30;
+    try {
+      let failedAt = 0;
+      const slow = {
+        name: "ollama",
+        health: null,
+        chat: async () => {
+          await new Promise((r) => setTimeout(r, 60)); // longer than the cooldown
+          failedAt = Date.now();
+          throw new Error("slow failure");
+        },
+      };
+      await assert.rejects(() => chainChat("p", [slow]), AllProvidersDownError);
+      assert.ok(getCircuit("ollama").openUntil >= failedAt + CFG.cbCooldownMs);
+    } finally {
+      CFG.cbFails = savedFails;
+      CFG.cbCooldownMs = savedCooldown;
+    }
+  });
+});
+
+describe("running through a symlink (npm bin)", () => {
+  test("a symlinked bot.mjs still starts as the main module", async () => {
+    const { mkdtempSync, symlinkSync, rmSync } = await import("node:fs");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+    const { spawnSync } = await import("node:child_process");
+    const { fileURLToPath } = await import("node:url");
+    const dir = mkdtempSync(join(tmpdir(), "hgbot-"));
+    try {
+      const link = join(dir, "hollow-grid-bot");
+      symlinkSync(fileURLToPath(new URL("./bot.mjs", import.meta.url)), link);
+      // An unknown provider makes validateConfig() fail loudly, which only happens
+      // when the file believes it is the main module.
+      const res = spawnSync(process.execPath, [link], {
+        env: { ...process.env, BOT_PROVIDERS: "bogus" },
+        encoding: "utf8",
+      });
+      assert.equal(res.status, 1);
+      assert.match(res.stderr, /unknown BOT_BRAIN\/provider "bogus"/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("scheduled travel before the character exists", () => {
+  beforeEach(() => {
+    resetState();
+    resetTravelSchedule();
+    CFG.travelIntervalMs = 60_000;
+    CFG.travelTargets = ["Dustfall"];
+  });
+
+  test("decideAndAct does not send scheduled travel while vitals are unset (char creation)", async () => {
+    state.vitals = null;
+    backdateScheduledTravel(61_000);
+    const mock = async () => okJson({ choices: [{ message: { content: "look" } }] });
+    try {
+      await withFetch(mock, () => decideAndAct());
+      assert.ok(!state.recentCommands.some((c) => c.startsWith("travel ")), `sent ${state.recentCommands}`);
+    } finally {
+      CFG.travelIntervalMs = 0;
+    }
+  });
+});
+
+describe("bug file write failure", () => {
+  beforeEach(resetState);
+
+  test("reportBug logs, and does not throw, when BOT_BUG is unwritable", () => {
+    const savedBugFile = CFG.bugFile;
+    const savedLog = console.log;
+    const lines = [];
+    CFG.bugFile = "/nonexistent-hgbot-dir/bugs.jsonl";
+    console.log = (...a) => lines.push(a.join(" "));
+    try {
+      state.room = { id: "r-unwritable", name: "Pit" };
+      reportBug("noticed", "finding that cannot be written");
+    } finally {
+      console.log = savedLog;
+      CFG.bugFile = savedBugFile;
+    }
+    assert.ok(lines.some((l) => /bug file write failed/.test(l)), `logged: ${lines.join(" | ")}`);
+  });
+});
+
+describe("world config diagnostics", () => {
+  function captureLog(fn) {
+    const savedLog = console.log;
+    const lines = [];
+    console.log = (...a) => lines.push(a.join(" "));
+    try {
+      fn();
+    } finally {
+      console.log = savedLog;
+    }
+    return lines.join("\n");
+  }
+  function withEnv(name, value, fn) {
+    const saved = process.env[name];
+    process.env[name] = value;
+    try {
+      return fn();
+    } finally {
+      if (saved === undefined) delete process.env[name];
+      else process.env[name] = saved;
+    }
+  }
+
+  test("malformed MUD_WORLD_URLS JSON is logged", () => {
+    const out = withEnv("MUD_WORLD_URLS", "{not json", () => captureLog(() => buildWorldRegistry()));
+    assert.match(out, /MUD_WORLD_URLS/);
+  });
+
+  test("a dropped MUD_WORLD_URLS entry is logged by name and stays out of the registry", () => {
+    const urls = JSON.stringify({ badproto: "http://evil.example/ws" });
+    let registry;
+    const out = withEnv("MUD_WORLD_URLS", urls, () => captureLog(() => { registry = buildWorldRegistry(); }));
+    assert.match(out, /badproto/);
+    assert.equal(registry.badproto, undefined);
+  });
+
+  test("malformed MUD_WORLD_ALIASES JSON is logged", () => {
+    const out = withEnv("MUD_WORLD_ALIASES", "{not json", () => captureLog(() => buildWorldAliases(WORLD_WS)));
+    assert.match(out, /MUD_WORLD_ALIASES/);
+  });
+
+  test("an MUD_WORLD_ALIASES entry pointing at an unregistered world is logged", () => {
+    const out = withEnv("MUD_WORLD_ALIASES", JSON.stringify({ lost: "nowhere" }), () => captureLog(() => buildWorldAliases(WORLD_WS)));
+    assert.match(out, /lost/);
+  });
+});

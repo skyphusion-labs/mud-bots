@@ -69,15 +69,16 @@
 //
 // Requires Node 24+ (global WebSocket + fetch). No build step, no deps.
 
-import { appendFileSync } from "node:fs";
+import { appendFileSync, realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const BRAIN = (process.env.BOT_BRAIN ?? "ollama").toLowerCase();
+const OLLAMA_DEFAULT_MODEL = "qwen3:30b-a3b-instruct-2507-q4_K_M";
 const DEFAULT_MODEL = {
   anthropic: "claude-sonnet-4-6",
   gateway: "openai/gpt-5",
-  ollama: "qwen3:30b-a3b-instruct-2507-q4_K_M",
-}[BRAIN] ?? "qwen3:30b-a3b-instruct-2507-q4_K_M";
+  ollama: OLLAMA_DEFAULT_MODEL,
+}[BRAIN] ?? OLLAMA_DEFAULT_MODEL;
 
 export const CFG = {
   url: process.env.MUD_URL ?? "ws://localhost:8787/ws",
@@ -97,7 +98,7 @@ export const CFG = {
   // Provider chain (issue #35). Each provider carries its own model so a mixed
   // chain (local ollama + Workers AI fallback) does not share one MUD_MODEL.
   providerNames: (process.env.BOT_PROVIDERS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
-  ollamaModel: process.env.OLLAMA_MODEL ?? process.env.MUD_MODEL ?? DEFAULT_MODEL.ollama,
+  ollamaModel: process.env.OLLAMA_MODEL ?? process.env.MUD_MODEL ?? OLLAMA_DEFAULT_MODEL,
   workersAiToken: process.env.WORKERS_AI_TOKEN ?? "",
   workersAiModel: process.env.WORKERS_AI_MODEL ?? "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   workersAiBase: process.env.WORKERS_AI_BASE_URL ?? "",
@@ -178,9 +179,10 @@ export function buildWorldRegistry() {
         if (typeof key !== "string" || typeof val !== "string") continue;
         const canon = parseConfiguredWsUrl(val);
         if (canon) urls[key] = canon;
+        else log(`MUD_WORLD_URLS: dropped "${key}" (needs a ws:/wss: URL with path ${HOME_WS_PATH})`);
       }
     } catch {
-      /* ignore malformed JSON */
+      log("MUD_WORLD_URLS is not valid JSON; ignoring it");
     }
   }
 
@@ -205,10 +207,12 @@ export function buildWorldAliases(urls) {
       for (const [alias, key] of Object.entries(JSON.parse(raw))) {
         if (typeof alias === "string" && typeof key === "string" && urls[key]) {
           aliases[alias] = key;
+        } else {
+          log(`MUD_WORLD_ALIASES: dropped "${alias}" (not a string pair naming a registered world)`);
         }
       }
     } catch {
-      /* ignore malformed JSON */
+      log("MUD_WORLD_ALIASES is not valid JSON; ignoring it");
     }
   }
   for (const key of Object.keys(urls)) {
@@ -319,8 +323,8 @@ export function reportBug(kind, detail, extra = {}) {
   if (CFG.bugFile) {
     try {
       appendFileSync(CFG.bugFile, JSON.stringify(entry) + "\n");
-    } catch {
-      /* best effort */
+    } catch (e) {
+      log("bug file write failed:", e.message); // best effort, but not silent
     }
   }
 }
@@ -979,10 +983,13 @@ function noteActiveProvider(name) {
 
 // Walk the chain in priority order, honoring circuit state, and return the first usable
 // provider reply. Throws AllProvidersDownError when none are usable this turn.
-export async function chainChat(prompt, chain = PROVIDERS, now = Date.now()) {
+export async function chainChat(prompt, chain = PROVIDERS, now) {
+  // An explicit `now` pins the clock (tests); otherwise read it where it is used, so a
+  // slow failed call still gets a cooldown measured from the failure, not call entry.
+  const clock = () => now ?? Date.now();
   for (const provider of chain) {
     const c = getCircuit(provider.name);
-    const halfOpen = c.openUntil > 0 && now >= c.openUntil;
+    const halfOpen = c.openUntil > 0 && clock() >= c.openUntil;
     if (c.openUntil > 0 && !halfOpen) continue; // cooling down: skip
     if (halfOpen && provider.health) {
       let healthy = false;
@@ -992,7 +999,7 @@ export async function chainChat(prompt, chain = PROVIDERS, now = Date.now()) {
         healthy = false;
       }
       if (!healthy) {
-        c.openUntil = now + CFG.cbCooldownMs; // still down: re-arm the cooldown
+        c.openUntil = clock() + CFG.cbCooldownMs; // still down: re-arm the cooldown
         continue;
       }
     }
@@ -1002,7 +1009,7 @@ export async function chainChat(prompt, chain = PROVIDERS, now = Date.now()) {
       noteActiveProvider(provider.name);
       return text;
     } catch (e) {
-      recordFailure(provider.name, now);
+      recordFailure(provider.name, clock());
       log(`provider ${provider.name} failed: ${e.message}`);
     }
   }
@@ -1156,7 +1163,9 @@ export async function decideAndAct() {
     send("inventory");
     return;
   }
-  const scheduled = maybeScheduledTravel();
+  // Not before the character exists: during character creation (no vitals yet) the turn
+  // belongs to the race answer, not to a travel command.
+  const scheduled = state.vitals ? maybeScheduledTravel() : null;
   if (scheduled) {
     log("scheduled federation travel ->", scheduled);
     send(scheduled);
@@ -1315,7 +1324,17 @@ export function validateConfig(cfg = CFG) {
 
 // Only start playing when executed directly (node bot.mjs); importing the
 // module (the test suite does) must stay side-effect free.
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// argv[1] is resolved first: npm installs `bin` entries as symlinks, and import.meta.url
+// is always the real path.
+function invokedDirectly() {
+  if (!process.argv[1]) return false;
+  try {
+    return fileURLToPath(import.meta.url) === realpathSync(process.argv[1]);
+  } catch {
+    return false;
+  }
+}
+const isMain = invokedDirectly();
 
 if (isMain) {
   process.on("SIGINT", () => {
