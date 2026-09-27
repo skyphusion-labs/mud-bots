@@ -977,3 +977,24 @@ describe("provider chain + circuit breaker", () => {
     assert.equal(getCircuit("ollama").fails, 0);
   });
 });
+
+describe("scheduled travel before the character exists", () => {
+  beforeEach(() => {
+    resetState();
+    resetTravelSchedule();
+    CFG.travelIntervalMs = 60_000;
+    CFG.travelTargets = ["Dustfall"];
+  });
+
+  test("decideAndAct does not send scheduled travel while vitals are unset (char creation)", async () => {
+    state.vitals = null;
+    backdateScheduledTravel(61_000);
+    const mock = async () => okJson({ choices: [{ message: { content: "look" } }] });
+    try {
+      await withFetch(mock, () => decideAndAct());
+      assert.ok(!state.recentCommands.some((c) => c.startsWith("travel ")), `sent ${state.recentCommands}`);
+    } finally {
+      CFG.travelIntervalMs = 0;
+    }
+  });
+});

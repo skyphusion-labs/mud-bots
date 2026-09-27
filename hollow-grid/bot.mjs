@@ -1156,7 +1156,9 @@ export async function decideAndAct() {
     send("inventory");
     return;
   }
-  const scheduled = maybeScheduledTravel();
+  // Not before the character exists: during character creation (no vitals yet) the turn
+  // belongs to the race answer, not to a travel command.
+  const scheduled = state.vitals ? maybeScheduledTravel() : null;
   if (scheduled) {
     log("scheduled federation travel ->", scheduled);
     send(scheduled);
