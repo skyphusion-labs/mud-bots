@@ -32,7 +32,7 @@ comma-separated chain instead of a single `BOT_BRAIN`:
 ```bash
 # local ollama primary, Cloudflare Workers AI REST fallback
 BOT_PROVIDERS=ollama,workersai \
-  OLLAMA_BASE_URL=http://10.1.1.7:11434/v1 OLLAMA_MODEL=qwen2.5:14b-instruct-q4_K_M \
+  OLLAMA_BASE_URL=http://127.0.0.1:11434/v1 OLLAMA_MODEL=qwen2.5:14b-instruct-q4_K_M \
   WORKERS_AI_TOKEN=... CF_ACCOUNT_ID=... \
   WORKERS_AI_MODEL=@cf/meta/llama-3.3-70b-instruct-fp8-fast \
   MUD_URL=wss://hollow.skyphusion.org/ws node bot.mjs
@@ -178,8 +178,7 @@ BOT_TRAVEL_INTERVAL_MS=300000          # 5 minutes
 BOT_TRAVEL_TARGETS=Dustfall,The Hollow Grid
 ```
 
-Fleet reference compose + **bot → world deployment matrix**:
-`fleet-chezmoi/system/stacks/biafra/mud-bots/README.md`.
+Point `MUD_URL` at the world you are running. The fleet host that used to run these bots is retired.
 
 ## Deployment
 

@@ -74,21 +74,7 @@ Two models validated for **steady-state fleet load** (instruct @ 40 tokens, 4000
 | **Vagrant** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | hollow | steady-state prod / QA |
 | **Filth** | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | dustfall | steady-state prod / QA |
 
-**Federation load test (2026-07-09, biafra):** phased plan in
-`fleet-chezmoi/system/stacks/biafra/mud-bots/README.md`.
-
-| Step | Layout |
-| --- | --- |
-| **1 (now)** | 4 hollow + 4 dustfall @ 2000ms soak (24-48h) |
-| **2** | +2-4 on Rust Choir (`rustchoir.skyphusion.org`) |
-| **3** | 6 + 6 Workers (12 total) |
-| **4** | ~10 per world (~30 federation-wide) |
-
-Step 1 bots: Vagrant, Chrome, Scrape, Wire (hollow); Filth, Spit, Static, Ash (dustfall).
-Wire federation-travels every 5m. Scrape/Ash reserved for Rust Choir in step 2.
-
-Fleet compose and deploy path: `fleet-chezmoi/system/stacks/biafra/mud-bots/`.
-See [`hollow-grid/README.md`](hollow-grid/README.md) for env vars and `BOT_TRAVEL_*`.
+The 2026-07-09 federation load test ran on a fleet host that is retired. Do not follow that layout. Run bots against a world you host. Env vars and `BOT_TRAVEL_*` are in [`hollow-grid/README.md`](hollow-grid/README.md).
 
 Earlier A/B runs compared instruct vs reasoning on hollow/dustfall; instruct @ 40 tok
 won for always-on load. Reasoning models remain supported (`BOT_MAX_TOKENS` ~2000);
