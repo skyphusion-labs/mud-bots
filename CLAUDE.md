@@ -100,9 +100,10 @@ or legacy `MUD_TRAVEL_ALLOW`. Optional load-test timer: `BOT_TRAVEL_INTERVAL_MS`
   2026-09-24; the Swarm compose stack this used to run under is gone with it. No current
   always-on deploy target; the GHCR image above is the durable artifact.
 - **Secrets escrow:** `crew-secrets/swarm-secrets/mud-bots-env/`.
-- **Laptop QA:** `hollow-grid/compose.laptop.yaml` targets the public Rust Choir Go port
-  at `rustchoir.skyphusion.org`, which is unreachable since the same 2026-09-24 fleet
-  retirement; the compose file needs a live `MUD_URL` before it is usable again.
+- **Laptop QA:** `hollow-grid/compose.laptop.yaml` sets `MUD_URL` to
+  `wss://hollow.skyphusion.org/ws`. The old Rust Choir target
+  `rustchoir.skyphusion.org` has no DNS after the 2026-09-24 fleet retirement;
+  do not point this file back at it.
 
 ## Conventions (SkyPhusion house style)
 
