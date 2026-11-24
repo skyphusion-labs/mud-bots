@@ -23,7 +23,7 @@ cd hollow-grid && npm run test:coverage
 
 `npm test` uses `node:test`. The suite imports `bot.mjs` and stubs `fetch`. It needs no game server. `npm run test:coverage` fails if line, branch, or function coverage on `bot.mjs` drops below 75 percent. Keep new logic in exported functions so that gate can see it.
 
-[`.github/workflows/release.yml`](.github/workflows/release.yml) lints and tests on every push and pull request. The image job runs on a `v*` tag. The tag commit must be on `main`. A merge to `main` leaves the image as it is. [`.github/workflows/coverage.yml`](.github/workflows/coverage.yml) runs the coverage script. [`.github/workflows/publish-npm.yml`](.github/workflows/publish-npm.yml) publishes when a GitHub Release is published. [`.github/workflows/corpus-notify.yml`](.github/workflows/corpus-notify.yml) refreshes the search corpus. CodeQL uses GitHub default setup.
+[`.github/workflows/release.yml`](.github/workflows/release.yml) lints and tests on every push and pull request. The image job runs on a `v*` tag. The tag commit must be on `main`. A merge to `main` leaves the image as it is. [`.github/workflows/coverage.yml`](.github/workflows/coverage.yml) runs the coverage script. [`.github/workflows/publish-npm.yml`](.github/workflows/publish-npm.yml) publishes when a GitHub Release is published. CodeQL uses GitHub default setup.
 
 ## How the bot behaves
 
